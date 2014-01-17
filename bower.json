@@ -1,0 +1,12 @@
+{
+  "name": "KsioP",
+  "version": "0.0.0",
+  "devDependencies": {
+    "ressources": "https://github.com/MrWormy/CampusNet-assets.git",
+    "easeljs": "",
+    "underscore": ">=0.0.0",
+    "backbone": ">=0.0.0",
+    "backbone.localStorage": ">=0.0.0",
+    "jquery": ">=0.0.0"
+  }
+}
