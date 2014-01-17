@@ -1,20 +1,20 @@
-$( function ( ) {
+var App = {
+  Models: {},
+  Collections: {},
+  Views: {},
+  Images: {},
+  Frames: [ ],
+  socket: {},
 
-  window.App = {
-    Models: {},
-    Collections: {},
-    Views: {},
-    Images: {},
-    Frames: [ ],
-    socket: {}
-  };
-
-  window.template = function ( id ) {
+  template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );
-  };
+  }
+};
 
-  var app = {}
-  _.extend( app, Backbone.Events );
+var app = {}
+_.extend( app, Backbone.Events );
+
+$( function ( ) {
 
   App.Models.Canvas = Backbone.Model.extend( {
     defaults: {
