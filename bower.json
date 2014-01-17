@@ -2,7 +2,7 @@
   "name": "KsioP",
   "version": "0.0.0",
   "devDependencies": {
-    "ressources": "https://github.com/MrWormy/CampusNet-assets.git",
+    "resources": "https://github.com/MrWormy/CampusNet-assets.git",
     "easeljs": "",
     "underscore": ">=0.0.0",
     "backbone": ">=0.0.0",

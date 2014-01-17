@@ -82,7 +82,7 @@ $( function ( ) {
   } );
 
   App.Collections.Maps = Backbone.Collection.extend( {
-    url: 'assets/map/testMap.json',
+    url: 'assets/ressources/map/testMap.json',
     model: App.Models.Map
   } );
 
@@ -239,7 +239,7 @@ $( function ( ) {
     initialize: function ( ) {
       var that = this;
       App.Images.tyleset = new Image( );
-      App.Images.tyleset.src = "assets/img/tilesheet.png"
+      App.Images.tyleset.src = "assets/ressources/img/tilesheet.png"
       App.Images.tyleset.onload = function ( ) {
         that.afterLoad( );
       };
