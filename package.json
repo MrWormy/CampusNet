@@ -1,5 +1,5 @@
 {
-  "name": "KsioP",
+  "name": "CampusNet",
   "description": "dependencies of the project",
   "dependencies": {
     "express": ">=0.0.0",
