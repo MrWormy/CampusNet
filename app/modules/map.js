@@ -29,8 +29,7 @@ App.Views.DrawMap = Backbone.View.extend( {
   el: '#myCanvas',
 
   initialize: function ( ) {
-    var movement = new App.Views.Perso( ),
-      data = this.loadTiles( ),
+    var data = this.loadTiles( ),
       spriteSheet = new createjs.SpriteSheet( data );
 
     this.loadFrames( spriteSheet );
