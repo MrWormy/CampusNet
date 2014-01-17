@@ -19,13 +19,13 @@ Prerequisite
 
 git needs to be installed on your computer and must be added to the `PATH`  environment variable (if you work on Windows).
 
--Link: <http://git-scm.com/downloads>
+- Link: <http://git-scm.com/downloads>
 
 ### Node.js
 
 CampusNet uses node as a server.
 
--Link: <http://nodejs.org/download/>
+- Link: <http://nodejs.org/download/>
 
 ### Bower
 
