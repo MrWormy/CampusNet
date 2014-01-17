@@ -13,44 +13,34 @@ App.Models.Canvas = Backbone.Model.extend( {
     var height = this.get( 'height' ),
       width = this.get( 'width' ),
       ratio = this.get( 'ratio' ),
-      myCan = $( "#myCanvas" ),
-      myCanProp = myCan[ 0 ],
       canWidth = ratio * height,
       canHeight = width / ratio;
 
     if ( width >= canWidth ) {
-
-      this.set( {
-        'height': height,
-        'width': canWidth
-      }, {
-        silent: true
-      } );
-
-      myCan.css( {
-        'margin-top': 0 + 'px'
-      } );
-
-      myCanProp.width = canWidth;
-      myCanProp.height = height;
+      this.setSize( 0, canWidth, height );
     } else {
-
-      this.set( {
-        'height': canHeight,
-        'width': width
-      }, {
-        silent: true
-      } );
-
-      myCan.css( {
-        'margin-top': ( height - canHeight ) / 2 + 'px'
-      } );
-
-      myCanProp.width = width;
-      myCanProp.height = canHeight;
+      this.setSize( ( height - canHeight ) / 2, width, canHeight );
     }
+  },
 
-    app.trigger( 'resized:ok', this.get( "width" ), this.get( "height" ) );
+  setSize: function ( margin, width, height ) {
+    var myCan = $( "#myCanvas" ),
+      myCanProp = myCan[ 0 ];
+
+    this.set( {
+      'height': height,
+      'width': width
+    }, {
+      silent: true
+    } );
+
+    myCan.css( {
+      'margin-top': margin + 'px'
+    } );
+
+    myCanProp.width = width;
+    myCanProp.height = height;
+    app.trigger( 'resized:ok', width, height );
   }
 } );
 
