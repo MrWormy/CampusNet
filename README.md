@@ -5,12 +5,12 @@ CampusNet is an innovative project who aims to put a gaphic environment on a com
 
 The project uses:
 
--**Node.js** as a server
--**Bower** as an assets manager
--**Npm** as a server side package manager
--**Backbone.js** as a framework
--**easel.js** as Canvas Manager
--**Tiled** to generate tylesheets
+- **Node.js** as a server
+- **Bower** as an assets manager
+- **Npm** as a server side package manager
+- **Backbone.js** as a framework
+- **easel.js** as Canvas Manager
+- **Tiled** to generate tylesheets
 
 Prerequisite
 --------
