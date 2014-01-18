@@ -15,7 +15,7 @@ var app = {}
 _.extend( app, Backbone.Events );
 
 $( function ( ) {
-
+//test commit
   var canvasView = new App.Views.CanvasView( );
 
 } );
