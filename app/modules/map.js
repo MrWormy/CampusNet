@@ -29,7 +29,6 @@ App.Views.DrawMap = Backbone.View.extend( {
   el: '#myCanvas',
 
   initialize: function ( ) {
-    this.listenToOnce( app, 'resized:ok', this.render );
     this.refresh();
   },
 

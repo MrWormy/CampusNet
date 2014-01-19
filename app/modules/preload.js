@@ -1,34 +1,56 @@
+App.Models.preload = Backbone.Model.extend( {
+  defaults: {
+    "loadTileSet": false,
+    "loadMap": false
+  },
+
+  initialize: function ( ) {
+    this.on( 'change', this.checkLoad );
+  },
+
+  checkLoad: function ( ) {
+    if ( this.get( "loadTileSet" ) && this.get( "loadMap" ) ) {
+      app.trigger( 'preload:ended' );
+    }
+  }
+} );
+
 App.Views.preload = Backbone.View.extend( {
 
   el: "#myCanvas",
 
   initialize: function ( ) {
-    this.loadTileSheet( );
+    this.loadTileSet( );
     this.loadMap( );
   },
 
-  loadTileSheet: function ( ) {
+  loadTileSet: function ( ) {
     var that = this,
       tileset = new Image( );
     tileset.src = "assets/resources/img/tilesheet.png"
     tileset.onload = function ( ) {
-      app.trigger( 'tileset:loaded', tileset );
+      that.model.set( {
+        "tileset": tileset,
+        "loadTileSet": true
+      } );
     };
   },
 
-  loadTiles: function ( tileset, model ) {
+  loadTiles: function ( ) {
+    var tileset = this.model.get( "tileset" ),
+      map = this.model.get( "map" );
     var data = {
       images: [ tileset ],
       frames: {
-        width: model.get( "tilewidth" ),
-        height: model.get( "tileheight" ),
+        width: map.get( "tilewidth" ),
+        height: map.get( "tileheight" ),
         regX: 0,
         regY: 0
       }
     },
       spriteSheet = new createjs.SpriteSheet( data );
 
-    this.loadFrames( spriteSheet, model );
+    this.loadFrames( spriteSheet, map );
 
   },
 
@@ -48,6 +70,7 @@ App.Views.preload = Backbone.View.extend( {
   },
 
   loadMap: function ( ) {
+    var that = this;
     var maps = new App.Collections.Maps( ),
       firstMap = new App.Models.Map( {
         id: 1
@@ -57,7 +80,11 @@ App.Views.preload = Backbone.View.extend( {
     maps.fetch( {
 
       success: function ( coll, resp, opt ) {
-        app.trigger( 'map:loaded', firstMap );
+        that.model.set( {
+          "map": firstMap,
+          "loadMap": true
+        } );
+        return firstMap;
       },
 
       error: function ( coll, resp, opt ) {
