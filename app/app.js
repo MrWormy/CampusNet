@@ -2,8 +2,7 @@ var App = {
   Models: {},
   Collections: {},
   Views: {},
-  Images: {},
-  Frames: [ ],
+  Frames: [],
   socket: {},
 
   template: function ( id ) {
@@ -15,7 +14,7 @@ var app = {}
 _.extend( app, Backbone.Events );
 
 $( function ( ) {
-//test commit
-  var canvasView = new App.Views.CanvasView( );
+
+  var eventHandler = new App.Views.eventHandler( );
 
 } );

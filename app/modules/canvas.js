@@ -6,7 +6,7 @@ App.Models.Canvas = Backbone.Model.extend( {
   },
 
   initialize: function ( ) {
-    this.resize( this.toJSON( ) );
+    this.resize( );
   },
 
   resize: function ( ) {
