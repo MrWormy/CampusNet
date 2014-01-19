@@ -29,42 +29,18 @@ App.Views.DrawMap = Backbone.View.extend( {
   el: '#myCanvas',
 
   initialize: function ( ) {
-    var data = this.loadTiles( ),
-      spriteSheet = new createjs.SpriteSheet( data );
-
-    this.loadFrames( spriteSheet );
     this.listenToOnce( app, 'resized:ok', this.render );
-  },
-
-  loadTiles: function ( ) {
-    var that = this;
-
-    setInterval( function ( ) {
-      that.stage.update( );
-    }, 30 );
-
-    var data = {
-      images: [ App.Images.tyleset ],
-      frames: {
-        width: this.model.get( "tilewidth" ),
-        height: this.model.get( "tileheight" ),
-        regX: 0,
-        regY: 0
-      }
-    };
-
-    return data;
-  },
-
-  loadFrames: function ( spriteSheet ) {
-    var length = spriteSheet._frames.length;
-
-    for ( var i = 0; i < length; i++ ) {
-      App.Frames.push( createjs.SpriteSheetUtils.extractFrame( spriteSheet, i ) );
-    }
+    this.refresh();
   },
 
   stage: new createjs.Stage( "myCanvas" ),
+
+  refresh: function () {
+    var that = this;
+    setInterval(function(){
+      that.stage.update();
+    }, 30);
+  },
 
   render: function ( width, height ) {
     var that = this;

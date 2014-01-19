@@ -28,21 +28,21 @@ App.Views.preload = Backbone.View.extend( {
     },
       spriteSheet = new createjs.SpriteSheet( data );
 
-    this.loadFrames( spriteSheet );
+    this.loadFrames( spriteSheet, model );
 
   },
 
-  loadFrames: function ( spriteSheet ) {
+  loadFrames: function ( spriteSheet, map ) {
     var length = spriteSheet._frames.length,
       framesLoaded = 0;
 
     for ( var i = 0; i < length; i++ ) {
       var tempsFrame = createjs.SpriteSheetUtils.extractFrame( spriteSheet, i );
+      App.Frames.push( tempsFrame );
       tempsFrame.onload = function ( ) {
         framesLoaded++;
-        App.Frames.push( tempsFrame );
         if ( framesLoaded == length )
-          app.trigger( 'load:ended' );
+          app.trigger( 'load:ended', map );
       }
     }
   },
@@ -58,15 +58,6 @@ App.Views.preload = Backbone.View.extend( {
 
       success: function ( coll, resp, opt ) {
         app.trigger( 'map:loaded', firstMap );
-        // firstMap.initMap( );
-        // console.log( 'Données chargées' );
-        // var myCanvas = new App.Models.Canvas( );
-        // var screenView = new App.Views.Screen( {
-        //   model: myCanvas
-        // } );
-        // var drawingView = new App.Views.DrawMap( {
-        //   model: firstMap
-        // } );
       },
 
       error: function ( coll, resp, opt ) {

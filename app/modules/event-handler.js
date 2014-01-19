@@ -2,6 +2,7 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   initialize: function ( ) {
     this.preload( );
+    this.afterLoad( );
   },
 
   preload: function ( ) {
@@ -34,6 +35,22 @@ App.Views.eventHandler = Backbone.View.extend( {
     if ( this.tileSetLoaded ) {
       app.trigger( 'preload:ended' );
     }
+  },
+
+  afterLoad: function ( ) {
+    this.listenTo( app, 'load:ended', this.drawMap );
+  },
+
+  drawMap: function ( firstMap ) {
+    firstMap.initMap( );
+    console.log( 'Données chargées' );
+    var myCanvas = new App.Models.Canvas( );
+    var screenView = new App.Views.Screen( {
+      model: myCanvas
+    } );
+    var drawingView = new App.Views.DrawMap( {
+      model: firstMap
+    } );
   }
 
 } );

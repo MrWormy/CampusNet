@@ -49,43 +49,4 @@ App.Views.CanvasView = Backbone.View.extend( {
 
   el: '#myCanvas',
 
-  initialize: function ( ) {
-    var that = this;
-
-    App.Images.tyleset = new Image( );
-    App.Images.tyleset.src = "assets/resources/img/tilesheet.png"
-    App.Images.tyleset.onload = function ( ) {
-      that.afterLoad( );
-    };
-  },
-
-  afterLoad: function ( ) {
-    var maps = new App.Collections.Maps( ),
-      firstMap = new App.Models.Map( {
-        id: 1
-      } );
-
-    maps.add( firstMap );
-    maps.fetch( {
-
-      success: function ( coll, resp, opt ) {
-        firstMap.initMap( );
-        console.log( 'Données chargées' );
-        var myCanvas = new App.Models.Canvas( );
-        var screenView = new App.Views.Screen( {
-          model: myCanvas
-        } );
-        var drawingView = new App.Views.DrawMap( {
-          model: firstMap
-        } );
-      },
-
-      error: function ( coll, resp, opt ) {
-        console.log( 'Une erreur c\' est dûr' );
-        $( 'body' ).html( 'Une erreur est survenue lors du chargement des données !' )
-      }
-
-    } );
-  }
-
 } );
