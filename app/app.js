@@ -4,6 +4,7 @@ var App = {
   Views: {},
   Frames: [],
   socket: {},
+  map: [],
 
   template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );

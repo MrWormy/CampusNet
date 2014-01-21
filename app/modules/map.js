@@ -29,16 +29,16 @@ App.Views.DrawMap = Backbone.View.extend( {
   el: '#myCanvas',
 
   initialize: function ( ) {
-    this.refresh();
+    this.refresh( );
   },
 
   stage: new createjs.Stage( "myCanvas" ),
 
-  refresh: function () {
+  refresh: function ( ) {
     var that = this;
-    setInterval(function(){
-      that.stage.update();
-    }, 30);
+    setInterval( function ( ) {
+      that.stage.update( );
+    }, 30 );
   },
 
   render: function ( width, height ) {
@@ -70,12 +70,22 @@ App.Views.DrawMap = Backbone.View.extend( {
   },
 
   addFrames: function ( container ) {
-    var layer = this.model.get( "layers" )[ 0 ].data;
-    var tileWidth = this.model.get( "tilewidth" ),
+    var layers = this.model.get( "layers" ),
+      tileWidth = this.model.get( "tilewidth" ),
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" );
-    for ( var i = 0; i < layer.length; i++ ) {
-      this.addFrame( container, layer[ i ] - 1, ( i % layerWidth ) * tileWidth, ( Math.floor( i / layerWidth ) ) * tileHeight );
+    for ( var i = 1; i <= layers.length; i++ ) {
+      var layer = this.model.get( "layers" )[ i - 1 ].data;
+      for ( var j = 0; j < layer.length; j++ ) {
+        var frame = layer[ j ] - 1,
+          col = j % layerWidth,
+          line = Math.floor( j / layerWidth );
+        if ( frame >= 0 ) {
+          ( col == 0 ) ? App.map[ line ] = [ ] : null;
+          App.map[ j ] = Math.min( 3, i );
+          this.addFrame( container, frame, col * tileWidth, line * tileHeight );
+        }
+      }
     }
   },
 
@@ -87,7 +97,14 @@ App.Views.DrawMap = Backbone.View.extend( {
   },
 
   mapClicked: function ( e, width, height ) {
-    console.log( e.target.x - this.model.get( "currentX" ) );
+    var tileWidth = this.model.get( "tilewidth" ),
+      tileHeight = this.model.get( "tileheight" ),
+      layerWidth = this.model.get( "width" ),
+      currentJ = this.model.get( "currentX" ) / tileWidth,
+      currentI = this.model.get( "currentY" ) / tileHeight,
+      toJ = e.target.x / tileWidth,
+      toI = e.target.y / tileHeight;
+    app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth);
   }
 
 } );
