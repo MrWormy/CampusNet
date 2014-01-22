@@ -34,12 +34,19 @@ App.Views.eventHandler = Backbone.View.extend( {
   },
 
   move: function ( scope ) {
-    var myMove = new App.Models.move( );
-    // myMove.on( 'change', function ( ) {
-    //    this.handleMove( scope );
-    // } );
-    myMove.listenTo( app, 'move', function(fromI, fromJ, toI, toJ, lw){
-      console.log(fromI, fromJ, toI, toJ, lw, this.findAway(fromI, fromJ, toI, toJ, lw));
+    var myMove = new App.Models.move( ),
+      hashMove = -1,
+      way;
+
+    myMove.listenTo( app, 'move', function ( fromI, fromJ, toI, toJ, lw ) {
+      hashMove = toI * lw + toJ;
+      way = this.findAway( fromI, fromJ, toI, toJ, lw );
+      if ( hashMove == way[0] ) {
+        var tempWay = way[1].slice(0);
+        way = [];
+        hashMove = -1;
+        this.handleMove(scope, tempWay);
+      }
     } );
   }
 

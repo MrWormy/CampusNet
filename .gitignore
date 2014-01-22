@@ -1,3 +1,7 @@
+# Files
+
+app/modules/move-*
+
 # Folders
 
 node_modules/

@@ -82,7 +82,7 @@ App.Views.DrawMap = Backbone.View.extend( {
           line = Math.floor( j / layerWidth );
         if ( frame >= 0 ) {
           ( col == 0 ) ? App.map[ line ] = [ ] : null;
-          App.map[ j ] = Math.min( 3, i );
+          App.map[ line ][ col ] = Math.min( 3, i );
           this.addFrame( container, frame, col * tileWidth, line * tileHeight );
         }
       }
@@ -104,7 +104,7 @@ App.Views.DrawMap = Backbone.View.extend( {
       currentI = this.model.get( "currentY" ) / tileHeight,
       toJ = e.target.x / tileWidth,
       toI = e.target.y / tileHeight;
-    app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth);
+    app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
   }
 
 } );
