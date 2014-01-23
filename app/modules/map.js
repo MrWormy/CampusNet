@@ -81,8 +81,8 @@ App.Views.DrawMap = Backbone.View.extend( {
           col = j % layerWidth,
           line = Math.floor( j / layerWidth );
         if ( frame >= 0 ) {
-          ( col == 0 ) ? App.map[ line ] = [ ] : null;
-          App.map[ line ][ col ] = Math.min( 3, i );
+          //( col == 0 ) ? App.map[ line ] = [ ] : null;
+          App.map[ j ] = Math.min( 3, i );
           this.addFrame( container, frame, col * tileWidth, line * tileHeight );
         }
       }

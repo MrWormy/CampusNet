@@ -38,10 +38,14 @@ App.Models.move = Backbone.Model.extend( {
         "hCost": Math.abs( toI - fromI ) + Math.abs( toJ - fromJ )
         } ],
       closedCases = [ ],
+      compteur = 0,
       hashMove = toI * layerWidth + toJ,
       cameFrom = {};
 
+    if ( App.map[ toI * layerWidth + toJ ] > 2 )
+      return [ hashMove, [ ] ];
     while ( openCases[ 0 ] ) {
+      compteur++;
       tempRes = this.nextCase( openCases );
       currentCase = tempRes[ 0 ];
       openCases = tempRes[ 1 ];
@@ -49,7 +53,11 @@ App.Models.move = Backbone.Model.extend( {
       i = currentCase.i;
       j = currentCase.j;
       if ( i == toI && j == toJ ) {
-        return [ hashMove, this.buildAway( cameFrom, toI, toJ ) ];
+        return [ hashMove, this.buildAway( cameFrom, i, j ) ];
+      }
+      if ( compteur == 1000 ) {
+        var minHcost = this.closestCase( closedCases );
+        return [ hashMove, this.buildAway( cameFrom, minHcost.i, minHcost.j ) ];
       }
       for ( var h = 0; h < 4; h++ ) {
         Ni = i + ( ( h + 1 ) % 2 ) * ( h - 1 );
@@ -62,14 +70,14 @@ App.Models.move = Backbone.Model.extend( {
           continue;
         tempCost = currentCase.cost + 1;
         iN = this.isIn( neighbor, openCases );
-        if ( App.map[ Ni ][ Nj ] < 3 && ( iN == -1 || openCases[ iN ].cost > tempCost ) ) {
+        if ( App.map[ Ni * layerWidth + Nj ] < 3 && ( iN == -1 || openCases[ iN ].cost > tempCost ) ) {
           ( cameFrom[ Ni.toString( ) ] || ( cameFrom[ Ni.toString( ) ] = {} ) ) && ( cameFrom[ Ni.toString( ) ][ Nj.toString( ) ] = {
             "i": i,
             "j": j
           } );
           neighbor.cost = tempCost;
           neighbor.hCost = tempCost + Math.abs( toI - neighbor.i ) + Math.abs( toJ - neighbor.j );
-          ( iN == -1 && openCases.push( neighbor ) ) || ( openCases[ iN ] = neighbor );
+          ( iN == -1 && openCases.unshift( neighbor ) ) || ( openCases[ iN ] = neighbor );
         }
       }
     }
@@ -110,6 +118,18 @@ App.Models.move = Backbone.Model.extend( {
     min = openCases[ iMin ];
     result = openCases.slice( 0, iMin ).concat( openCases.slice( iMin + 1 ) );
     return [ min, result ];
+  },
+
+  closestCase: function ( closedCases ) {
+    var caseMin, tempMinCost, tempMinHcost, costMin = closedCases[ 0 ].cost,
+      hCostMin = closedCases[ 0 ].hCost,
+      iMin = 0,
+      n = closedCases.length;
+    for ( var i = 1; i < n; i++ ) {
+      ( ( tempMinHcost = closedCases[ i ].hCost ) && ( tempMinCost = closedCases[ i ].cost ) ) && tempMinHcost <= hCostMin && tempMinCost > costMin && ( iMin = i ) && ( hCostMin = tempMinHcost ) && ( costMin = tempMinCost );
+    }
+    min = closedCases[ iMin ];
+    return min;
   }
 
 } );
