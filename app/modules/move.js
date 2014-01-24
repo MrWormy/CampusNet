@@ -42,7 +42,7 @@ App.Models.move = Backbone.Model.extend( {
       hashMove = toI * layerWidth + toJ,
       cameFrom = {};
 
-    if ( App.map[ toI * layerWidth + toJ ] > 2 )
+    if ( App.map[ toI * layerWidth + toJ ] > 1 )
       return [ hashMove, [ ] ];
     while ( openCases[ 0 ] ) {
       compteur++;
@@ -70,7 +70,7 @@ App.Models.move = Backbone.Model.extend( {
           continue;
         tempCost = currentCase.cost + 1;
         iN = this.isIn( neighbor, openCases );
-        if ( App.map[ Ni * layerWidth + Nj ] < 3 && ( iN == -1 || openCases[ iN ].cost > tempCost ) ) {
+        if ( App.map[ Ni * layerWidth + Nj ] < 2 && ( iN == -1 || openCases[ iN ].cost > tempCost ) ) {
           ( cameFrom[ Ni.toString( ) ] || ( cameFrom[ Ni.toString( ) ] = {} ) ) && ( cameFrom[ Ni.toString( ) ][ Nj.toString( ) ] = {
             "i": i,
             "j": j

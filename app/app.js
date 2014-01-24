@@ -17,5 +17,4 @@ _.extend( app, Backbone.Events );
 $( function ( ) {
 
   var eventHandler = new App.Views.eventHandler( );
-
 } );

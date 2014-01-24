@@ -75,14 +75,16 @@ App.Views.DrawMap = Backbone.View.extend( {
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" );
     for ( var i = 1; i <= layers.length; i++ ) {
-      var layer = this.model.get( "layers" )[ i - 1 ].data;
-      for ( var j = 0; j < layer.length; j++ ) {
-        var frame = layer[ j ] - 1,
+      var type, layer = this.model.get( "layers" )[ i - 1 ],
+        data = layer.data,
+        name = layer.name.split( " " )[ 0 ];
+      ( name == "floor" && !( type = 0 ) ) || ( name == "map-transition" && ( type = 1 ) ) || ( type = 2 );
+      for ( var j = 0; j < data.length; j++ ) {
+        var frame = data[ j ] - 1,
           col = j % layerWidth,
           line = Math.floor( j / layerWidth );
         if ( frame >= 0 ) {
-          //( col == 0 ) ? App.map[ line ] = [ ] : null;
-          App.map[ j ] = Math.min( 3, i );
+          App.map[ j ] = type;
           this.addFrame( container, frame, col * tileWidth, line * tileHeight );
         }
       }

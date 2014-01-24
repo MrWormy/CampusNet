@@ -13,5 +13,7 @@ app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 
 io.sockets.on( 'connection', function ( socket ) {
-  // sockets
+  socket.on('init', function (data){
+    console.log(data.init);
+  });
 } );
