@@ -46,13 +46,16 @@ App.Views.eventHandler = Backbone.View.extend( {
       hashMove = -1,
       way;
 
-    App.socket.on( 'pop', function ( data ) {
+    App.socket.on( 'popGuy', function ( data ) {
       if ( !myPerso.get( "id" ) ) {
         myPerso.set( {
           "id": data.id,
           "currentPos": data.currentPos
         }, {silent: true} );
         myView.pop(data.currentPos);
+      }
+      else{
+        //gestion autres persos
       }
     } );
 
