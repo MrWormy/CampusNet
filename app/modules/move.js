@@ -1,33 +1,11 @@
-App.Models.move = Backbone.Model.extend( {
-  animating: {},
+App.Models.Move = Backbone.Model.extend( {
 
-  handleMove: function ( scope, way ) {
-    var container = scope.stage.getChildAt( 0 ),
-      that = this,
-      model = scope.model,
-      tileW = model.get( "tilewidth" ),
-      tileH = model.get( "tileheight" );
-    clearInterval( this.animating );
-    this.animating = setInterval( function ( ) {
-      var currentTarget = way.shift( );
-      if ( !currentTarget )
-        clearInterval( that.animating )
-      else
-        that.moveIt( model, container, currentTarget, tileW, tileH );
-    }, 90 );
-  },
-
-  moveIt: function ( model, container, currentTarget, tw, th ) {
-    var x = currentTarget.j * tw,
-      y = currentTarget.i * th,
-      currentX = model.get( "currentX" ),
-      currentY = model.get( "currentY" );
-    container.x += currentX - x;
-    container.y += currentY - y;
-    model.set( {
-      "currentX": x,
-      "currentY": y
-    } );
+  move: function ( fromI, fromJ, toI, toJ, layerWidth ) {
+    var way;
+    this.set( "hashMove", toI * layerWidth + toJ );
+    way = this.findAway( fromI, fromJ, toI, toJ, layerWidth );
+    if ( this.get( "hashMove" ) == way[ 0 ] )
+      app.trigger( 'move:ok', way[1] );
   },
 
   findAway: function ( fromI, fromJ, toI, toJ, layerWidth ) {
@@ -94,7 +72,7 @@ App.Models.move = Backbone.Model.extend( {
       result = this.buildAway( cameFrom, next.i, next.j );
       result.push( current );
       return result;
-    } else return [ current ];
+    } else return [ ];
   },
 
   isIn: function ( a, l ) {

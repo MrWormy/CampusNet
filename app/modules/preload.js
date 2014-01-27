@@ -1,7 +1,8 @@
 App.Models.preload = Backbone.Model.extend( {
   defaults: {
     "loadTileSet": false,
-    "loadMap": false
+    "loadMap": false,
+    "loadPerso": false
   },
 
   initialize: function ( ) {
@@ -9,7 +10,7 @@ App.Models.preload = Backbone.Model.extend( {
   },
 
   checkLoad: function ( ) {
-    if ( this.get( "loadTileSet" ) && this.get( "loadMap" ) ) {
+    if ( this.get( "loadTileSet" ) && this.get( "loadMap" ) && this.get( "loadPerso" ) ) {
       app.trigger( 'preload:ended' );
     }
   }
@@ -17,11 +18,54 @@ App.Models.preload = Backbone.Model.extend( {
 
 App.Views.preload = Backbone.View.extend( {
 
-  el: "#myCanvas",
+  el: "#mapCanvas",
 
   initialize: function ( ) {
     this.loadTileSet( );
     this.loadMap( );
+    this.loadPerso( );
+  },
+
+  loadPerso: function ( ) {
+    var that = this,
+      perso = new Image( );
+    perso.src = "assets/resources/img/simple-me.png";
+    perso.onload = function ( ) {
+      that.model.set( {
+        "perso": perso,
+        "loadPerso": true
+      } );
+    }
+  },
+
+  loadPersos: function ( ) {
+    var perso = this.model.get( "perso" ),
+      map = this.model.get( "map" );
+    var data = {
+      images: [ perso ],
+      frames: {
+        width: map.get( "tilewidth" ),
+        height: map.get( "tileheight" ),
+        regX: 0,
+        regY: 0
+      }
+    },
+      spriteSheet = new createjs.SpriteSheet( data );
+
+    this.createPersos( spriteSheet );
+  },
+
+  createPersos: function ( spriteSheet ) {
+    var length = spriteSheet._frames.length,
+      persosLoaded = 0;
+
+    for ( var i = 0; i < length; i++ ) {
+      var tempsFrame = createjs.SpriteSheetUtils.extractFrame( spriteSheet, i );
+      App.Persos.push( tempsFrame );
+      tempsFrame.onload = function ( ) {
+        persosLoaded++;
+      }
+    }
   },
 
   loadTileSet: function ( ) {

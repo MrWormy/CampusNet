@@ -2,9 +2,14 @@ var App = {
   Models: {},
   Collections: {},
   Views: {},
-  Frames: [],
+  Stages: {},
+  models: {},
+  collections: {},
+  views: {},
   socket: {},
-  map: [],
+  Frames: [ ],
+  map: [ ],
+  Persos: [ ],
 
   template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );
@@ -16,5 +21,8 @@ _.extend( app, Backbone.Events );
 
 $( function ( ) {
 
+  new App.Views.Socket( );
+  App.Stages.mapStage = new createjs.Stage( "mapCanvas" );
+  App.Stages.characterStage = new createjs.Stage( "charactersCanvas" )
   var eventHandler = new App.Views.eventHandler( );
 } );

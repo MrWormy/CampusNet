@@ -26,13 +26,14 @@ App.Collections.Maps = Backbone.Collection.extend( {
 
 App.Views.DrawMap = Backbone.View.extend( {
 
-  el: '#myCanvas',
+  el: '#mapCanvas',
 
   initialize: function ( ) {
+    this.stage = App.Stages.mapStage;
     this.refresh( );
   },
 
-  stage: new createjs.Stage( "myCanvas" ),
+  stage: {},
 
   refresh: function ( ) {
     var that = this;

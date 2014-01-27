@@ -2,29 +2,34 @@
 <html>
 
 <head>
-    <title>Bienvenue sur KsioP</title>
-    <meta charset="utf-8">
+  <title>Bienvenue sur KsioP</title>
+  <meta charset="utf-8">
 </head>
 
-<body style="margin: 0px;">
-    <canvas id="myCanvas" width=1 600 height=1 000 style="display: block; margin-left: auto; margin-right: auto; background-color: #DDDDDD;">
-        <p>Your browser cannot support this content, please update it</p>
+<body style="margin: 0px; ">
+  <div id="canvasContainer" style="position: relative;">
+    <canvas id="charactersCanvas" width=0 height=0 style="position: absolute;">
     </canvas>
-    <script type="text/javascript" src="assets/jquery/jquery.js"></script>
-    <script type="text/javascript" src="assets/underscore/underscore.js"></script>
-    <script type="text/javascript" src="assets/backbone/backbone.js"></script>
-    <script type="text/javascript" src="assets/backbone.localStorage/backbone.localStorage.js"></script>
-    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
+    <canvas id="mapCanvas" width=0 height=0 style="position: absolute; background-color: #DDDDDD;">
+      <p>Your browser cannot support this content, please update it</p>
+    </canvas>
+  </div>
+  <script type="text/javascript" src="assets/jquery/jquery.js"></script>
+  <script type="text/javascript" src="assets/underscore/underscore.js"></script>
+  <script type="text/javascript" src="assets/backbone/backbone.js"></script>
+  <script type="text/javascript" src="assets/backbone.localStorage/backbone.localStorage.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
 
-    <script type="text/javascript" src="app/app.js"></script>
+  <script type="text/javascript" src="app/app.js"></script>
 
-    <script type="text/javascript" src="app/modules/map.js"></script>
-    <script type="text/javascript" src="app/modules/resize.js"></script>
-    <script type="text/javascript" src="app/modules/socket.js"></script>
-    <script type="text/javascript" src="app/modules/event-handler.js"></script>
-    <script type="text/javascript" src="app/modules/preload.js"></script>
-    <script type="text/javascript" src="app/modules/move.js"></script>
+  <script type="text/javascript" src="app/modules/map.js"></script>
+  <script type="text/javascript" src="app/modules/resize.js"></script>
+  <script type="text/javascript" src="app/modules/socket.js"></script>
+  <script type="text/javascript" src="app/modules/event-handler.js"></script>
+  <script type="text/javascript" src="app/modules/preload.js"></script>
+  <script type="text/javascript" src="app/modules/move.js"></script>
+  <script type="text/javascript" src="app/modules/perso.js"></script>
 </body>
 
 </html>

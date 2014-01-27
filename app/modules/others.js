@@ -1,59 +1,39 @@
-App.Models.OtherPlayer = Backbone.Model.extend({
+App.Models.OtherPlayer = Backbone.Model.extend( {
 
-	initialize: function () {
-		this.pop();
-		this.on('change', this.update);
-	},
+  initialize: function ( ) {
+    this.pop( );
+    this.on( 'change', this.move );
+  },
 
-	pop:function (argument) {
-		var.perso = new createjs.Bitmap(App.character);
-		perso.name = "joueur " + this.name;
-		perso.x = this.posX;
-		perso.y = this.posY;
-		this.set("perso": perso);
-		App.stage.getChildAt(1).addChild(this.perso);
-	},
+  pop: function ( argument ) {
+    var.perso = new createjs.Bitmap( App.character );
+    perso.name = "joueur " + this.name;
+    perso.x = this.posX;
+    perso.y = this.posY;
+    this.set( "perso": perso );
+    App.stages.getChildAt( 1 ).addChild( this.perso );
+  },
 
-	update: function () {
-		// socket de mise a jour de la pos 
-	}
+  handleMove: function ( data ) {
+    if ( data.i == this.get( "nextPos" ).i && data.j == this.get( "nextPos" ).j ) {
+      var nextPos = this.get( "way" ).shift( );
+      this.set( "currentPos", data );
+      this.tellMove( nextPos );
+      app.trigger( 'move:bg', data );
+    } else {
+      $( 'body' ).html( 'stop cheat pleas or you\'ll be BANNED' )
+    }
+  },
 
-});
+} );
 
 App.Collections.OtherPlayers = Backbone.Collection.extend( {
 
   model: App.Models.OtherPlayer,
 
-  move: function(way, id){
-		var perso = this.pero,
-      that = this,
-      model = this.get(id);
-      tileW = App.models.map.get( "tilewidth" ),
-      tileH = App.models.app.get( "tileheight" );
-    clearInterval( this.moving );
-    this.moving = setInterval( function ( ) {
-      var currentTarget = way.shift( );
-      if ( !currentTarget )
-        clearInterval( that.animating ) 
-      else
-        that.moveIt( perso, model, currentTarget, tileW, tileH );
-    }, 90 );
-
-	},  
-
-	moveIt: function ( perso, model, currentTarget, tw, th ) {
-    var x = currentTarget.j * tw,
-      y = currentTarget.i * th,
-      currentX = model.get( "posX" ),
-      currentY = model.get( "posY" );
-    perso.x += currentX + x;
-    perso.y += currentY + y;
-    model.set( {
-      "currentX": x,
-      "currentY": y
-    });
-  },
-
-	moving: {}
+  move: function ( id, pos ) {
+    var perso = this.get( id );
+    perso.set( pos );
+  }
 
 } );

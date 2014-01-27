@@ -3,6 +3,8 @@ App.Views.eventHandler = Backbone.View.extend( {
   initialize: function ( ) {
     this.preload( );
     this.afterLoad( );
+    new App.Views.Socket( );
+    this.move();
   },
 
   preload: function ( ) {
@@ -11,7 +13,10 @@ App.Views.eventHandler = Backbone.View.extend( {
         model: preload
       } );
 
-    preloadView.listenToOnce( app, 'preload:ended', preloadView.loadTiles );
+    preloadView.listenToOnce( app, 'preload:ended', function ( ) {
+      preloadView.loadPersos( );
+      preloadView.loadTiles( );
+    } );
 
   },
 
@@ -30,24 +35,32 @@ App.Views.eventHandler = Backbone.View.extend( {
       } );
 
     drawingView.listenToOnce( app, 'resized:ok', drawingView.render );
-    this.move( drawingView );
   },
 
-  move: function ( scope ) {
-    var myMove = new App.Models.move( ),
+  move: function ( ) {
+    var myMove = new App.Models.Move( ),
+      myPerso = new App.Models.Perso( ),
+      myView = new App.Views.Perso( {
+        model: myPerso
+      } ),
       hashMove = -1,
       way;
 
-    myMove.listenTo( app, 'move', function ( fromI, fromJ, toI, toJ, lw ) {
-      hashMove = toI * lw + toJ;
-      way = this.findAway( fromI, fromJ, toI, toJ, lw );
-      if ( hashMove == way[0] ) {
-        var tempWay = way[1].slice(0);
-        way = [];
-        hashMove = -1;
-        this.handleMove(scope, tempWay);
+    App.socket.on( 'pop', function ( data ) {
+      if ( !myPerso.get( "id" ) ) {
+        myPerso.set( {
+          "id": data.id,
+          "currentPos": data.currentPos
+        }, {silent: true} );
+        myView.pop(data.currentPos);
       }
     } );
+
+    myMove.listenTo( app, 'move', myMove.move );
+    myPerso.listenTo( app, 'move:ok', myPerso.changeWay );
+    this.listenTo( app, 'move:bg', function ( data ) {
+      console.log( data );
+    } )
   }
 
 } );

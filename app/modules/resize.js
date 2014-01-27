@@ -17,16 +17,16 @@ App.Models.Canvas = Backbone.Model.extend( {
       canHeight = width / ratio;
 
     if ( width >= canWidth ) {
-      this.setSize( 0, canWidth, height );
+      this.setSize( 0, ( width - canWidth ) / 2, canWidth, height );
     } else {
-      this.setSize( ( height - canHeight ) / 2, width, canHeight );
+      this.setSize( ( height - canHeight ) / 2, 0, width, canHeight );
     }
   },
 
-  setSize: function ( margin, width, height ) {
-    var myCan = $( "#myCanvas" ),
-      myCanProp = myCan[ 0 ];
-
+  setSize: function ( top, left, width, height ) {
+    var mapCan = $( "#mapCanvas" )[ 0 ],
+      charCan = $( "#charactersCanvas" )[ 0 ],
+      contCan = $( "#canvasContainer" );
     this.set( {
       'height': height,
       'width': width
@@ -34,12 +34,15 @@ App.Models.Canvas = Backbone.Model.extend( {
       silent: true
     } );
 
-    myCan.css( {
-      'margin-top': margin + 'px'
+    contCan.css( {
+      'top': top + 'px',
+      'left': left + 'px'
     } );
 
-    myCanProp.width = width;
-    myCanProp.height = height;
+    mapCan.width = width;
+    mapCan.height = height;
+    charCan.width = width;
+    charCan.height = height;
     app.trigger( 'resized:ok', width, height );
   }
 } );
