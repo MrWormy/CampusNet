@@ -34,6 +34,7 @@ App.Views.eventHandler = Backbone.View.extend( {
         model: firstMap
       } );
 
+    drawingView.listenTo( app, 'move:container', drawingView.moveCont );
     drawingView.listenToOnce( app, 'resized:ok', drawingView.render );
   },
 

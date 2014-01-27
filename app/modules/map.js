@@ -31,6 +31,7 @@ App.Views.DrawMap = Backbone.View.extend( {
   initialize: function ( ) {
     this.stage = App.Stages.mapStage;
     this.refresh( );
+    this.model.on( 'change', this.moveContainer );
   },
 
   stage: {},
@@ -69,6 +70,19 @@ App.Views.DrawMap = Backbone.View.extend( {
     container.y = -this.model.get( "currentY" );
     container.regX = -width / 2;
     container.regY = -height / 2;
+  },
+
+  moveCont: function ( i, j ) {
+    this.model.set( {
+      "currentX": this.model.get( "currentX" ) + j * 48,
+      "currentY": this.model.get( "currentY" ) + i * 48
+    } );
+  },
+
+  moveContainer: function ( e ) {
+    var cont = App.Stages.mapStage.getChildAt( 0 );
+    cont.x = -e.get( "currentX" );
+    cont.y = -e.get( "currentY" );
   },
 
   addFrames: function ( container ) {

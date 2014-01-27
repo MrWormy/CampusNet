@@ -64,6 +64,8 @@ App.Views.preload = Backbone.View.extend( {
       App.Persos.push( tempsFrame );
       tempsFrame.onload = function ( ) {
         persosLoaded++;
+        if(persosLoaded == length)
+          app.trigger('perso:ok');
       }
     }
   },
