@@ -14,8 +14,8 @@ exports.Game = function() {
 var Guy = function(socket) {
 	this.socket = socket;
 	var that = this;
-	this.x = 0;
-	this.y = 0;
+	this.x = 20;
+	this.y = 30;
 
 	socket.on("iMove", function(data) {
 		socket.broadcast.emit("iMove", {id: that.id, data: data});

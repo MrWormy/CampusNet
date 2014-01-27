@@ -12,8 +12,8 @@ app.get( '/', function ( req, res ) {
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 
+var Game = new require("./Game.js").Game();
+
 io.sockets.on( 'connection', function ( socket ) {
-  socket.on('init', function (data){
-    console.log(data.init);
-  });
+	Game.appendGuy(socket);
 } );
