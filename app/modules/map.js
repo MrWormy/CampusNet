@@ -56,7 +56,7 @@ App.Views.DrawMap = Backbone.View.extend( {
   initContainer: function ( container, width, height ) {
     var that = this;
     this.addFrames( container );
-    container.cache(0, 0, this.model.get("mapWidth"), this.model.get("mapHeight"));
+    //container.cache(0, 0, this.model.get("mapWidth"), this.model.get("mapHeight"));
     this.stage.addChild( container );
     container.addEventListener( "mousedown", function ( e ) {
       that.mapClicked( e, width / 2, height / 2 );

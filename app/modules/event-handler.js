@@ -4,7 +4,7 @@ App.Views.eventHandler = Backbone.View.extend( {
     this.preload( );
     this.afterLoad( );
     new App.Views.Socket( );
-    this.move();
+    this.move( );
   },
 
   preload: function ( ) {
@@ -39,31 +39,30 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   move: function ( ) {
     var myMove = new App.Models.Move( ),
-      myPerso = new App.Models.Perso( ),
-      myView = new App.Views.Perso( {
-        model: myPerso
-      } ),
+      myPerso,
+      myView,
       hashMove = -1,
       way;
 
     App.socket.on( 'popGuy', function ( data ) {
-      if ( !myPerso.get( "id" ) ) {
-        myPerso.set( {
-          "id": data.id,
-          "currentPos": data.currentPos
-        }, {silent: true} );
-        myView.pop(data.currentPos);
-      }
-      else{
+      if ( !myPerso ) {
+        myPerso = new App.Models.Perso( {
+          'id': data.id,
+          'currentPos': data.pos
+        } );
+        myView = new App.Views.Perso( {
+          model: myPerso
+        } );
+
+        myMove.listenTo( app, 'move', myMove.move );
+        myPerso.listenTo( app, 'move:ok', myPerso.changeWay );
+        myMove.listenTo( app, 'move:bg', function ( data ) {
+          console.log( data );
+        } );
+      } else {
         //gestion autres persos
       }
     } );
-
-    myMove.listenTo( app, 'move', myMove.move );
-    myPerso.listenTo( app, 'move:ok', myPerso.changeWay );
-    this.listenTo( app, 'move:bg', function ( data ) {
-      console.log( data );
-    } )
   }
 
 } );

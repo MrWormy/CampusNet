@@ -1,7 +1,9 @@
 var express = require( 'express' ),
   app = express( ),
   server = require( 'http' ).createServer( app ),
-  io = require( 'socket.io' ).listen( server );
+  io = require( 'socket.io' ).listen( server ),
+  play = require("./Game.js"),
+  game = new play.Game();
 
 server.listen( 19872 );
 
@@ -12,8 +14,6 @@ app.get( '/', function ( req, res ) {
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 
-var Game = new require("./Game.js").Game();
-
 io.sockets.on( 'connection', function ( socket ) {
-	Game.appendGuy(socket);
+	game.appendGuy(socket);
 } );

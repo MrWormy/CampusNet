@@ -10,10 +10,8 @@ App.Models.Perso = Backbone.Model.extend( {
   initialize: function ( ) {
     var that = this;
     this.on( 'change:way', this.newMove );
-    App.socket.on( 'youMove', function ( data ) {
-      that.handleMove( data );
-    } );
     this.set( "perso", new createjs.Bitmap( App.Persos[ 2 ] ) );
+
   },
 
   newMove: function ( ) {
@@ -39,6 +37,7 @@ App.Models.Perso = Backbone.Model.extend( {
 App.Views.Perso = Backbone.View.extend( {
 
   initialize: function ( ) {
+    this.pop( );
     this.model.on( 'change:currentPos', this.move );
   },
 
@@ -47,10 +46,9 @@ App.Views.Perso = Backbone.View.extend( {
   },
 
   pop: function ( currentPos ) {
-    this.model.get( "perso" ).x = currentPos.x * 48;
-    this.model.get( "perso" ).y = currentPos.y * 48;
+    this.model.get( "perso" ).x = this.model.get( "currentPos" ).i * 48;
+    this.model.get( "perso" ).y = this.model.get( "currentPos" ).j * 48;
     App.Stages.mapStage.getChildAt( 0 ).addChild( this.model.get( "perso" ) );
-    App.Stages.mapStage.getChildAt( 0 ).updateCache( );
   }
 
 } );
