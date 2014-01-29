@@ -64,6 +64,7 @@ App.Views.DrawMap = Backbone.View.extend( {
     container.cache( 0, 0, this.model.get( "mapWidth" ), this.model.get( "mapHeight" ) );
     this.drawContainer( container, width, height );
     this.stage.addChild( container );
+    app.trigger( 'load:ended' );
   },
 
   drawContainer: function ( container, width, height ) {
@@ -79,16 +80,20 @@ App.Views.DrawMap = Backbone.View.extend( {
   },
 
   moveCont: function ( i, j ) {
+    var tw = this.model.get("tilewidth");
     this.model.set( {
-      "currentX": this.model.get( "currentX" ) + j * 48,
-      "currentY": this.model.get( "currentY" ) + i * 48
+      "currentX": this.model.get( "currentX" ) + j * tw,
+      "currentY": this.model.get( "currentY" ) + i * tw
     } );
   },
 
   moveContainer: function ( e ) {
-    var cont = App.Stages.mapStage.getChildAt( 0 );
+    var cont = App.Stages.mapStage.getChildAt( 0 ),
+      contOthers = App.Stages.mapStage.getChildByName("others");
     cont.x = -e.get( "currentX" );
     cont.y = -e.get( "currentY" );
+    contOthers.x = -e.get( "currentX" );
+    contOthers.y = -e.get( "currentY" );
   },
 
   addFrames: function ( container ) {
@@ -115,8 +120,6 @@ App.Views.DrawMap = Backbone.View.extend( {
           App.map[ j ] = type;
           this.addFrame( container, frame, col * tileWidth, line * tileHeight, tileWidth, tileHeight, tsW );
         }
-        if ( j == ( dl - 1 ) && i == ll )
-          app.trigger( 'load:ended' );
       }
     }
   },
@@ -137,8 +140,8 @@ App.Views.DrawMap = Backbone.View.extend( {
       layerWidth = this.model.get( "width" ),
       currentJ = this.model.get( "currentX" ) / tileWidth,
       currentI = this.model.get( "currentY" ) / tileHeight,
-      toJ = Math.floor( ( this.stage.mouseX + this.stage.getChildAt( 0 ).regX ) / 48 ) + currentJ,
-      toI = Math.floor( ( this.stage.mouseY + this.stage.getChildAt( 0 ).regY ) / 48 ) + currentI;
+      toJ = Math.floor( ( this.stage.mouseX + this.stage.getChildAt( 0 ).regX ) / tileWidth ) + currentJ,
+      toI = Math.floor( ( this.stage.mouseY + this.stage.getChildAt( 0 ).regY ) / tileHeight ) + currentI;
     app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
   }
 

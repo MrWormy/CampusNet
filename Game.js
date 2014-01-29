@@ -7,7 +7,6 @@ exports.Game = function() {
 			var guy = this.guys[i];
 			socket.emit("popGuy", {id: guy.id, pos: guy.pos});
 		}
-		//socket.broadcast.emit("popGuy", {x: this.x, y: this.y});
 	}
 }
 
@@ -17,7 +16,10 @@ var Guy = function(socket, id, initPos) {
 	this.pos = initPos;
 	this.id = id;
 
+	socket.broadcast.emit("popGuy", {id: this.id, pos: this.pos});
+
 	socket.on("iMove", function(data) {
-		socket.broadcast.emit("iMove", {id: that.id, data: data});
+		that.pos = data;
+		socket.broadcast.emit("iMove", {id: that.id, pos: data});
 	});
 }

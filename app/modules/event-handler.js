@@ -45,11 +45,13 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   move: function ( ) {
     var myMove = new App.Models.Move( ),
-      myPerso,
-      myView,
+      socket = io.connect( 'http://localhost:19872' ),
+      others = new App.Collections.OtherPlayers( ),
+      othersView = new App.Views.OtherPlayers( {
+        collection: others
+      } ),
       hashMove = -1,
-      way,
-      socket = io.connect( 'http://localhost:19872' );
+      myPerso, myView, way;
 
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
@@ -58,6 +60,7 @@ App.Views.eventHandler = Backbone.View.extend( {
           'id': data.id,
           'currentPos': data.pos
         } );
+
         myView = new App.Views.Perso( {
           model: myPerso
         } );
@@ -68,11 +71,15 @@ App.Views.eventHandler = Backbone.View.extend( {
           console.log( data );
         } );
       } else {
-        //gestion autres persos
+        others.pop( data );
       }
 
     } );
-    socket.emit( 'ready' , this.intialPos);
+
+    socket.on('iMove', function(data){
+      others.move(data);
+    });
+    socket.emit( 'ready', this.intialPos );
   }
 
 } );

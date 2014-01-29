@@ -10,6 +10,7 @@ var App = {
   tileset: {},
   map: [ ],
   perso: {},
+  tw: 0,
 
   template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );

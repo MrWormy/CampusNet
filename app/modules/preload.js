@@ -52,13 +52,7 @@ App.Views.preload = Backbone.View.extend( {
     },
       spriteSheet = new createjs.SpriteSheet( data );
 
-    this.createPersos( spriteSheet );
-  },
-
-  createPersos: function ( spriteSheet ) {
-    var perso = new createjs.Sprite( spriteSheet );
-    perso.gotoAndStop( 2 );
-    App.perso = perso;
+    App.perso = spriteSheet;
   },
 
   loadTileSet: function ( ) {
@@ -84,6 +78,7 @@ App.Views.preload = Backbone.View.extend( {
     maps.fetch( {
 
       success: function ( coll, resp, opt ) {
+        App.tw = firstMap.get("tilewidth");
         that.model.set( {
           "map": firstMap,
           "loadMap": true

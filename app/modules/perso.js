@@ -8,9 +8,17 @@ App.Models.Perso = Backbone.Model.extend( {
   },
 
   initialize: function ( ) {
-    var that = this;
+    this.pop();
     this.on( 'change:way', this.newMove );
+  },
 
+  pop: function () {
+    var perso = new createjs.Sprite(App.perso);
+    perso.gotoAndStop(2),
+    tw = App.tw;
+    perso.x = this.get("currentPos").j * tw;
+    perso.y = this.get("currentPos").i * tw;
+    this.set("perso", perso);
   },
 
   newMove: function ( ) {
@@ -36,7 +44,7 @@ App.Models.Perso = Backbone.Model.extend( {
 App.Views.Perso = Backbone.View.extend( {
 
   initialize: function ( ) {
-    this.pop( );
+    this.createCont( );
     this.model.on( 'change:currentPos', this.move );
   },
 
@@ -45,26 +53,25 @@ App.Views.Perso = Backbone.View.extend( {
       curPos = e.get( "currentPos" );
 
     if ( prevPos.i == curPos.i ) {
-      ( prevPos.j + 1 ) == curPos.j && App.perso.gotoAndStop( 1 );
-      ( prevPos.j - 1 ) == curPos.j && App.perso.gotoAndStop( 3 );
+      ( prevPos.j + 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 1 );
+      ( prevPos.j - 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 3 );
     } else {
-      ( prevPos.i + 1 ) == curPos.i && App.perso.gotoAndStop( 2 );
-      ( prevPos.i - 1 ) == curPos.i && App.perso.gotoAndStop( 0 );
+      ( prevPos.i + 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 2 );
+      ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
     }
 
     app.trigger( 'move:container', curPos.i - prevPos.i, curPos.j - prevPos.j );
   },
 
-  pop: function ( currentPos ) {
-    var cont = new createjs.Container( ),
-      perso = App.perso;
-    perso.x = this.model.get( "currentPos" ).j * 48;
-    perso.y = this.model.get( "currentPos" ).i * 48;
+  createCont: function ( ) {
+    var cont = new createjs.Container( );
+
+    cont.name = "player";
     cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-    cont.addChild( perso );
+    cont.addChild(this.model.get("perso"));
     App.Stages.mapStage.addChild( cont );
   }
 
