@@ -3,25 +3,24 @@ App.Views.eventHandler = Backbone.View.extend( {
   initialize: function ( ) {
     this.preload( );
     this.afterLoad( );
-    new App.Views.Socket( );
-    this.move( );
   },
 
   preload: function ( ) {
     var preload = new App.Models.preload( ),
+      that = this,
       preloadView = new App.Views.preload( {
         model: preload
       } );
 
-    preloadView.listenToOnce( app, 'preload:ended', function ( ) {
+    preloadView.listenToOnce( app, 'preload:ended', function ( map ) {
       preloadView.loadPersos( );
-      preloadView.loadTiles( );
+      that.drawMap( map );
     } );
 
   },
 
   afterLoad: function ( ) {
-    this.listenToOnce( app, 'load:ended', this.drawMap );
+    this.listenToOnce( app, 'load:ended', this.move );
   },
 
   drawMap: function ( firstMap ) {
@@ -38,14 +37,22 @@ App.Views.eventHandler = Backbone.View.extend( {
     drawingView.listenToOnce( app, 'resized:ok', drawingView.render );
   },
 
+
+  intialPos: {
+    "i": 17,
+    "j": 38
+  },
+
   move: function ( ) {
     var myMove = new App.Models.Move( ),
       myPerso,
       myView,
       hashMove = -1,
-      way;
+      way,
+      socket = io.connect( 'http://localhost:19872' );
 
-    App.socket.on( 'popGuy', function ( data ) {
+    App.socket = socket;
+    socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
         myPerso = new App.Models.Perso( {
           'id': data.id,
@@ -63,7 +70,9 @@ App.Views.eventHandler = Backbone.View.extend( {
       } else {
         //gestion autres persos
       }
+
     } );
+    socket.emit( 'ready' , this.intialPos);
   }
 
 } );

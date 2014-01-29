@@ -20,6 +20,7 @@ App.Models.Move = Backbone.Model.extend( {
       hashMove = toI * layerWidth + toJ,
       cameFrom = {};
 
+
     if ( App.map[ toI * layerWidth + toJ ] > 1 )
       return [ hashMove, [ ] ];
     while ( openCases[ 0 ] ) {
@@ -55,7 +56,7 @@ App.Models.Move = Backbone.Model.extend( {
           } );
           neighbor.cost = tempCost;
           neighbor.hCost = tempCost + Math.abs( toI - neighbor.i ) + Math.abs( toJ - neighbor.j );
-          ( iN == -1 && openCases.unshift( neighbor ) ) || ( openCases[ iN ] = neighbor );
+          ( iN == (-1) && openCases.unshift( neighbor ) ) || ( openCases[ iN ] = neighbor );
         }
       }
     }

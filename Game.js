@@ -1,10 +1,9 @@
 exports.Game = function() {
 	this.guys = [];
 
-	this.appendGuy = function(socket) {
-		this.guys.unshift(new Guy(socket, this.guys.length));
+	this.appendGuy = function(socket, initPos) {
+		this.guys.unshift(new Guy(socket, this.guys.length, initPos));
 		for (var i=0 ; i<this.guys.length ; i++) {
-			console.log(this.guys);
 			var guy = this.guys[i];
 			socket.emit("popGuy", {id: guy.id, pos: guy.pos});
 		}
@@ -12,11 +11,10 @@ exports.Game = function() {
 	}
 }
 
-var Guy = function(socket, id) {
-	console.log(this);
+var Guy = function(socket, id, initPos) {
 	this.socket = socket;
 	var that = this;
-	this.pos = {i : 20, j: 30};
+	this.pos = initPos;
 	this.id = id;
 
 	socket.on("iMove", function(data) {

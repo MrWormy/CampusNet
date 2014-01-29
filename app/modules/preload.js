@@ -11,7 +11,7 @@ App.Models.preload = Backbone.Model.extend( {
 
   checkLoad: function ( ) {
     if ( this.get( "loadTileSet" ) && this.get( "loadMap" ) && this.get( "loadPerso" ) ) {
-      app.trigger( 'preload:ended' );
+      app.trigger( 'preload:ended', this.get( "map" ) );
     }
   }
 } );
@@ -56,18 +56,9 @@ App.Views.preload = Backbone.View.extend( {
   },
 
   createPersos: function ( spriteSheet ) {
-    var length = spriteSheet._frames.length,
-      persosLoaded = 0;
-
-    for ( var i = 0; i < length; i++ ) {
-      var tempsFrame = createjs.SpriteSheetUtils.extractFrame( spriteSheet, i );
-      App.Persos.push( tempsFrame );
-      tempsFrame.onload = function ( ) {
-        persosLoaded++;
-        if(persosLoaded == length)
-          app.trigger('perso:ok');
-      }
-    }
+    var perso = new createjs.Sprite( spriteSheet );
+    perso.gotoAndStop( 2 );
+    App.perso = perso;
   },
 
   loadTileSet: function ( ) {
@@ -75,44 +66,11 @@ App.Views.preload = Backbone.View.extend( {
       tileset = new Image( );
     tileset.src = "assets/resources/img/tilesheet.png"
     tileset.onload = function ( ) {
+      App.tileset = tileset;
       that.model.set( {
-        "tileset": tileset,
         "loadTileSet": true
       } );
     };
-  },
-
-  loadTiles: function ( ) {
-    var tileset = this.model.get( "tileset" ),
-      map = this.model.get( "map" );
-    var data = {
-      images: [ tileset ],
-      frames: {
-        width: map.get( "tilewidth" ),
-        height: map.get( "tileheight" ),
-        regX: 0,
-        regY: 0
-      }
-    },
-      spriteSheet = new createjs.SpriteSheet( data );
-
-    this.loadFrames( spriteSheet, map );
-
-  },
-
-  loadFrames: function ( spriteSheet, map ) {
-    var length = spriteSheet._frames.length,
-      framesLoaded = 0;
-
-    for ( var i = 0; i < length; i++ ) {
-      var tempsFrame = createjs.SpriteSheetUtils.extractFrame( spriteSheet, i );
-      App.Frames.push( tempsFrame );
-      tempsFrame.onload = function ( ) {
-        framesLoaded++;
-        if ( framesLoaded == length )
-          app.trigger( 'load:ended', map );
-      }
-    }
   },
 
   loadMap: function ( ) {

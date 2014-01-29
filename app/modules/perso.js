@@ -19,7 +19,7 @@ App.Models.Perso = Backbone.Model.extend( {
     this.moving = setInterval( function ( ) {
       var nextPos = that.get( "way" ).shift( );
       that.doMove( nextPos );
-    }, 90 );
+    }, 120 );
   },
 
   doMove: function ( nextPos ) {
@@ -42,15 +42,14 @@ App.Views.Perso = Backbone.View.extend( {
 
   move: function ( e ) {
     var prevPos = e.previousAttributes( ).currentPos,
-      curPos = e.get( "currentPos" ),
-      perso = App.Stages.mapStage.getChildAt( 1 ).getChildAt( 0 );
+      curPos = e.get( "currentPos" );
 
     if ( prevPos.i == curPos.i ) {
-      ( prevPos.j + 1 ) == curPos.j && ( perso.image = App.Persos[ 1 ] );
-      ( prevPos.j - 1 ) == curPos.j && ( perso.image = App.Persos[ 3 ] );
+      ( prevPos.j + 1 ) == curPos.j && App.perso.gotoAndStop( 1 );
+      ( prevPos.j - 1 ) == curPos.j && App.perso.gotoAndStop( 3 );
     } else {
-      ( prevPos.i + 1 ) == curPos.i && ( perso.image = App.Persos[ 2 ] );
-      ( prevPos.i - 1 ) == curPos.i && ( perso.image = App.Persos[ 0 ] );
+      ( prevPos.i + 1 ) == curPos.i && App.perso.gotoAndStop( 2 );
+      ( prevPos.i - 1 ) == curPos.i && App.perso.gotoAndStop( 0 );
     }
 
     app.trigger( 'move:container', curPos.i - prevPos.i, curPos.j - prevPos.j );
@@ -58,7 +57,7 @@ App.Views.Perso = Backbone.View.extend( {
 
   pop: function ( currentPos ) {
     var cont = new createjs.Container( ),
-      perso = new createjs.Bitmap( App.Persos[ 2 ] );
+      perso = App.perso;
     perso.x = this.model.get( "currentPos" ).j * 48;
     perso.y = this.model.get( "currentPos" ).i * 48;
     cont.x = App.Stages.mapStage.getChildAt( 0 ).x;

@@ -20,13 +20,17 @@ App.Models.Map = Backbone.Model.extend( {
 } );
 
 App.Collections.Maps = Backbone.Collection.extend( {
-  url: 'assets/resources/map/testMap.json',
+  url: 'assets/resources/map/forum.json',
   model: App.Models.Map
 } );
 
 App.Views.DrawMap = Backbone.View.extend( {
 
   el: '#mapCanvas',
+
+  events: {
+    "mousedown": "mapClicked"
+  },
 
   initialize: function ( ) {
     this.stage = App.Stages.mapStage;
@@ -57,12 +61,9 @@ App.Views.DrawMap = Backbone.View.extend( {
   initContainer: function ( container, width, height ) {
     var that = this;
     this.addFrames( container );
-    //container.cache(0, 0, this.model.get("mapWidth"), this.model.get("mapHeight"));
-    this.stage.addChild( container );
-    container.addEventListener( "mousedown", function ( e ) {
-      that.mapClicked( e, width / 2, height / 2 );
-    } );
+    container.cache( 0, 0, this.model.get( "mapWidth" ), this.model.get( "mapHeight" ) );
     this.drawContainer( container, width, height );
+    this.stage.addChild( container );
   },
 
   drawContainer: function ( container, width, height ) {
@@ -70,6 +71,11 @@ App.Views.DrawMap = Backbone.View.extend( {
     container.y = -this.model.get( "currentY" );
     container.regX = -width / 2;
     container.regY = -height / 2;
+    var charac = App.Stages.mapStage.getChildAt( 1 );
+    if ( charac ) {
+      charac.regX = container.regX;
+      charac.regY = container.regY;
+    }
   },
 
   moveCont: function ( i, j ) {
@@ -89,39 +95,50 @@ App.Views.DrawMap = Backbone.View.extend( {
     var layers = this.model.get( "layers" ),
       tileWidth = this.model.get( "tilewidth" ),
       tileHeight = this.model.get( "tileheight" ),
-      layerWidth = this.model.get( "width" );
-    for ( var i = 1; i <= layers.length; i++ ) {
+      layerWidth = this.model.get( "width" ),
+      tileSet = this.model.get( "tilesets" )[ 0 ],
+      tsW = Math.floor( tileSet.imagewidth / tileWidth ),
+      ll = layers.length,
+      dl;
+
+    for ( var i = 1; i <= ll; i++ ) {
       var type, layer = this.model.get( "layers" )[ i - 1 ],
         data = layer.data,
         name = layer.name.split( " " )[ 0 ];
+      dl = data.length;
       ( name == "floor" && !( type = 0 ) ) || ( name == "map-transition" && ( type = 1 ) ) || ( type = 2 );
-      for ( var j = 0; j < data.length; j++ ) {
+      for ( var j = 0; j < dl; j++ ) {
         var frame = data[ j ] - 1,
           col = j % layerWidth,
           line = Math.floor( j / layerWidth );
         if ( frame >= 0 ) {
           App.map[ j ] = type;
-          this.addFrame( container, frame, col * tileWidth, line * tileHeight );
+          this.addFrame( container, frame, col * tileWidth, line * tileHeight, tileWidth, tileHeight, tsW );
         }
+        if ( j == ( dl - 1 ) && i == ll )
+          app.trigger( 'load:ended' );
       }
     }
   },
 
-  addFrame: function ( container, frame, posX, posY ) {
-    var tempsFrame = new createjs.Bitmap( App.Frames[ frame ] );
+  addFrame: function ( container, frame, posX, posY, tw, th, tsW ) {
+    var sourceRect = new createjs.Rectangle( ( frame % tsW ) * tw, ( Math.floor( frame / tsW ) ) * th, tw, th ),
+      tempsFrame = new createjs.Bitmap( App.tileset );
+
+    tempsFrame.sourceRect = sourceRect;
     tempsFrame.x = posX;
     tempsFrame.y = posY;
     container.addChild( tempsFrame );
   },
 
-  mapClicked: function ( e, width, height ) {
+  mapClicked: function ( e ) {
     var tileWidth = this.model.get( "tilewidth" ),
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" ),
       currentJ = this.model.get( "currentX" ) / tileWidth,
       currentI = this.model.get( "currentY" ) / tileHeight,
-      toJ = e.target.x / tileWidth,
-      toI = e.target.y / tileHeight;
+      toJ = Math.floor( ( this.stage.mouseX + this.stage.getChildAt( 0 ).regX ) / 48 ) + currentJ,
+      toI = Math.floor( ( this.stage.mouseY + this.stage.getChildAt( 0 ).regY ) / 48 ) + currentI;
     app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
   }
 

@@ -15,5 +15,7 @@ app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 
 io.sockets.on( 'connection', function ( socket ) {
-	game.appendGuy(socket);
+  socket.on('ready', function(data){
+    game.appendGuy(socket, data);
+  })
 } );

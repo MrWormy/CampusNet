@@ -7,9 +7,9 @@ var App = {
   collections: {},
   views: {},
   socket: {},
-  Frames: [ ],
+  tileset: {},
   map: [ ],
-  Persos: [ ],
+  perso: {},
 
   template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );
