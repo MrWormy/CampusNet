@@ -72,15 +72,20 @@ App.Views.DrawMap = Backbone.View.extend( {
     container.y = -this.model.get( "currentY" );
     container.regX = -width / 2;
     container.regY = -height / 2;
-    var charac = App.Stages.mapStage.getChildAt( 1 );
+    var charac = App.Stages.mapStage.getChildByName( "player" ),
+      others = App.Stages.mapStage.getChildByName( "others" );
     if ( charac ) {
       charac.regX = container.regX;
       charac.regY = container.regY;
     }
+    if ( others ) {
+      others.regX = container.regX;
+      others.regY = container.regY;
+    }
   },
 
   moveCont: function ( i, j ) {
-    var tw = this.model.get("tilewidth");
+    var tw = this.model.get( "tilewidth" );
     this.model.set( {
       "currentX": this.model.get( "currentX" ) + j * tw,
       "currentY": this.model.get( "currentY" ) + i * tw
@@ -89,7 +94,7 @@ App.Views.DrawMap = Backbone.View.extend( {
 
   moveContainer: function ( e ) {
     var cont = App.Stages.mapStage.getChildAt( 0 ),
-      contOthers = App.Stages.mapStage.getChildByName("others");
+      contOthers = App.Stages.mapStage.getChildByName( "others" );
     cont.x = -e.get( "currentX" );
     cont.y = -e.get( "currentY" );
     contOthers.x = -e.get( "currentX" );
