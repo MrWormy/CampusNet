@@ -39,8 +39,8 @@ App.Views.eventHandler = Backbone.View.extend( {
 
 
   intialPos: {
-    "i": 17,
-    "j": 38
+    "i": 16,
+    "j": 40
   },
 
   move: function ( ) {
