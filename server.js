@@ -17,5 +17,5 @@ app.use( '/app', express.static( __dirname + '/app' ) );
 io.sockets.on( 'connection', function ( socket ) {
   socket.on('ready', function(data){
     game.appendGuy(socket, data);
-  })
+  });
 } );
