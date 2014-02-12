@@ -41,6 +41,12 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
     this.add( player );
   },
 
+  kill: function(id){
+    var mapOthers = App.Stages.mapStage.getChildByName( "others" );
+    console.log(mapOthers.getChildByName("joueur " + id));
+    mapOthers.removeChild(mapOthers.getChildByName("joueur " + id));
+  },
+
   model: App.Models.OtherPlayer,
 
   move: function ( data ) {

@@ -22,11 +22,11 @@ var Guy = function(socket, id, initPos, Map) {
 	});
 
 	socket.on("disconnect", function() {
-		Game.deletePlayer(that.id);
+		Map.deletePlayer(that.id);
 	});
 
 	socket.on("quitMap", function() {
-		Game.deletePlayer(that.id);
+		Map.deletePlayer(that.id);
 	});
 }
 
@@ -61,7 +61,7 @@ var Map = function() {
 
 	this.emit = function(nom, data, exception) {
 		for (var i=0 ; i<this.guys.length ; i++) {
-			if (this.guys[i].id != exception) {
+			if (this.guys[i] != undefined && this.guys[i].id != exception) {
 				this.guys[i].socket.emit(nom, data);
 			}
 		}

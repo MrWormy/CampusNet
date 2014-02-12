@@ -13,6 +13,10 @@ App.Views.eventHandler = Backbone.View.extend( {
       } );
 
     preloadView.listenToOnce( app, 'preload:ended', function ( map ) {
+      that.intialPos = {
+        "i": map.get( "height" ) / 2,
+        "j": map.get( "width" ) / 2
+      };
       preloadView.loadPersos( );
       that.drawMap( map );
     } );
@@ -39,8 +43,8 @@ App.Views.eventHandler = Backbone.View.extend( {
 
 
   intialPos: {
-    "i": 16,
-    "j": 40
+    "i": 0,
+    "j": 0
   },
 
   move: function ( ) {
@@ -53,7 +57,7 @@ App.Views.eventHandler = Backbone.View.extend( {
       hashMove = -1,
       myPerso, myView, way;
 
-/*
+    /*
 Barnabelemagicien
 Salut Mr. Wormy ! Tu vas bien ? En gros c'était pour te dire que j'ai avancé du côté serveur et je te dis ce qui change.
 Avant tout, je voulais savoir si tout ce qui est en rapport avec socket se trouve ici. Si oui, c'est très bien, tout est centralisé : comme ça pour communiquer on se rejoindra ici et ce sera plus clair.
@@ -90,13 +94,16 @@ PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://ww
 
     } );
 
-    socket.on('iMove', function(data){
-      others.move(data);
-    });
-    socket.on("aurevoir", function(id) {
-      alert("Oh lala, le joueur numero " + id + " vient de quitter la map ! Il faut vite l'effacer !");
-    });
-    socket.emit( 'ready', {initPos: this.intialPos, map: 0} );
+    socket.on( 'iMove', function ( data ) {
+      others.move( data );
+    } );
+    socket.on( "aurevoir", function ( id ) {
+      others.kill(id);
+    } );
+    socket.emit( 'ready', {
+      initPos: this.intialPos,
+      map: 0
+    } );
   }
 
 } );
