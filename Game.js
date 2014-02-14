@@ -28,6 +28,20 @@ var Guy = function(socket, id, initPos, Map) {
 	socket.on("quitMap", function() {
 		Map.deletePlayer(that.id);
 	});
+
+	socket.on("message", data) {
+		var info = {};
+		info.expediteur = that.id;
+		info.msg = data.msg;
+		if (data.destinataire == undefined) {
+			info.prive = false;
+			Map.emit("message", info);
+		} else {
+			info.prive = true;
+			Map.guys[data.destinataire].emit("message", info);
+		}
+	}
+
 }
 
 var Map = function() {
