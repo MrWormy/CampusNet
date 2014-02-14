@@ -29,7 +29,7 @@ var Guy = function(socket, id, initPos, Map) {
 		Map.deletePlayer(that.id);
 	});
 
-	socket.on("message", data) {
+	socket.on("message", function(data) {
 		var info = {};
 		info.expediteur = that.id;
 		info.msg = data.msg;
@@ -40,7 +40,7 @@ var Guy = function(socket, id, initPos, Map) {
 			info.prive = true;
 			Map.guys[data.destinataire].emit("message", info);
 		}
-	}
+	});
 
 }
 
