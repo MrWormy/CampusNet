@@ -35,7 +35,7 @@ var Guy = function(socket, id, initPos, Map) {
 		info.msg = data.msg;
 		if (data.destinataire == undefined) {
 			info.prive = false;
-			Map.emit("message", info);
+			Map.emit("message", info, that.id);
 		} else {
 			info.prive = true;
 			Map.guys[data.destinataire].emit("message", info);

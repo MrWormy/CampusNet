@@ -21,9 +21,8 @@ var app = {}
 _.extend( app, Backbone.Events );
 
 $( function ( ) {
-
-  new App.Views.Socket( );
   App.Stages.mapStage = new createjs.Stage( "mapCanvas" );
-  App.Stages.characterStage = new createjs.Stage( "charactersCanvas" )
+  App.Stages.characterStage = new createjs.Stage( "charactersCanvas" );
+  App.views.drawings = new App.Views.Drawings();
   var eventHandler = new App.Views.eventHandler( );
 } );

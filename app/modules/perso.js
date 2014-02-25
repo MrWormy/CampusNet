@@ -8,17 +8,17 @@ App.Models.Perso = Backbone.Model.extend( {
   },
 
   initialize: function ( ) {
-    this.pop();
+    this.pop( );
     this.on( 'change:way', this.newMove );
   },
 
-  pop: function () {
-    var perso = new createjs.Sprite(App.perso);
-    perso.gotoAndStop(2),
+  pop: function ( ) {
+    var perso = new createjs.Sprite( App.perso );
+    perso.gotoAndStop( 2 ),
     tw = App.tw;
-    perso.x = this.get("currentPos").j * tw;
-    perso.y = this.get("currentPos").i * tw;
-    this.set("perso", perso);
+    perso.x = this.get( "currentPos" ).j * tw;
+    perso.y = this.get( "currentPos" ).i * tw;
+    this.set( "perso", perso );
   },
 
   newMove: function ( ) {
@@ -36,6 +36,16 @@ App.Models.Perso = Backbone.Model.extend( {
       App.socket.emit( 'iMove', nextPos );
     } else
       clearInterval( this.moving );
+  },
+
+  sendMessage: function ( form ) {
+    var message = form[ 0 ].value.trim( );
+    form[ 0 ].value = "";
+    if ( message != "" ) {
+      App.socket.emit( "message", {
+        "msg": message
+      } );
+    }
   },
 
   moving: {}
@@ -71,7 +81,7 @@ App.Views.Perso = Backbone.View.extend( {
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-    cont.addChild(this.model.get("perso"));
+    cont.addChild( this.model.get( "perso" ) );
     App.Stages.mapStage.addChild( cont );
   }
 

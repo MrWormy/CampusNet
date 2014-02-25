@@ -13,6 +13,10 @@
     <canvas id="mapCanvas" width=0 height=0 style="position: absolute; background-color: #DDDDDD;">
       <p>Your browser cannot support this content, please update it</p>
     </canvas>
+    <form onSubmit="app.trigger('message', this); return false;" style="position: absolute" name = "dialogue">
+      <input style="width:350px" type="text" autocomplete="off" maxlength=140 name="texte">
+      <input type="submit" name="parler" value="parler">
+    </form>
   </div>
   <script type="text/javascript" src="assets/jquery/jquery.js"></script>
   <script type="text/javascript" src="assets/underscore/underscore.js"></script>
@@ -25,12 +29,12 @@
 
   <script type="text/javascript" src="app/modules/map.js"></script>
   <script type="text/javascript" src="app/modules/resize.js"></script>
-  <script type="text/javascript" src="app/modules/socket.js"></script>
   <script type="text/javascript" src="app/modules/event-handler.js"></script>
   <script type="text/javascript" src="app/modules/preload.js"></script>
   <script type="text/javascript" src="app/modules/move.js"></script>
   <script type="text/javascript" src="app/modules/perso.js"></script>
   <script type="text/javascript" src="app/modules/others.js"></script>
+  <script type="text/javascript" src="app/modules/drawings.js"></script>
 </body>
 
 </html>

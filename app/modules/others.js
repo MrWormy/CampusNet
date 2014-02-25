@@ -43,7 +43,6 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
 
   kill: function(id){
     var mapOthers = App.Stages.mapStage.getChildByName( "others" );
-    console.log(mapOthers.getChildByName("joueur " + id));
     mapOthers.removeChild(mapOthers.getChildByName("joueur " + id));
   },
 
@@ -55,6 +54,12 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
       perso = this.get( id );
     perso.set( "pos", nextPos );
 
+  },
+
+  message: function ( data ) {
+    var pos = this.get(data.expediteur).get("pos");
+    console.log(pos);
+    App.views.drawings.drawText(data.msg, pos);
   }
 
 } );

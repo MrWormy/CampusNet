@@ -57,20 +57,6 @@ App.Views.eventHandler = Backbone.View.extend( {
       hashMove = -1,
       myPerso, myView, way;
 
-    /*
-Barnabelemagicien
-Salut Mr. Wormy ! Tu vas bien ? En gros c'était pour te dire que j'ai avancé du côté serveur et je te dis ce qui change.
-Avant tout, je voulais savoir si tout ce qui est en rapport avec socket se trouve ici. Si oui, c'est très bien, tout est centralisé : comme ça pour communiquer on se rejoindra ici et ce sera plus clair.
-Mais dans ce cas, à quoi sert le module socket ?
-Sinon, j'ai implementé la déconnexion : je te laisse te charger d'effacer les bonhommes (cf plus loin : socket.emit("aurevoir") )
-Pour le changement de map, regarde ton socket.emit("ready"), tu comprendras comment ça marche.
-Pour l'instant il n'y a qe deux maps, dis moi combien t'en veux !
-Du coup, l'apparition sur une carte se gère comme une connexion. Pour quitter une map sans se déconnecter,
-fait simplement un socket.emit("quitMap") (aucun paramètre n'est demandé).
-Bisous bisous !
-PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://www.youtube.com/watch?v=oHg5SJYRHA0
-*/
-
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
@@ -88,6 +74,7 @@ PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://ww
         myMove.listenTo( app, 'move:bg', function ( data ) {
           console.log( data );
         } );
+        myPerso.listenTo(app, 'message', myPerso.sendMessage);
       } else {
         others.pop( data );
       }
@@ -100,6 +87,9 @@ PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://ww
     socket.on( "aurevoir", function ( id ) {
       others.kill(id);
     } );
+    socket.on( "message", function ( data ) {
+      others.message(data);
+    } );
     socket.emit( 'ready', {
       initPos: this.intialPos,
       map: 0
@@ -107,3 +97,18 @@ PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://ww
   }
 
 } );
+
+
+    /*
+Barnabelemagicien
+Salut Mr. Wormy ! Tu vas bien ? En gros c'était pour te dire que j'ai avancé du côté serveur et je te dis ce qui change.
+Avant tout, je voulais savoir si tout ce qui est en rapport avec socket se trouve ici. Si oui, c'est très bien, tout est centralisé : comme ça pour communiquer on se rejoindra ici et ce sera plus clair.
+Mais dans ce cas, à quoi sert le module socket ?
+Sinon, j'ai implementé la déconnexion : je te laisse te charger d'effacer les bonhommes (cf plus loin : socket.emit("aurevoir") )
+Pour le changement de map, regarde ton socket.emit("ready"), tu comprendras comment ça marche.
+Pour l'instant il n'y a qe deux maps, dis moi combien t'en veux !
+Du coup, l'apparition sur une carte se gère comme une connexion. Pour quitter une map sans se déconnecter,
+fait simplement un socket.emit("quitMap") (aucun paramètre n'est demandé).
+Bisous bisous !
+PS : vu que tu t'es tapé tout ce pavé, je t'offre un goodie cadeau : http://www.youtube.com/watch?v=oHg5SJYRHA0
+*/
