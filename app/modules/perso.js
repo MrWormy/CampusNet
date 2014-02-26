@@ -45,6 +45,7 @@ App.Models.Perso = Backbone.Model.extend( {
       App.socket.emit( "message", {
         "msg": message
       } );
+      App.views.drawings.drawText( message, this.get( "currentPos" ), this.get( "id" ) );
     }
   },
 
@@ -70,6 +71,7 @@ App.Views.Perso = Backbone.View.extend( {
       ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
     }
 
+    App.views.drawings.removeText( e.get( "id" ) );
     app.trigger( 'move:container', curPos.i - prevPos.i, curPos.j - prevPos.j );
   },
 

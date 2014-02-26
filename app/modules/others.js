@@ -24,14 +24,15 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
     if ( prevPos.i == curPos.i ) {
       ( prevPos.j + 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 1 );
       ( prevPos.j - 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 3 );
-      e.get("perso").x = curPos.j * tw;
+      e.get( "perso" ).x = curPos.j * tw;
     } else {
       ( prevPos.i + 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 2 );
       ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
-      e.get("perso").y = curPos.i * tw;
+      e.get( "perso" ).y = curPos.i * tw;
     }
-  }
 
+    App.views.drawings.removeText( e.get( "id" ) );
+  }
 } );
 
 App.Collections.OtherPlayers = Backbone.Collection.extend( {
@@ -41,9 +42,9 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
     this.add( player );
   },
 
-  kill: function(id){
+  kill: function ( id ) {
     var mapOthers = App.Stages.mapStage.getChildByName( "others" );
-    mapOthers.removeChild(mapOthers.getChildByName("joueur " + id));
+    mapOthers.removeChild( mapOthers.getChildByName( "joueur " + id ) );
   },
 
   model: App.Models.OtherPlayer,
@@ -57,9 +58,9 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
   },
 
   message: function ( data ) {
-    var pos = this.get(data.expediteur).get("pos");
-    console.log(pos);
-    App.views.drawings.drawText(data.msg, pos);
+    var pos = this.get( data.expediteur ).get( "pos" ),
+      id = this.get( data.expediteur ).get( "id" );
+    App.views.drawings.drawText( data.msg, pos, id );
   }
 
 } );
