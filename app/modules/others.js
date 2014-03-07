@@ -12,8 +12,11 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
     perso.name = "joueur " + this.id;
     perso.x = this.get( "pos" ).j * tw;
     perso.y = this.get( "pos" ).i * tw;
+    perso.addEventListener("mouseover", function(){
+      console.log("coucou");
+    })
     this.set( "perso", perso );
-    App.Stages.mapStage.getChildByName( "others" ).addChild( perso );
+    App.Stages.characterStage.getChildByName( "others" ).addChild( perso );
   },
 
   move: function ( e ) {
@@ -37,13 +40,17 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
 
 App.Collections.OtherPlayers = Backbone.Collection.extend( {
 
+  defaults:{
+    "names": {}
+  },
+
   pop: function ( data ) {
     var player = new this.model( data );
     this.add( player );
   },
 
   kill: function ( id ) {
-    var mapOthers = App.Stages.mapStage.getChildByName( "others" );
+    var mapOthers = App.Stages.characterStage.getChildByName( "others" );
     mapOthers.removeChild( mapOthers.getChildByName( "joueur " + id ) );
   },
 
@@ -79,7 +86,7 @@ App.Views.OtherPlayers = Backbone.View.extend( {
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-    App.Stages.mapStage.addChild( cont );
+    App.Stages.characterStage.addChild( cont );
   }
 
 } );

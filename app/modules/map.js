@@ -26,7 +26,7 @@ App.Collections.Maps = Backbone.Collection.extend( {
 
 App.Views.DrawMap = Backbone.View.extend( {
 
-  el: '#mapCanvas',
+  el: '#charactersCanvas',
 
   events: {
     "mousedown": "mapClicked"
@@ -44,6 +44,7 @@ App.Views.DrawMap = Backbone.View.extend( {
     var that = this;
     setInterval( function ( ) {
       that.stage.update( );
+      App.Stages.characterStage.update( );
     }, 30 );
   },
 
@@ -73,7 +74,7 @@ App.Views.DrawMap = Backbone.View.extend( {
     container.regX = -width / 2;
     container.regY = -height / 2;
     var charac = App.Stages.mapStage.getChildByName( "player" ),
-      others = App.Stages.mapStage.getChildByName( "others" );
+      others = App.Stages.characterStage.getChildByName( "others" );
     if ( charac ) {
       charac.regX = container.regX;
       charac.regY = container.regY;
@@ -94,7 +95,7 @@ App.Views.DrawMap = Backbone.View.extend( {
 
   moveContainer: function ( e ) {
     var cont = App.Stages.mapStage.getChildAt( 0 ),
-      contOthers = App.Stages.mapStage.getChildByName( "others" );
+      contOthers = App.Stages.characterStage.getChildByName( "others" );
     cont.x = -e.get( "currentX" );
     cont.y = -e.get( "currentY" );
     contOthers.x = -e.get( "currentX" );

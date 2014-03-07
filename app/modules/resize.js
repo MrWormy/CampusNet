@@ -52,6 +52,9 @@ App.Views.Screen = Backbone.View.extend( {
 
   initialize: function ( ) {
     var win = $( window );
+
+    $( "#loading" ).css( "display", "none" );
+    $( "#message" ).css( "display", "block" );
     win.on( 'resize', {
       that: this
     }, this.resize );
@@ -61,6 +64,26 @@ App.Views.Screen = Backbone.View.extend( {
       'width': window.innerWidth
     } );
     this.listenTo( app, 'resize:on', this.resizeCan );
+    this.displayRegister( );
+  },
+
+  displayRegister: function ( ) {
+    var shadow = $( "#shadow" ),
+      regForm = $( "#register" ),
+      innW = window.innerWidth,
+      innH = window.innerHeight;
+
+    shadow.css( {
+      "display": "block",
+      "width": innW + 'px',
+      "height": innH + 'px'
+    } );
+    regForm.css( {
+      "display": "block",
+      "left": ( innW - regForm.width( ) ) / 2 + 'px',
+      "top": ( innH - regForm.height( ) ) / 2 + 'px'
+    } );
+
   },
 
   resize: function ( e ) {

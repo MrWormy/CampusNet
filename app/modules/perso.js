@@ -12,6 +12,57 @@ App.Models.Perso = Backbone.Model.extend( {
     this.on( 'change:way', this.newMove );
   },
 
+  parseData: function ( message ) {
+    var header, dest, msg, parsedMsg = this.trimMsg( message ),
+      cmd = parsedMsg[ 0 ];
+
+    switch ( cmd ) {
+    case '/w':
+    case '/whisper':
+      dest = parsedMsg[ 1 ] || "none";
+      msg = this.msgRes( parsedMsg, 2 );
+      break;
+    case '/a':
+    case '/all':
+      dest = "all";
+      msg = this.msgRes( parsedMsg, 1 );
+      break;
+    default:
+      if ( cmd.charAt( 0 ) == '/' ) {
+        dest = "me";
+        msg = "Cette commande n'est pas prise en charge, les commandes correctes sont /w + destinataire et /all";
+      } else {
+        dest = "classic";
+        msg = this.msgRes( parsedMsg, 0 );
+        break;
+      }
+    }
+    return {
+      msg: msg,
+      destinataire: dest
+    };
+  },
+
+  trimMsg: function ( msg ) {
+    var tab = msg.split( ' ' ),
+      trimT = [ ],
+      tabLength = tab.length,
+      currI = 0;
+    for ( var i = 0; i < tabLength; i++ ) {
+      if ( tab[ i ] != "" ) {
+        trimT[ currI ] = tab[ i ];
+        currI++;
+      }
+    };
+    return trimT;
+  },
+
+  msgRes: function ( tab, pos ) {
+    var msg = tab.slice( pos, tab.length ).join( ' ' ) || "";
+
+    return msg;
+  },
+
   pop: function ( ) {
     var perso = new createjs.Sprite( App.perso );
     perso.gotoAndStop( 2 ),
@@ -39,13 +90,15 @@ App.Models.Perso = Backbone.Model.extend( {
   },
 
   sendMessage: function ( form ) {
-    var message = form[ 0 ].value.trim( );
+    var info, message = form[ 0 ].value.trim( ),
+      data = {};
     form[ 0 ].value = "";
     if ( message != "" ) {
-      App.socket.emit( "message", {
-        "msg": message
-      } );
-      App.views.drawings.drawText( message, this.get( "currentPos" ), this.get( "id" ) );
+      data = this.parseData( message );
+      if ( data.msg ) {
+        App.socket.emit( "message", data );
+        App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ) );
+      }
     }
   },
 

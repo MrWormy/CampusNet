@@ -10,7 +10,7 @@ App.Views.Drawings = Backbone.View.extend( {
     var former, tName = "texte" + id,
       h = Math.ceil( text.length / 15 ),
       textContainer = new createjs.Container( ),
-      others = App.Stages.mapStage.getChildByName( "others" ),
+      others = App.Stages.characterStage.getChildByName( "others" ),
       dText = new createjs.Text( text, "17px Arial" );
     dText.lineWidth = 250;
     dText.maxWidth = 250;
@@ -20,7 +20,7 @@ App.Views.Drawings = Backbone.View.extend( {
     textContainer.y = pos.i * App.tw - dText.getMeasuredHeight( );
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
-    App.Stages.mapStage.getChildByName( "others" ).addChild( textContainer );
+    App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
     setTimeout( function ( ) {
       if ( textContainer )
         others.removeChild( textContainer );
@@ -28,7 +28,7 @@ App.Views.Drawings = Backbone.View.extend( {
   },
 
   removeText: function ( id ) {
-    var others = App.Stages.mapStage.getChildByName( "others" ),
+    var others = App.Stages.characterStage.getChildByName( "others" ),
       text = others.getChildByName( "texte" + id );
     if ( text )
       others.removeChild( text );

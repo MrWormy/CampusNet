@@ -33,13 +33,13 @@ var Guy = function(socket, id, initPos, Map) {
 		var info = {};
 		info.expediteur = that.id;
 		info.msg = data.msg;
-		if (data.destinataire == undefined) {
+		// if (data.destinataire == 'none') {
 			info.prive = false;
 			Map.emit("message", info, that.id);
-		} else {
-			info.prive = true;
-			Map.guys[data.destinataire].emit("message", info);
-		}
+		// } else {
+		// 	info.prive = true;
+		// 	Map.guys[data.destinataire].emit("message", info);
+		// }
 	});
 
 }

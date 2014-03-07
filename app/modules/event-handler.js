@@ -74,7 +74,7 @@ App.Views.eventHandler = Backbone.View.extend( {
         myMove.listenTo( app, 'move:bg', function ( data ) {
           console.log( data );
         } );
-        myPerso.listenTo(app, 'message', myPerso.sendMessage);
+        myPerso.listenTo( app, 'message', myPerso.sendMessage );
       } else {
         others.pop( data );
       }
@@ -85,21 +85,40 @@ App.Views.eventHandler = Backbone.View.extend( {
       others.move( data );
     } );
     socket.on( "aurevoir", function ( id ) {
-      others.kill(id);
+      others.kill( id );
     } );
     socket.on( "message", function ( data ) {
-      others.message(data);
+      others.message( data );
     } );
+
+    this.showRegister( );
     socket.emit( 'ready', {
       initPos: this.intialPos,
       map: 0
     } );
+  },
+
+  showRegister: function ( ) {
+    var formBlock = $( "#register" );
+
+    console.log(formBlock.before());
+
+    formBlock.css( {
+      "display": "block",
+      "top": window.innerHeight / 2 + 'px',
+      "margin-left": "auto",
+      "margin-right": "auto"
+    } );
+  },
+
+  register: function ( form ) {
+
   }
 
 } );
 
 
-    /*
+/*
 Barnabelemagicien
 Salut Mr. Wormy ! Tu vas bien ? En gros c'était pour te dire que j'ai avancé du côté serveur et je te dis ce qui change.
 Avant tout, je voulais savoir si tout ce qui est en rapport avec socket se trouve ici. Si oui, c'est très bien, tout est centralisé : comme ça pour communiquer on se rejoindra ici et ce sera plus clair.
