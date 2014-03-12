@@ -101,7 +101,8 @@ App.Models.Perso = Backbone.Model.extend( {
     if ( message != "" ) {
       data = this.parseData( message );
       if ( data.msg ) {
-        app.trigger( "send:message", data );
+        if (data.destinataire != "me")
+          app.trigger( "send:message", data );
         App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ), data.destinataire );
       }
     }

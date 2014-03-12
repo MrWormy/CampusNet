@@ -64,6 +64,7 @@ App.Views.eventHandler = Backbone.View.extend( {
       that = this,
       myPerso, myView, way;
 
+    $( "#register" ).css( "display", "block" );
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
