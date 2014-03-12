@@ -4,17 +4,18 @@ exports.Game = function() {
 	this.maps.push(new Map());
 
 	this.appendGuy = function(socket, data) {
-		this.maps[data.map].appendGuy(socket, data.initPos);
+		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
 	}
 }
 
-var Guy = function(socket, id, initPos, Map) {
+var Guy = function(socket, id, pName, initPos, Map) {
 	this.socket = socket;
 	var that = this;
 	this.pos = initPos;
+	this.pName = pName;
 	this.id = id;
 
-	Map.emit("popGuy", {id: this.id, pos: this.pos}, this.id);
+	Map.emit("popGuy", {id: this.id, pName: pName, pos: this.pos}, this.id);
 
 	socket.on("iMove", function(data) {
 		that.pos = data;
@@ -33,13 +34,14 @@ var Guy = function(socket, id, initPos, Map) {
 		var info = {};
 		info.expediteur = that.id;
 		info.msg = data.msg;
-		// if (data.destinataire == 'none') {
+		info.destinataire = data.destinataire;
+		if (!data.private) {
 			info.prive = false;
 			Map.emit("message", info, that.id);
-		// } else {
-		// 	info.prive = true;
-		// 	Map.guys[data.destinataire].emit("message", info);
-		// }
+		} else {
+			info.prive = true;
+			Map.guys[Map.guys.length - data.destinataire - 1].socket.emit("message", info);
+		}
 	});
 
 }
@@ -48,17 +50,17 @@ var Map = function() {
 	this.guys = [];
 	this.idnew = 0;
 
-	this.appendGuy = function(socket, initPos) {
+	this.appendGuy = function(socket, pName, initPos) {
 		if (this.idnew == this.guys.length) {
-			this.guys.unshift(new Guy(socket, this.guys.length, initPos, this));
+			this.guys.unshift(new Guy(socket, this.guys.length, pName, initPos, this));
 		} else {
-			this.guy[this.guys.length - 1 - this.idnew] = new Guy(socket, this.guys.length, initPos, this);
+			this.guys[this.guys.length - 1 - this.idnew] = new Guy(socket, this.guys.length, pName, initPos, this);
 		}
 		this.calculeridnew();
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {
-				socket.emit("popGuy", {id: guy.id, pos: guy.pos});
+				socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName});
 			}
 		}
 	}

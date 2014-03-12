@@ -7,14 +7,18 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
 
   pop: function ( ) {
     var perso = new createjs.Sprite( App.perso ),
-      tw = App.tw;
+      tw = App.tw,
+      that = this;
     perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );
     perso.name = "joueur " + this.id;
     perso.x = this.get( "pos" ).j * tw;
     perso.y = this.get( "pos" ).i * tw;
-    perso.addEventListener("mouseover", function(){
-      console.log("coucou");
-    })
+    perso.addEventListener( "mouseover", function ( ) {
+      App.views.drawings.showName( that.get( "pos" ), that.get( "pName" ), that.get( "id" ) );
+    } )
+    perso.addEventListener( "mouseout", function ( ) {
+      App.views.drawings.removeName( that.get( "id" ) );
+    } )
     this.set( "perso", perso );
     App.Stages.characterStage.getChildByName( "others" ).addChild( perso );
   },
@@ -34,15 +38,11 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
       e.get( "perso" ).y = curPos.i * tw;
     }
 
-    App.views.drawings.removeText( e.get( "id" ) );
+    App.views.drawings.moveAndText( e.get( "id" ), curPos.i - prevPos.i, curPos.j - prevPos.j );
   }
 } );
 
 App.Collections.OtherPlayers = Backbone.Collection.extend( {
-
-  defaults:{
-    "names": {}
-  },
 
   pop: function ( data ) {
     var player = new this.model( data );
@@ -65,9 +65,10 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
   },
 
   message: function ( data ) {
+    console.log(data);
     var pos = this.get( data.expediteur ).get( "pos" ),
       id = this.get( data.expediteur ).get( "id" );
-    App.views.drawings.drawText( data.msg, pos, id );
+    App.views.drawings.drawText( data.msg, pos, id, data.destinataire );
   }
 
 } );

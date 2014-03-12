@@ -29,7 +29,9 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   drawMap: function ( firstMap ) {
     firstMap.initMap( );
-    var myCanvas = new App.Models.Canvas( ),
+    var myCanvas = new App.Models.Canvas( {
+      registering: true
+    } ),
       screenView = new App.Views.Screen( {
         model: myCanvas
       } ),
@@ -47,6 +49,10 @@ App.Views.eventHandler = Backbone.View.extend( {
     "j": 0
   },
 
+  oNames: {},
+
+  oId: [ ],
+
   move: function ( ) {
     var myMove = new App.Models.Move( ),
       socket = io.connect( 'http://localhost:19872' ),
@@ -55,14 +61,17 @@ App.Views.eventHandler = Backbone.View.extend( {
         collection: others
       } ),
       hashMove = -1,
+      that = this,
       myPerso, myView, way;
 
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
+        that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,
-          'currentPos': data.pos
+          'currentPos': data.pos,
+          'pName': data.pName
         } );
 
         myView = new App.Views.Perso( {
@@ -77,6 +86,9 @@ App.Views.eventHandler = Backbone.View.extend( {
         myPerso.listenTo( app, 'message', myPerso.sendMessage );
       } else {
         others.pop( data );
+        App.oNames[ data.pName ] = data.id;
+        that.oId[ data.id ] = data.pName;
+        console.log( App.oNames );
       }
 
     } );
@@ -86,33 +98,50 @@ App.Views.eventHandler = Backbone.View.extend( {
     } );
     socket.on( "aurevoir", function ( id ) {
       others.kill( id );
+      App.oNames[ that.oId[ id ] ] = null;
+      that.oId[ id ] = null;
     } );
     socket.on( "message", function ( data ) {
       others.message( data );
     } );
 
-    this.showRegister( );
-    socket.emit( 'ready', {
-      initPos: this.intialPos,
-      map: 0
-    } );
+    this.listenTo( app, 'register', this.registerPlayer );
+    this.listenTo( app, 'send:message', this.sendMessage );
+
   },
 
-  showRegister: function ( ) {
-    var formBlock = $( "#register" );
+  registerPlayer: function ( form ) {
+    var pName = form.playerName.value.trim( );
 
-    console.log(formBlock.before());
-
-    formBlock.css( {
-      "display": "block",
-      "top": window.innerHeight / 2 + 'px',
-      "margin-left": "auto",
-      "margin-right": "auto"
-    } );
+    if ( pName && pName.length > 5 ) {
+      App.socket.emit( 'ready', {
+        initPos: this.intialPos,
+        pName: pName,
+        map: 0
+      } );
+    }
   },
 
-  register: function ( form ) {
+  destroyReg: function ( ) {
+    var regCont = $( "#regCont" );
 
+    regCont.remove( );
+  },
+
+  sendMessage: function ( data ) {
+    var dest = data.destinataire,
+      priv = false;
+
+    if ( App.oNames[ dest ] ) {
+      priv = true;
+      data.destinataire = App.oNames[ dest ];
+    }
+
+    App.socket.emit( 'message', {
+      "msg": data.msg,
+      "destinataire": data.destinataire,
+      "private": priv
+    } );
   }
 
 } );
