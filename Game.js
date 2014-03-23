@@ -2,6 +2,7 @@ exports.Game = function() {
 	this.maps = [];
 	this.maps.push(new Map());
 	this.maps.push(new Map());
+	this.quetes = require("./quete.js").liste;
 
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.initPos);
@@ -40,6 +41,17 @@ var Guy = function(socket, id, initPos, Map) {
 		// 	info.prive = true;
 		// 	Map.guys[data.destinataire].emit("message", info);
 		// }
+	});
+
+	socket.on("parler_pnj", function(id) {
+		for (var i=0 ; i<this.quetes.length ; i++) {
+			if (this.quetes[i].status==unlocked) {
+				if (this.quetes.objet.type=="parler_pnj" && this.quetes.objet.id_pnj==id) {
+					return this.quetes.objet.dialogue;
+				}
+			}
+		}
+		return null; // Si aucune quete ne corresond, on affichera le texte de base
 	});
 
 }
