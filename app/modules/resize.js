@@ -16,6 +16,9 @@ App.Models.Canvas = Backbone.Model.extend( {
       canWidth = ratio * height,
       canHeight = width / ratio;
 
+    if ( this.get( "registering" ) ) {
+      this.sizeRegister( width, height );
+    }
     if ( width >= canWidth ) {
       this.setSize( 0, ( width - canWidth ) / 2, canWidth, height );
     } else {
@@ -44,6 +47,21 @@ App.Models.Canvas = Backbone.Model.extend( {
     charCan.width = width;
     charCan.height = height;
     app.trigger( 'resized:ok', width, height );
+  },
+
+  sizeRegister: function ( width, height ) {
+    var cont = $( "#regCont" ),
+      playName = $( "#register" );
+
+    playName.css( {
+      "left": ( width - playName.width( ) ) / 2 + "px",
+      "top": ( height - playName.height( ) ) / 2 + "px"
+    } );
+    cont.css( {
+      "width": width + "px",
+      "height": height + "px",
+      "display": "block"
+    } );
   }
 } );
 
@@ -53,7 +71,7 @@ App.Views.Screen = Backbone.View.extend( {
   initialize: function ( ) {
     var win = $( window );
 
-    $( "#loading" ).css( "display", "none" );
+    $( "#loading" ).remove();
     $( "#message" ).css( "display", "block" );
     win.on( 'resize', {
       that: this
@@ -64,26 +82,6 @@ App.Views.Screen = Backbone.View.extend( {
       'width': window.innerWidth
     } );
     this.listenTo( app, 'resize:on', this.resizeCan );
-    this.displayRegister( );
-  },
-
-  displayRegister: function ( ) {
-    var shadow = $( "#shadow" ),
-      regForm = $( "#register" ),
-      innW = window.innerWidth,
-      innH = window.innerHeight;
-
-    shadow.css( {
-      "display": "block",
-      "width": innW + 'px',
-      "height": innH + 'px'
-    } );
-    regForm.css( {
-      "display": "block",
-      "left": ( innW - regForm.width( ) ) / 2 + 'px',
-      "top": ( innH - regForm.height( ) ) / 2 + 'px'
-    } );
-
   },
 
   resize: function ( e ) {

@@ -8,6 +8,7 @@ var App = {
   views: {},
   socket: {},
   tileset: {},
+  oNames: {},
   map: [ ],
   perso: {},
   tw: 0,

@@ -19,8 +19,13 @@ App.Models.Perso = Backbone.Model.extend( {
     switch ( cmd ) {
     case '/w':
     case '/whisper':
-      dest = parsedMsg[ 1 ] || "none";
-      msg = this.msgRes( parsedMsg, 2 );
+      if ( App.oNames[ parsedMsg[ 1 ] ] != null ) {
+        dest = parsedMsg[ 1 ];
+        msg = this.msgRes( parsedMsg, 2 );
+      } else {
+        dest = "me";
+        msg = "Ce destinataire n'est pas connecté"
+      }
       break;
     case '/a':
     case '/all':
@@ -96,8 +101,9 @@ App.Models.Perso = Backbone.Model.extend( {
     if ( message != "" ) {
       data = this.parseData( message );
       if ( data.msg ) {
-        App.socket.emit( "message", data );
-        App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ) );
+        if (data.destinataire != "me")
+          app.trigger( "send:message", data );
+        App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ), data.destinataire );
       }
     }
   },
@@ -124,7 +130,7 @@ App.Views.Perso = Backbone.View.extend( {
       ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
     }
 
-    App.views.drawings.removeText( e.get( "id" ) );
+    App.views.drawings.moveAndText( e.get( "id" ), curPos.i - prevPos.i, curPos.j - prevPos.j );
     app.trigger( 'move:container', curPos.i - prevPos.i, curPos.j - prevPos.j );
   },
 

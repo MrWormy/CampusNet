@@ -14,17 +14,19 @@
     </canvas>
     <canvas id="charactersCanvas" width=0 height=0 style="position: absolute;">
     </canvas>
+    <form id="message" onSubmit="app.trigger('message', this); return false;" target = "_blank" style="position: absolute; display: none;" name = "dialogue">
+      <input style="width:350px;" type="text" autocomplete="off" maxlength=140 name="texte">
+      <input type="submit" name="parler" value="parler">
+    </form>
   </div>
-  <form id="message" onSubmit="app.trigger('message', this); return false;" target = "_blank" style="position: fixed; display: none;" name = "dialogue">
-    <input style="width:350px;" type="text" autocomplete="off" maxlength=140 name="texte">
-    <input type="submit" name="parler" value="parler">
-  </form>
-  <div id="shadow" style="position:absolute; background-color: black; display:none; opacity: 0.7">
+  <div id="regCont" style="position: absolute; display: none; overflow: hidden">
+    <div id="shadow" style="width: inherit; height: inherit; position:absolute; background-color: black; opacity: 0.7">
+    </div>
+    <form id="register" onSubmit="app.trigger('register', this); return false;" target = "_blank" style="position: absolute; display:none" name = "dialogue">
+      <input style="width: 350px; padding: 25px; border-radius: 5px; border: 0px none; font-size: xx-large;" type="text" autocomplete="off" maxlength=140 name="playerName">
+      <input style="padding: 25px 20px; border: 0px none; border-radius: 5px; font-size: xx-large;" type="submit" name="play" value="jouer">
+    </form>
   </div>
-  <form id="register" onSubmit="app.trigger('register', this); return false;" target = "_blank" style="position: absolute; display: none" name = "dialogue">
-    <input style="width: 350px; padding: 25px; border-radius: 5px; border: 0px none; font-size: xx-large;" type="text" autocomplete="off" maxlength=140 name="playerName">
-    <input style="padding: 25px 20px; border: 0px none; border-radius: 5px; font-size: xx-large;" type="submit" name="play" value="jouer">
-  </form>
   <script type="text/javascript" src="assets/jquery/jquery.js"></script>
   <script type="text/javascript" src="assets/underscore/underscore.js"></script>
   <script type="text/javascript" src="assets/backbone/backbone.js"></script>
