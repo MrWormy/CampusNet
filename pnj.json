@@ -1,0 +1,8 @@
+[
+	{
+		"id": 0,
+		"nom": "Arthur Blin",
+		"pos": {"x": 0, "y": 0},
+		"dialogue_de_base": "T'as cotisé toi ?! Ah oui, peut-être..."
+	}
+]
