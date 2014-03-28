@@ -85,6 +85,12 @@ App.Views.eventHandler = Backbone.View.extend( {
           console.log( data );
         } );
         myPerso.listenTo( app, 'message', myPerso.sendMessage );
+        App.map[2143]=2;
+        others.pop({"id": 1000, "pos":{"i":21, "j": 43}, "pName": "pnj"});
+        others.get(1000).get("perso").gotoAndStop( 1 );
+        others.get(1000).get("perso").addEventListener("click", function(){
+          App.views.drawings.drawText("Bravo tu as réussi à me parler !", {"i": 21, "j": 43}, 1000, "all");
+        });
       } else {
         others.pop( data );
         App.oNames[ data.pName ] = data.id;
