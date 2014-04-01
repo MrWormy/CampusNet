@@ -12,6 +12,7 @@ app.get( '/', function ( req, res ) {
 } );
 
 app.use( '/assets', express.static( __dirname + '/assets' ) );
+app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 
 io.sockets.on( 'connection', function ( socket ) {
