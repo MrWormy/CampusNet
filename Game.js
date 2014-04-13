@@ -63,6 +63,12 @@ var Map = function() {
 	this.idnew = 0;
 
 	this.appendGuy = function(socket, pName, initPos) {
+		for (var i=0 ; i<this.guys.length ; i++) {
+			if (this.guys[i]!=undefined && this.guys[i].pName==pName) {
+				socket.emit("pb_pseudo");
+				return null;
+			}
+		}
 		if (this.idnew == this.guys.length) {
 			this.guys.unshift(new Guy(socket, this.guys.length, pName, initPos, this));
 		} else {
