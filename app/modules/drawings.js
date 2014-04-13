@@ -7,18 +7,28 @@ App.Views.Drawings = Backbone.View.extend( {
   },
 
   drawText: function ( text, pos, id, dest ) {
-    var former, tName = "texte" + id,
+    var former, s, tName = "texte" + id,
       h = Math.ceil( text.length / 15 ),
       textContainer = new createjs.Container( ),
       others = App.Stages.characterStage.getChildByName( "others" ),
-      dText = new createjs.Text( text, "17px Arial" );
+      dText = new createjs.Text( text, "17px Arial" ),
+      g = new createjs.Graphics( );
+    g.beginStroke( "#000000" );
+    g.beginFill( "#FFFFFF" );
+    s = new createjs.Shape(g);
     dText.lineWidth = 250;
     dText.maxWidth = 250;
+    dText.x = 5;
+    dText.y = 3;
     dText.color = this.selectColor( dest );
     textContainer.name = tName;
+    textContainer.addChild( s );
     textContainer.addChild( dText );
+    g.drawRoundRect ( 0, 0, Math.min(250, dText.getMeasuredWidth( )) + 10 , dText.getMeasuredHeight( ) + 10, 5 );
+    g.endFill();
+    g.endStroke();
     textContainer.x = pos.j * App.tw + App.tw / 2;
-    textContainer.y = pos.i * App.tw - dText.getMeasuredHeight( );
+    textContainer.y = pos.i * App.tw - dText.getMeasuredHeight( ) - 10;
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
     App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
@@ -45,7 +55,7 @@ App.Views.Drawings = Backbone.View.extend( {
 
     var others = App.Stages.characterStage.getChildByName( "others" ),
       text = others.getChildByName( "texte" + id );
-    if ( text && text.getChildAt( 0 ).color != "brown" )
+    if ( text && text.getChildAt( 1 ).color != "brown" )
       others.removeChild( text );
     else if ( text ) {
       text.x = text.x + diffJ * App.tw;
@@ -64,7 +74,7 @@ App.Views.Drawings = Backbone.View.extend( {
     textContainer.name = tName;
     textContainer.addChild( dText );
     textContainer.x = pos.j * App.tw + App.tw / 2;
-    textContainer.y = pos.i * App.tw - dText.getMeasuredHeight( );
+    textContainer.y = (pos.i + 1)* App.tw;
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
     App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
