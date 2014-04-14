@@ -20,6 +20,8 @@ var App = {
 
 var app = {}
 _.extend( app, Backbone.Events );
+console.log(Backbone.Events);
+
 
 $( function ( ) {
   App.Stages.mapStage = new createjs.Stage( "mapCanvas" );

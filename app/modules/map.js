@@ -20,7 +20,7 @@ App.Models.Map = Backbone.Model.extend( {
 } );
 
 App.Collections.Maps = Backbone.Collection.extend( {
-  url: 'assets/resources/map/exterieur.json',
+  url: 'assets/resources/map/forum.json',
   model: App.Models.Map
 } );
 
