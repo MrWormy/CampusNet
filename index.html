@@ -1,51 +1,66 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>Bienvenue sur KsioP</title>
-  <meta charset="utf-8">
-</head>
+    <head>
+        <title>Bienvenue sur KsioP</title>
+        <meta charset="utf-8">
+        <link type="text/css" rel="stylesheet" href="app/css/style.css"> 
+    </head>
 
-<body style="margin: 0px; overflow: hidden;">
-  <div id="loading" style="text-align: center; margin-top: 100px; font-size: 90px">Chargement <br /> en cours</div>
-  <div id="canvasContainer" style="position: relative;">
-    <canvas id="mapCanvas" width=0 height=0 style="position: absolute; background-color: #DDDDDD;">
-      <p>Your browser cannot support this content, please update it</p>
-    </canvas>
-    <canvas id="charactersCanvas" width=0 height=0 style="position: absolute;">
-    </canvas>
-    <form id="message" onSubmit="app.trigger('message', this); return false;" target = "_blank" style="position: absolute; display: none;" name = "dialogue">
-      <input style="width:350px;" type="text" autocomplete="off" maxlength=140 name="texte">
-      <input type="submit" name="parler" value="parler">
-    </form>
-  </div>
-  <div id="regCont" style="position: absolute; display: none; overflow: hidden">
-    <div id="shadow" style="width: inherit; height: inherit; position:absolute; background-color: black; opacity: 0.7">
-    </div>
-    <form id="register" onSubmit="app.trigger('register', this); return false;" target = "_blank" style="position: absolute; display:none" name = "dialogue">
-      <input style="width: 350px; padding: 25px; border-radius: 5px; border: 0px none; font-size: xx-large;" type="text" autocomplete="off" maxlength=140 name="playerName">
-      <input style="padding: 25px 20px; border: 0px none; border-radius: 5px; font-size: xx-large;" type="submit" name="play" value="jouer">
-    </form>
-  </div>
-  <script type="text/javascript" src="assets/jquery/dist/jquery.js"></script>
-  <script type="text/javascript" src="assets/underscore/underscore.js"></script>
-  <script type="text/javascript" src="assets/backbone/backbone.js"></script>
-  <script type="text/javascript" src="assets/backbone.localStorage/backbone.localStorage.js"></script>
-  <!--<script type="text/javascript" src="node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>-->
-  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <body>
+        <div id="loading">Chargement <br /> en cours</div>
+        <div id="canvasContainer">
+            <canvas id="mapCanvas" width=0 height=0>
+                <p>Your browser cannot support this content, please update it</p>
+            </canvas>
+            <canvas id="charactersCanvas" width=0 height=0>
+            </canvas>
+            <div id="navbar">
+                <form id="message" onSubmit="app.trigger('message', this);
+                        return false;" target = "_blank" name = "dialogue">
+                    <input type="button" class="navbutton" value="D">
+                    <input id="messageInput" type="text" autocomplete="off" maxlength=140 name="texte">
+                    <input type="submit" class="navbutton" name="parler" value="parler">
+                    <span class="espace"></span>
+                    <input type="button" class="navbutton" value="Q">
+                    <input type="button" class="navbutton" value="M">
+                    <input type="button" class="navbutton" value="P">
+                    <span class="espace"></span>
+                    <input type="button" class="navbutton" value="S">
+                    <input type="button" class="navbutton" value="?">
+                    <input type="button" class="navbutton" value="T">
+                    <input type="button" class="navbutton" value="O">
+                </form>
+            </div>
+        </div>
+        <div id="regCont">
+            <div id="shadow">
+            </div>
+            <form id="register" onSubmit="app.trigger('register', this);
+                        return false;" target = "_blank" name = "dialogue">
+                <input id="nameInput" type="text" autocomplete="off" maxlength=140 name="playerName">
+                <input id="nameSubmit" type="submit" name="play" value="Jouer">
+            </form>
+        </div>
+        <script type="text/javascript" src="assets/jquery/dist/jquery.js"></script>
+        <script type="text/javascript" src="assets/underscore/underscore.js"></script>
+        <script type="text/javascript" src="assets/backbone/backbone.js"></script>
+        <script type="text/javascript" src="assets/backbone.localStorage/backbone.localStorage.js"></script>
+        <!--<script type="text/javascript" src="node_modules/socket.io/node_modules/socket.io-client/dist/socket.io.js"></script>-->
+        <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
-  <script type="text/javascript" src="assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
+        <script type="text/javascript" src="assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
 
-  <script type="text/javascript" src="app/app.js"></script>
+        <script type="text/javascript" src="app/app.js"></script>
 
-  <script type="text/javascript" src="app/modules/map.js"></script>
-  <script type="text/javascript" src="app/modules/resize.js"></script>
-  <script type="text/javascript" src="app/modules/event-handler.js"></script>
-  <script type="text/javascript" src="app/modules/preload.js"></script>
-  <script type="text/javascript" src="app/modules/move.js"></script>
-  <script type="text/javascript" src="app/modules/perso.js"></script>
-  <script type="text/javascript" src="app/modules/others.js"></script>
-  <script type="text/javascript" src="app/modules/drawings.js"></script>
-</body>
+        <script type="text/javascript" src="app/modules/map.js"></script>
+        <script type="text/javascript" src="app/modules/resize.js"></script>
+        <script type="text/javascript" src="app/modules/event-handler.js"></script>
+        <script type="text/javascript" src="app/modules/preload.js"></script>
+        <script type="text/javascript" src="app/modules/move.js"></script>
+        <script type="text/javascript" src="app/modules/perso.js"></script>
+        <script type="text/javascript" src="app/modules/others.js"></script>
+        <script type="text/javascript" src="app/modules/drawings.js"></script>
+    </body>
 
 </html>
