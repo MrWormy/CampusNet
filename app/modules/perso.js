@@ -95,9 +95,9 @@ App.Models.Perso = Backbone.Model.extend( {
   },
 
   sendMessage: function ( form ) {
-    var info, message = form[ 0 ].value.trim( ),
+    var info, message = form[ 'texte' ].value.trim( ),
       data = {};
-    form[ 0 ].value = "";
+    form[ 'texte' ].value = "";
     if ( message != "" ) {
       data = this.parseData( message );
       if ( data.msg ) {

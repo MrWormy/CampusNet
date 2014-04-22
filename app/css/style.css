@@ -29,6 +29,17 @@ body  {
 
 #messageInput{
     width:350px;
+    bottom: 20px;
+    position: relative;
+    height: 25px;
+    font-size: 14pt;
+    cursor: default;
+}
+
+#messageSend{
+    position: relative; 
+    bottom: 20px;
+    color: transparent;
 }
 
 #regCont {
@@ -69,14 +80,12 @@ body  {
 
 #navbar{
     position: absolute;
-    width: 960px;
-    height: 40px;
-    top: 600px;
-    left: 50px;
+    width: 922px;
+    height: 44px;
     background-color: rgb(147, 169, 213);
     padding: 10px;
     border: 2px solid #cccccc;
-    border-radius: 5px;
+    border-radius: 15px;
 }
 
 .espace{
@@ -84,6 +93,16 @@ body  {
 }
 
 .navbutton{
-    width: 50px;
-    height: auto;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background: 0;
+}
+
+input{
+    cursor: pointer;
+}
+
+input:hover{
+    box-shadow: 0px 0px 5px 5px white;
 }

@@ -29,7 +29,8 @@ App.Models.Canvas = Backbone.Model.extend( {
   setSize: function ( top, left, width, height ) {
     var mapCan = $( "#mapCanvas" )[ 0 ],
       charCan = $( "#charactersCanvas" )[ 0 ],
-      contCan = $( "#canvasContainer" );
+      contCan = $( "#canvasContainer" ),
+      navbar = $("#navbar");
     this.set( {
       'height': height,
       'width': width
@@ -41,6 +42,11 @@ App.Models.Canvas = Backbone.Model.extend( {
       'top': top + 'px',
       'left': left + 'px'
     } );
+
+    navbar.css({
+        'top' : height - 80 + 'px',
+        'left' : (width-922)/2 + 'px' 
+    });
 
     mapCan.width = width;
     mapCan.height = height;
