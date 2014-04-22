@@ -29,16 +29,17 @@ body  {
 
 #messageInput{
     width:350px;
-    bottom: 20px;
+    bottom: 12px;
     position: relative;
     height: 25px;
     font-size: 14pt;
     cursor: default;
+    border-radius: 8px;
 }
 
 #messageSend{
     position: relative; 
-    bottom: 20px;
+    bottom: 14px;
     color: transparent;
 }
 
@@ -76,6 +77,7 @@ body  {
     border: 0px none;
     border-radius: 5px;
     font-size: xx-large;
+    cursor: pointer;
 }
 
 #navbar{
@@ -89,20 +91,26 @@ body  {
 }
 
 .espace{
-    margin-right: 50px;
+    margin-right: 63px;
 }
 
 .navbutton{
-    width: 48px;
-    height: 48px;
+    width: 39px;
+    height: 39px;
     border: 0;
     background: 0;
+    border-radius: 8px;
+    margin: 3px;
 }
 
-input{
+.navbutton:hover{
+    box-shadow: 0px 0px 5px 2px white;
     cursor: pointer;
 }
 
-input:hover{
-    box-shadow: 0px 0px 5px 5px white;
+#registerInfo{
+    color: white;
+    font-style: italic;
+    text-align: center;
+    font-size: 20pt;
 }
