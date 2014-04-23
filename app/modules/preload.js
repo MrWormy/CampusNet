@@ -21,9 +21,30 @@ App.Views.preload = Backbone.View.extend( {
   el: "#mapCanvas",
 
   initialize: function ( ) {
+    this.loadTransitions( );
     this.loadTileSet( );
     this.loadMap( );
     this.loadPerso( );
+  },
+
+  loadTransitions: function ( ) {
+    var transitions = new App.Collections.Transitions( ),
+      transition = new App.Models.Transitions( );
+
+    transitions.add( transition );
+    transitions.fetch( {
+
+      success: function ( coll, resp, opt ) {
+        App.models.transitions = transition;
+      },
+
+      error: function ( coll, resp, opt ) {
+        console.log( 'Une erreur c\' est dûr' );
+        $( 'body' ).html( 'Une erreur est survenue lors du chargement des données !' )
+      }
+
+    } );
+
   },
 
   loadPerso: function ( ) {
@@ -78,7 +99,7 @@ App.Views.preload = Backbone.View.extend( {
     maps.fetch( {
 
       success: function ( coll, resp, opt ) {
-        App.tw = firstMap.get("tilewidth");
+        App.tw = firstMap.get( "tilewidth" );
         that.model.set( {
           "map": firstMap,
           "loadMap": true

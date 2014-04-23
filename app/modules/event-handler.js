@@ -49,6 +49,8 @@ App.Views.eventHandler = Backbone.View.extend( {
     "j": 0
   },
 
+  curMap: 0,
+
   oNames: {},
 
   oId: [ ],
@@ -85,12 +87,22 @@ App.Views.eventHandler = Backbone.View.extend( {
           console.log( data );
         } );
         myPerso.listenTo( app, 'message', myPerso.sendMessage );
-        App.map[2143]=2;
-        others.pop({"id": 1000, "pos":{"i":21, "j": 43}, "pName": "pnj"});
-        others.get(1000).get("perso").gotoAndStop( 1 );
-        others.get(1000).get("perso").addEventListener("click", function(){
-          App.views.drawings.drawText("Bravo tu as réussi à me parler !", {"i": 21, "j": 43}, 1000, "all");
-        });
+        App.map[ 2143 ] = 2;
+        others.pop( {
+          "id": 1000,
+          "pos": {
+            "i": 21,
+            "j": 43
+          },
+          "pName": "pnj"
+        } );
+        others.get( 1000 ).get( "perso" ).gotoAndStop( 1 );
+        others.get( 1000 ).get( "perso" ).addEventListener( "click", function ( ) {
+          App.views.drawings.drawText( "Bravo tu as réussi à me parler !", {
+            "i": 21,
+            "j": 43
+          }, 1000, "all" );
+        } );
       } else {
         others.pop( data );
         App.oNames[ data.pName ] = data.id;
@@ -114,7 +126,20 @@ App.Views.eventHandler = Backbone.View.extend( {
 
     this.listenTo( app, 'register', this.registerPlayer );
     this.listenTo( app, 'send:message', this.sendMessage );
+    this.listenTo( app, 'way:end', this.checkChange );
 
+  },
+
+  checkChange: function ( pos ) {
+    var m = App.models.transitions.get( "transitions" )[ this.curMap ],
+      l = ( m && m.length ) || 0;
+
+    for ( var i = 0; i < l; i++ ) {
+      if ( m[ i ][ 0 ] == pos.i ) {
+        if ( m[ i ][ 1 ] == pos.j )
+          console.log( m[ i ] );
+      }
+    }
   },
 
   registerPlayer: function ( form ) {
