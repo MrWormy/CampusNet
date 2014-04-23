@@ -10,6 +10,9 @@ server.listen( 19872 );
 app.get( '/', function ( req, res ) {
   res.sendfile( __dirname + '/index.html' );
 } );
+app.get( '/admin.html', function ( req, res ) {
+  res.sendfile( __dirname + '/admin.html' );
+} );
 
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
