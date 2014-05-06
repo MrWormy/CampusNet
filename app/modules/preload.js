@@ -24,6 +24,7 @@ App.Views.preload = Backbone.View.extend( {
     this.loadTileSet( );
     this.loadMap( );
     this.loadPerso( );
+    this.loadPNJ( );
   },
 
   loadPerso: function ( ) {
@@ -92,6 +93,28 @@ App.Views.preload = Backbone.View.extend( {
       }
 
     } );
+  },
+
+  loadPNJ: function() {
+    /*var that = this;
+    var pnjs = new App.Collections.Pnjs( ),
+      firstPnj = new App.Models.Pnj( {
+        id: 1
+      } );
+
+    pnjs.add( firstPnj );
+    pnjs.fetch( {
+
+      success: function ( coll, resp, opt ) {
+        return firstPnj;
+      },
+
+      error: function ( coll, resp, opt ) {
+        console.log( 'Une erreur c\' est dûr' );
+        $( 'body' ).html( 'Une erreur est survenue lors du chargement des données !' )
+      }
+
+    } );*/
   }
 
 } );
