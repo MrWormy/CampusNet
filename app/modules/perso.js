@@ -90,6 +90,8 @@ App.Models.Perso = Backbone.Model.extend( {
     if ( nextPos ) {
       this.set( "currentPos", nextPos );
       App.socket.emit( 'iMove', nextPos );
+      if ( this.get( "way" ).length == 0 )
+        app.trigger('way:end', nextPos);
     } else
       clearInterval( this.moving );
   },
@@ -101,7 +103,7 @@ App.Models.Perso = Backbone.Model.extend( {
     if ( message != "" ) {
       data = this.parseData( message );
       if ( data.msg ) {
-        if (data.destinataire != "me")
+        if ( data.destinataire != "me" )
           app.trigger( "send:message", data );
         App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ), data.destinataire );
       }
