@@ -1,3 +1,7 @@
+/**
+L'application
+@enum
+*/
 var App = {
   Models: {},
   Collections: {},
@@ -13,11 +17,17 @@ var App = {
   perso: {},
   tw: 0,
 
+  /**
+    @returns {}
+  */
   template: function ( id ) {
     return _.template( $( '#template' + id ).html( ) );
   }
 };
 
+/**
+Variable app
+*/
 var app = {}
 _.extend( app, Backbone.Events );
 console.log(Backbone.Events);

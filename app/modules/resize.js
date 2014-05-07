@@ -1,14 +1,30 @@
-App.Models.Canvas = Backbone.Model.extend( {
+/**
+  Module de redimensionnement 
+  @module resize
+*/
+
+App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.prototype */ {
   defaults: {
     'height': window.innerHeight,
     'width': window.innerWidth,
     'ratio': 1.6
   },
 
+  /**
+  * @property {object}  defaults
+  * @property {number}  defaults.height
+  * @property {number}  defaults.width
+  * @property {number}  defaults.ratio
+  * @augments Backbone.Model
+  * @constructs
+  */
   initialize: function ( ) {
     this.resize( );
   },
 
+  /**
+    Redimensionnement
+  */
   resize: function ( ) {
     var height = this.get( 'height' ),
       width = this.get( 'width' ),
@@ -26,6 +42,13 @@ App.Models.Canvas = Backbone.Model.extend( {
     }
   },
 
+  /**
+    Dimensionnement
+    @param {number} top
+    @param {number} left
+    @param {number} width
+    @param {number} height
+  */
   setSize: function ( top, left, width, height ) {
     var mapCan = $( "#mapCanvas" )[ 0 ],
       charCan = $( "#charactersCanvas" )[ 0 ],
@@ -55,6 +78,11 @@ App.Models.Canvas = Backbone.Model.extend( {
     app.trigger( 'resized:ok', width, height );
   },
 
+  /**
+    Taille écran de connexion
+    @param {number} width
+    @param {number} height
+  */
   sizeRegister: function ( width, height ) {
     var cont = $( "#regCont" ),
       playName = $( "#register" );
@@ -71,9 +99,11 @@ App.Models.Canvas = Backbone.Model.extend( {
   }
 } );
 
-App.Views.Screen = Backbone.View.extend( {
+App.Views.Screen = Backbone.View.extend( /** @lends module:resize.Screen.prototype */ {
+  /** @type {string} */
   el: '#myCanvas',
 
+  /** @constructs */
   initialize: function ( ) {
     var win = $( window );
 
@@ -90,6 +120,9 @@ App.Views.Screen = Backbone.View.extend( {
     this.listenTo( app, 'resize:on', this.resizeCan );
   },
 
+  /**
+    Redimensionnement
+  */
   resize: function ( e ) {
     var that = e.data.that;
     that.model.set( {
@@ -100,10 +133,16 @@ App.Views.Screen = Backbone.View.extend( {
 
   resizing: {},
 
+  /**
+    Redimensionnement
+  */
   resizeCan: function ( ) {
     this.model.resize( );
   },
 
+  /**
+    Redimensionnement
+  */
   resizeWin: function ( ) {
     clearTimeout( this.resizing );
     var that = this;

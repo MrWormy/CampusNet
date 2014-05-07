@@ -1,12 +1,25 @@
-App.Models.Perso = Backbone.Model.extend( {
+/**
+  Module personnage
+  @module perso
+*/
+
+
+App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.prototype */ {
   defaults: {
     "moving": false
   },
 
+  /**
+  Function de changement de chemin
+  */
   changeWay: function ( way ) {
     this.set( 'way', way );
   },
 
+  /** 
+  * @augments Backbone.Model
+  * @constructs 
+  */
   initialize: function ( ) {
     this.pop( );
     this.on( 'change:way', this.newMove );
@@ -113,8 +126,12 @@ App.Models.Perso = Backbone.Model.extend( {
   moving: {}
 } );
 
-App.Views.Perso = Backbone.View.extend( {
+App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prototype */ {
 
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.createCont( );
     this.model.on( 'change:currentPos', this.move );

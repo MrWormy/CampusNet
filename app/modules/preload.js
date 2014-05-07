@@ -1,10 +1,20 @@
-App.Models.preload = Backbone.Model.extend( {
+/**
+  Module préchargement
+  @module preload
+*/
+
+App.Models.preload = Backbone.Model.extend( /** @lends module:preload.Models/preload.prototype */ {
   defaults: {
     "loadTileSet": false,
     "loadMap": false,
     "loadPerso": false
   },
-
+  
+  /** 
+  * @property {} defaults
+  * @augments Backbone.Model
+  * @constructs 
+  */
   initialize: function ( ) {
     this.on( 'change', this.checkLoad );
   },
@@ -16,10 +26,14 @@ App.Models.preload = Backbone.Model.extend( {
   }
 } );
 
-App.Views.preload = Backbone.View.extend( {
+App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preload.prototype */ {
 
   el: "#mapCanvas",
 
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.loadTransitions( );
     this.loadTileSet( );

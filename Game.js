@@ -1,3 +1,6 @@
+/**
+Game
+*/
 exports.Game = function() {
 	this.maps = [];
 	this.maps.push(new Map());
@@ -9,6 +12,14 @@ exports.Game = function() {
 	}
 }
 
+/**
+Variable Guy
+@param {} socket
+@param {} id
+@param {} pName
+@param {} initPos
+@param {} Map
+*/
 var Guy = function(socket, id, pName, initPos, Map) {
 	this.socket = socket;
 	var that = this;
@@ -58,10 +69,18 @@ var Guy = function(socket, id, pName, initPos, Map) {
 
 }
 
+/**
+Variable Map
+*/
 var Map = function() {
 	this.guys = [];
 	this.idnew = 0;
 
+	/**
+		@param {} socket
+		@param {} pName
+		@param {} initPos
+	*/
 	this.appendGuy = function(socket, pName, initPos) {
 		for (var i=0 ; i<this.guys.length ; i++) {
 			if (this.guys[i]!=undefined && this.guys[i].pName==pName) {
@@ -83,6 +102,8 @@ var Map = function() {
 		}
 	}
 
+	/**
+	*/
 	this.calculeridnew = function() {
 		for (var i=this.idnew ; i<this.guys.length-1 ; i++) {
 			if (this.guys[this.guys.length - 1 - i] == undefined) {
@@ -93,6 +114,11 @@ var Map = function() {
 		this.idnew = this.guys.length;
 	}
 
+	/**
+		@param {} nom
+		@param {} data
+		@param {} exception
+	*/
 	this.emit = function(nom, data, exception) {
 		for (var i=0 ; i<this.guys.length ; i++) {
 			if (this.guys[i] != undefined && this.guys[i].id != exception) {
@@ -101,6 +127,9 @@ var Map = function() {
 		}
 	}
 
+	/**
+		@param {} id
+	*/
 	this.deletePlayer = function(id) {
 		delete this.guys[this.guys.length - 1 - id];
 		this.emit("aurevoir", id, id);

@@ -1,10 +1,22 @@
-App.Views.eventHandler = Backbone.View.extend( {
+/**
+  @fileOverview Description du gestionnaire d'évènements.
+  @module event_handler
+*/
 
+App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.eventHandler.prototype */ {
+
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.preload( );
     this.afterLoad( );
   },
 
+  /**
+  Avant chargement
+  */
   preload: function ( ) {
     var preload = new App.Models.preload( ),
       that = this,
@@ -23,10 +35,17 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   },
 
+  /**
+  Après chargement
+  */
   afterLoad: function ( ) {
     this.listenToOnce( app, 'load:ended', this.move );
   },
 
+  /**
+  Dessin de la carte
+  @param firstmap première carte à dessiner
+  */
   drawMap: function ( firstMap ) {
     firstMap.initMap( );
     var myCanvas = new App.Models.Canvas( {
@@ -43,18 +62,38 @@ App.Views.eventHandler = Backbone.View.extend( {
     drawingView.listenToOnce( app, 'resized:ok', drawingView.render );
   },
 
-
+  /**
+    position initiale
+    @enum {entier}
+  */
   intialPos: {
+    /** abscisse
+      @type {entier} */
     "i": 0,
+    /** ordonnée
+     @type {entier} */
     "j": 0
   },
 
+  /**
+    carte courante
+    @type {entier}
+  */
   curMap: 0,
 
+  /**
+    @enum
+  */
   oNames: {},
 
+  /**
+    @type {table}
+  */
   oId: [ ],
 
+  /**
+    Mouvement
+  */
   move: function ( ) {
     var myMove = new App.Models.Move( ),
       socket = io.connect( 'http://localhost:19872' ),
@@ -130,6 +169,9 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   },
 
+  /**
+    Vérification des mouvements
+  */
   checkChange: function ( pos ) {
     var m = App.models.transitions.get( "transitions" )[ this.curMap ],
       l = ( m && m.length ) || 0;
@@ -142,6 +184,10 @@ App.Views.eventHandler = Backbone.View.extend( {
     }
   },
 
+  /**
+    Enregistrement d'un joueur
+    @param {object} form Formulaire
+  */
   registerPlayer: function ( form ) {
     var pName = form.playerName.value.trim( );
 
@@ -154,12 +200,19 @@ App.Views.eventHandler = Backbone.View.extend( {
     }
   },
 
+  /**
+    Destruction de la fenâtre d'enregistrement
+  */
   destroyReg: function ( ) {
     var regCont = $( "#regCont" );
 
     regCont.remove( );
   },
 
+  /**
+    Envoi de message
+    @param {object} data Données à transmettre
+  */
   sendMessage: function ( data ) {
     var dest = data.destinataire,
       priv = false;

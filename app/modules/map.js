@@ -1,5 +1,14 @@
-App.Models.Map = Backbone.Model.extend( {
+/**
+  Module carte
+  @module map
+*/
 
+App.Models.Map = Backbone.Model.extend( /** @lends module:map.Map.prototype */ {
+
+  /** 
+  * @augments Backbone.Model
+  * @constructs 
+  */
   initMap: function ( ) {
 
     var tileWidth = this.get( "tilewidth" ),
@@ -19,12 +28,16 @@ App.Models.Map = Backbone.Model.extend( {
   }
 } );
 
-App.Collections.Maps = Backbone.Collection.extend( {
+/**
+  * @class Maps
+  * @augments Backbone.Collection
+  */
+App.Collections.Maps = Backbone.Collection.extend( /** @lends module:map~Maps.prototype */ {
   url: 'assets/resources/map/forum.json',
   model: App.Models.Map
 } );
 
-App.Views.DrawMap = Backbone.View.extend( {
+App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototype */ {
 
   el: '#charactersCanvas',
 
@@ -32,6 +45,10 @@ App.Views.DrawMap = Backbone.View.extend( {
     "mousedown": "mapClicked"
   },
 
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.stage = App.Stages.mapStage;
     this.refresh( );
