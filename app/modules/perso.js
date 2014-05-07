@@ -1,12 +1,25 @@
-App.Models.Perso = Backbone.Model.extend( {
+/**
+  Module personnage
+  @module perso
+*/
+
+
+App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.prototype */ {
   defaults: {
     "moving": false
   },
 
+  /**
+  Function de changement de chemin
+  */
   changeWay: function ( way ) {
     this.set( 'way', way );
   },
 
+  /** 
+  * @augments Backbone.Model
+  * @constructs 
+  */
   initialize: function ( ) {
     this.pop( );
     this.on( 'change:way', this.newMove );
@@ -113,8 +126,12 @@ App.Models.Perso = Backbone.Model.extend( {
   moving: {}
 } );
 
-App.Views.Perso = Backbone.View.extend( {
+App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prototype */ {
 
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.createCont( );
     this.model.on( 'change:currentPos', this.move );
@@ -137,14 +154,17 @@ App.Views.Perso = Backbone.View.extend( {
   },
 
   createCont: function ( ) {
-    var cont = new createjs.Container( );
+    var cont = new createjs.Container( ), perso = this.model.get( "perso" )
 
+    console.log(App.Stages.mapStage);
     cont.name = "player";
     cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-    cont.addChild( this.model.get( "perso" ) );
+    perso.x = this.model.get( "currentPos" ).j * tw;
+    perso.y = this.model.get( "currentPos" ).i * tw;
+    cont.addChild( perso );
     App.Stages.mapStage.addChild( cont );
   }
 

@@ -1,5 +1,21 @@
-App.Models.Move = Backbone.Model.extend( {
+/**
+  Module mouvement
+  @module move
+*/
 
+/**
+  @class Models/Move
+  @augments Backbone.Model
+*/
+App.Models.Move = Backbone.Model.extend( /** @lends module:move~Models/Move.prototype */ {
+  /**
+    Mouvement
+    @param {} fromI
+    @param {} fromJ
+    @param {} toI
+    @param {} toJ
+    @param {} layerWidth
+  */
   move: function ( fromI, fromJ, toI, toJ, layerWidth ) {
     var way;
     this.set( "hashMove", toI * layerWidth + toJ );

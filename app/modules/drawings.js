@@ -1,11 +1,30 @@
-App.Views.Drawings = Backbone.View.extend( {
+/**
+  @fileOverview Fonctions de dessin
+  @module drawings
+*/
 
+
+App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.prototype */ {
+  /**
+  * @type string
+  */
   el: '#mapCanvas',
 
+  /**  
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
 
   },
 
+  /**
+    Dessine du texte
+    @param {string} text Texte transmis
+    @param {object} pos Position
+    @param {number} id Emetteur
+    @param {number} dest Destinataire
+  */
   drawText: function ( text, pos, id, dest ) {
     var former, s, tName = "texte" + id,
       h = Math.ceil( text.length / 15 ),
@@ -40,10 +59,19 @@ App.Views.Drawings = Backbone.View.extend( {
     }
   },
 
+  /**
+    Selection de la couleur à utiliser
+    @param {String} dest Destinataire
+    @returns {String} Couleur à utiliser
+  */
   selectColor: function ( dest ) {
     return ( ( dest == "me" && "red" ) || ( dest == "classic" && "black" ) || ( dest == "all" && "brown" ) || "blue" );
   },
 
+  /**
+    Effacement de texte
+    @param {number} id Id du joueur
+  */
   removeText: function ( id ) {
     var others = App.Stages.characterStage.getChildByName( "others" ),
       text = others.getChildByName( "texte" + id );
@@ -51,6 +79,12 @@ App.Views.Drawings = Backbone.View.extend( {
       others.removeChild( text );
   },
 
+  /**
+    Déplacement du texte
+    @param {number} id Id du joueur
+    @param {number} diffI Différence en abscisse
+    @param {number} diffJ Différence en ordonnée
+  */
   moveAndText: function ( id, diffI, diffJ ) {
 
     var others = App.Stages.characterStage.getChildByName( "others" ),
@@ -63,6 +97,11 @@ App.Views.Drawings = Backbone.View.extend( {
     }
   },
 
+  /**
+    Apparition du nom de personnage
+    @param {name} name Nom du personnage
+    @param {number} id Id du personnage
+  */
   showName: function ( pos, name, id ) {
     var former, tName = "name" + id,
       h = Math.ceil( name.length / 15 ),
@@ -80,6 +119,10 @@ App.Views.Drawings = Backbone.View.extend( {
     App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
   },
 
+  /**
+    Effacement du nom d'un personnage
+    @param {number} id Id du joueur
+  */
   removeName: function ( id ) {
     var others = App.Stages.characterStage.getChildByName( "others" ),
       text = others.getChildByName( "name" + id );

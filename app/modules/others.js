@@ -1,5 +1,14 @@
-App.Models.OtherPlayer = Backbone.Model.extend( {
+/**
+  Module autres
+  @module others
+*/
 
+App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/OtherPlayer.prototype */ {
+
+  /** 
+  * @augments Backbone.Model
+  * @constructs 
+  */
   initialize: function ( ) {
     this.pop( );
     this.on( 'change', this.move );
@@ -42,7 +51,11 @@ App.Models.OtherPlayer = Backbone.Model.extend( {
   }
 } );
 
-App.Collections.OtherPlayers = Backbone.Collection.extend( {
+/**
+  * @class Collections/OtherPlayers
+  * @augments Backbone.Collection
+*/
+App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:others~Collections/OtherPlayers.prototype */ {
 
   pop: function ( data ) {
     var player = new this.model( data );
@@ -73,8 +86,12 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( {
 
 } );
 
-App.Views.OtherPlayers = Backbone.View.extend( {
+App.Views.OtherPlayers = Backbone.View.extend( /** @lends module:others.Views/OtherPlayers.prototype */ {
 
+  /** 
+  * @augments Backbone.View
+  * @constructs 
+  */
   initialize: function ( ) {
     this.newCont( );
   },

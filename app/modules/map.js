@@ -1,6 +1,15 @@
-App.Models.Map = Backbone.Model.extend( {
+/**
+  Module carte
+  @module map
+*/
 
-  initMap: function ( ) {
+App.Models.Map = Backbone.Model.extend( /** @lends module:map.Map.prototype */ {
+
+  /**
+  * @augments Backbone.Model
+  * @constructs
+  */
+  initMap: function ( bool ) {
 
     var tileWidth = this.get( "tilewidth" ),
       tileHeight = this.get( "tileheight" ),
@@ -11,20 +20,22 @@ App.Models.Map = Backbone.Model.extend( {
 
     this.set( {
       'mapWidth': mapWidth,
-      'mapHeight': mapHeight,
-      'currentX': mapWidth / 2,
-      'currentY': mapHeight / 2
-    } );
+      'mapHeight': mapHeight
+    }, {silent: bool} );
 
   }
 } );
 
-App.Collections.Maps = Backbone.Collection.extend( {
+/**
+  * @class Maps
+  * @augments Backbone.Collection
+  */
+App.Collections.Maps = Backbone.Collection.extend( /** @lends module:map~Maps.prototype */ {
   url: 'assets/resources/map/forum.json',
   model: App.Models.Map
 } );
 
-App.Views.DrawMap = Backbone.View.extend( {
+App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototype */ {
 
   el: '#charactersCanvas',
 
@@ -32,6 +43,10 @@ App.Views.DrawMap = Backbone.View.extend( {
     "mousedown": "mapClicked"
   },
 
+  /**
+  * @augments Backbone.View
+  * @constructs
+  */
   initialize: function ( ) {
     this.stage = App.Stages.mapStage;
     this.refresh( );
@@ -96,10 +111,12 @@ App.Views.DrawMap = Backbone.View.extend( {
   moveContainer: function ( e ) {
     var cont = App.Stages.mapStage.getChildAt( 0 ),
       contOthers = App.Stages.characterStage.getChildByName( "others" );
-    cont.x = -e.get( "currentX" );
-    cont.y = -e.get( "currentY" );
-    contOthers.x = -e.get( "currentX" );
-    contOthers.y = -e.get( "currentY" );
+    if ( cont && contOthers ) {
+      cont.x = -e.get( "currentX" );
+      cont.y = -e.get( "currentY" );
+      contOthers.x = -e.get( "currentX" );
+      contOthers.y = -e.get( "currentY" );
+    }
   },
 
   addFrames: function ( container ) {

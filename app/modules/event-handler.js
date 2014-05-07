@@ -1,10 +1,22 @@
-App.Views.eventHandler = Backbone.View.extend( {
+/**
+  @fileOverview Description du gestionnaire d'évènements.
+  @module event_handler
+*/
 
+App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.eventHandler.prototype */ {
+
+  /**
+  * @augments Backbone.View
+  * @constructs
+  */
   initialize: function ( ) {
     this.preload( );
     this.afterLoad( );
   },
 
+  /**
+  Avant chargement
+  */
   preload: function ( ) {
     var preload = new App.Models.preload( ),
       that = this,
@@ -13,22 +25,32 @@ App.Views.eventHandler = Backbone.View.extend( {
       } );
 
     preloadView.listenToOnce( app, 'preload:ended', function ( map ) {
-      that.intialPos = {
+      that.initialPos = {
         "i": map.get( "height" ) / 2,
         "j": map.get( "width" ) / 2
       };
+      map.set( {
+        currentX: that.initialPos.j * App.tw,
+        currentY: that.initialPos.i * App.tw
+      } );
       preloadView.loadPersos( );
       that.drawMap( map );
-    } );
-
+    } )
   },
 
+  /**
+  Après chargement
+  */
   afterLoad: function ( ) {
     this.listenToOnce( app, 'load:ended', this.move );
   },
 
-  drawMap: function ( firstMap ) {
-    firstMap.initMap( );
+  /**
+  Dessin de la carte
+  @param firstmap première carte à dessiner
+  */
+  drawMap: function ( map ) {
+    map.initMap( false );
     var myCanvas = new App.Models.Canvas( {
       registering: true
     } ),
@@ -36,44 +58,101 @@ App.Views.eventHandler = Backbone.View.extend( {
         model: myCanvas
       } ),
       drawingView = new App.Views.DrawMap( {
-        model: firstMap
-      } );
+        model: map
+      } ),
+      that = this;
 
     drawingView.listenTo( app, 'move:container', drawingView.moveCont );
     drawingView.listenToOnce( app, 'resized:ok', drawingView.render );
+    that.listenTo( app, 'change:map', function ( ) {
+      map.collection.url = 'assets/resources/map/' + App.models.transitions.get( "maps" )[ that.curMap ];
+      map.collection.fetch( {
+        success: function ( coll, resp, opt ) {
+          map.set( {
+            currentX: that.initialPos.j * App.tw,
+            currentY: that.initialPos.i * App.tw
+          } );
+          that.listenToOnce( app, 'load:ended', function ( ) {
+            app.trigger( 'changed:map' );
+          } )
+          map.initMap( true );
+          drawingView.render( myCanvas.get( "width" ), myCanvas.get( "height" ) );
+        },
+
+        error: function ( coll, resp, opt ) {
+          console.log( 'Une erreur c\' est dûr' );
+          $( 'body' ).html( 'Une erreur est survenue lors du chargement des données !' )
+        }
+      } )
+    } );
   },
 
-
+  /**
+    position initiale
+    @enum {entier}
+  */
   intialPos: {
+    /** abscisse
+      @type {entier} */
+
     "i": 0,
+    /** ordonnée
+     @type {entier} */
     "j": 0
   },
 
+  /**
+    carte courante
+    @type {entier}
+  */
   curMap: 0,
 
+  /**
+    @enum
+  */
   oNames: {},
 
+  /**
+    @type {table}
+  */
   oId: [ ],
+
+
+  /**
+    Mouvement
+  */
+  changeMap: function ( ) {
+    App.Stages.mapStage.removeAllChildren( );
+    App.Stages.characterStage.removeAllChildren( );
+    app.trigger( 'change:map' );
+  },
 
   move: function ( ) {
     var myMove = new App.Models.Move( ),
       socket = io.connect( 'http://localhost:19872' ),
       others = new App.Collections.OtherPlayers( ),
-      pnjs = new App.Collections.Pnjs( ),
-      othersView = new App.Views.OtherPlayers( {
+      //pnjs = new App.Collections.Pnjs( ),
+      /*othersView = new App.Views.OtherPlayers( {
         collection: others
       } ),
-      /*pnjsView = new App.Views.handlePnj(
+      pnjsView = new App.Views.handlePnj(
         {collection: pnjs}
         ),*/
+      othersView = null,
       hashMove = -1,
       that = this,
-      myPerso, myView, way;
+      myPerso = null,
+      myView, way;
 
     $( "#register" ).css( "display", "block" );
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
+        if ( !othersView )
+          othersView = new App.Views.OtherPlayers( {
+            collection: others
+          } )
+        pnjs = new App.Collections.Pnjs( ),
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,
@@ -107,6 +186,32 @@ App.Views.eventHandler = Backbone.View.extend( {
             "j": 43
           }, 1000, "all" );
         } );
+        myMove.listenTo( app, 'change:map', function ( ) {
+          // myPerso.set( {
+          //   "currentPos": that.initialPos
+          // }, {
+          //   silent: true
+          // } );
+          App.socket.emit( 'quitMap' );
+        } );
+        myMove.listenTo( app, 'changed:map', function ( ) {
+          othersView.stopListening();
+          myPerso.stopListening();
+          myMove.stopListening();
+          myView.stopListening();
+          others.reset();
+          myPerso = null;
+          othersView = null;
+
+          console.log('ici', this.curMap);
+          App.socket.emit( 'ready', {
+            initPos: that.initialPos,
+            pName: that.pName,
+            map: that.curMap
+          } );
+          // myView.createCont( );
+          // othersView.newCont( );
+        } );
       } else {
         others.pop( data );
         App.oNames[ data.pName ] = data.id;
@@ -137,36 +242,60 @@ App.Views.eventHandler = Backbone.View.extend( {
 
   },
 
+  /**
+    Vérification des mouvements
+  */
   checkChange: function ( pos ) {
     var m = App.models.transitions.get( "transitions" )[ this.curMap ],
-      l = ( m && m.length ) || 0;
+      l = ( m && m.length ) || 0,
+      tempChange = [ ],
+      nextPos = null;
 
     for ( var i = 0; i < l; i++ ) {
-      if ( m[ i ][ 0 ] == pos.i ) {
-        if ( m[ i ][ 1 ] == pos.j )
-          console.log( m[ i ] );
+      tempChange = m[ i ];
+      if ( tempChange[ 0 ] == pos.i ) {
+        if ( tempChange[ 1 ] == pos.j ) {
+          this.curMap = tempChange[ 2 ];
+          nextPos = App.models.transitions.get( "transitions" )[ tempChange[ 2 ] ][ tempChange[ 3 ] ];
+          this.initialPos.i = nextPos[ 0 ];
+          this.initialPos.j = nextPos[ 1 ];
+          this.changeMap( );
+        }
       }
     }
   },
 
+  /**
+    Enregistrement d'un joueur
+    @param {object} form Formulaire
+  */
   registerPlayer: function ( form ) {
     var pName = form.playerName.value.trim( );
 
+    this.pName = pName;
+
     if ( pName && pName.length > 5 ) {
       App.socket.emit( 'ready', {
-        initPos: this.intialPos,
+        initPos: this.initialPos,
         pName: pName,
-        map: 0
+        map: this.curMap
       } );
     }
   },
 
+  /**
+    Destruction de la fenâtre d'enregistrement
+  */
   destroyReg: function ( ) {
     var regCont = $( "#regCont" );
 
     regCont.remove( );
   },
 
+  /**
+    Envoi de message
+    @param {object} data Données à transmettre
+  */
   sendMessage: function ( data ) {
     var dest = data.destinataire,
       priv = false;
