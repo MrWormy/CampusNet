@@ -2,6 +2,7 @@
 
 body {
 	margin: 0px;
+	min-width: 580px;
 	text-align: center;
 	font-family: 'Open Sans', 'sans-serif';
 	background-color: #EEEEEE;
