@@ -154,14 +154,17 @@ App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prot
   },
 
   createCont: function ( ) {
-    var cont = new createjs.Container( );
+    var cont = new createjs.Container( ), perso = this.model.get( "perso" )
 
+    console.log(App.Stages.mapStage);
     cont.name = "player";
     cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-    cont.addChild( this.model.get( "perso" ) );
+    perso.x = this.model.get( "currentPos" ).j * tw;
+    perso.y = this.model.get( "currentPos" ).i * tw;
+    cont.addChild( perso );
     App.Stages.mapStage.addChild( cont );
   }
 

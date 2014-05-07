@@ -30,7 +30,6 @@ Variable app
 */
 var app = {}
 _.extend( app, Backbone.Events );
-console.log(Backbone.Events);
 
 
 $( function ( ) {

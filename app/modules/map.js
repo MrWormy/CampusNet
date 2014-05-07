@@ -5,11 +5,11 @@
 
 App.Models.Map = Backbone.Model.extend( /** @lends module:map.Map.prototype */ {
 
-  /** 
+  /**
   * @augments Backbone.Model
-  * @constructs 
+  * @constructs
   */
-  initMap: function ( ) {
+  initMap: function ( bool ) {
 
     var tileWidth = this.get( "tilewidth" ),
       tileHeight = this.get( "tileheight" ),
@@ -20,10 +20,8 @@ App.Models.Map = Backbone.Model.extend( /** @lends module:map.Map.prototype */ {
 
     this.set( {
       'mapWidth': mapWidth,
-      'mapHeight': mapHeight,
-      'currentX': mapWidth / 2,
-      'currentY': mapHeight / 2
-    } );
+      'mapHeight': mapHeight
+    }, {silent: bool} );
 
   }
 } );
@@ -45,9 +43,9 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
     "mousedown": "mapClicked"
   },
 
-  /** 
+  /**
   * @augments Backbone.View
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.stage = App.Stages.mapStage;
@@ -113,10 +111,12 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
   moveContainer: function ( e ) {
     var cont = App.Stages.mapStage.getChildAt( 0 ),
       contOthers = App.Stages.characterStage.getChildByName( "others" );
-    cont.x = -e.get( "currentX" );
-    cont.y = -e.get( "currentY" );
-    contOthers.x = -e.get( "currentX" );
-    contOthers.y = -e.get( "currentY" );
+    if ( cont && contOthers ) {
+      cont.x = -e.get( "currentX" );
+      cont.y = -e.get( "currentY" );
+      contOthers.x = -e.get( "currentX" );
+      contOthers.y = -e.get( "currentY" );
+    }
   },
 
   addFrames: function ( container ) {
