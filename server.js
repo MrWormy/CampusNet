@@ -5,7 +5,7 @@ var express = require( 'express' ),
   play = require("./Game.js"),
   game = new play.Game();
 
-server.listen( 19873 );
+server.listen( 19872 );
 
 app.get( '/', function ( req, res ) {
   res.sendfile( __dirname + '/index.html' );

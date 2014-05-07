@@ -59,11 +59,13 @@ App.Views.eventHandler = Backbone.View.extend( {
     var myMove = new App.Models.Move( ),
       socket = io.connect( 'http://localhost:19872' ),
       others = new App.Collections.OtherPlayers( ),
+      pnjs = new App.Collections.Pnjs( ),
       othersView = new App.Views.OtherPlayers( {
         collection: others
       } ),
-      pnjsView = new App.Views.handlePnj(),
-      //pnjs = new App.Collections.Pnjs( ),
+      /*pnjsView = new App.Views.handlePnj(
+        {collection: pnjs}
+        ),*/
       hashMove = -1,
       that = this,
       myPerso, myView, way;
@@ -125,6 +127,9 @@ App.Views.eventHandler = Backbone.View.extend( {
     socket.on( "message", function ( data ) {
       others.message( data );
     } );
+    socket.on("reponse_pnj", function(data) {
+      pnjs.message(data);
+    })
 
     this.listenTo( app, 'register', this.registerPlayer );
     this.listenTo( app, 'send:message', this.sendMessage );

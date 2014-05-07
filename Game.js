@@ -2,7 +2,6 @@ exports.Game = function() {
 	this.maps = [];
 	this.maps.push(new Map());
 	this.maps.push(new Map());
-	this.quetes = require("./quete.js").liste;
 
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
@@ -15,6 +14,7 @@ var Guy = function(socket, id, pName, initPos, Map) {
 	this.pos = initPos;
 	this.pName = pName;
 	this.id = id;
+	this.quetes = require("./quete.js").liste;
 
 	Map.emit("popGuy", {id: this.id, pName: pName, pos: this.pos}, this.id);
 
@@ -46,15 +46,27 @@ var Guy = function(socket, id, pName, initPos, Map) {
 	});
 
 	socket.on("parler_pnj", function(id) {
-		for (var i=0 ; i<this.quetes.length ; i++) {
-			if (this.quetes[i].status==unlocked) {
-				if (this.quetes.objet.type=="parler_pnj" && this.quetes.objet.id_pnj==id) {
-					return this.quetes.objet.dialogue;
+		var hesaidit = false;
+		for (var i=0 ; i<that.quetes.length ; i++) {
+			if (that.quetes[i].status=="unlocked") {
+				if (that.quetes[i].objet.type=="parler_pnj" && that.quetes[i].objet.id_pnj==id) {
+					socket.emit("reponse_pnj", {id: id, texte: that.quetes[i].objet.dialogue});
+					that.valider_quete(i);
+					hesaidit = true;
 				}
 			}
 		}
-		return null; // Si aucune quete ne corresond, on affichera le texte de base
+		if (!hesaidit) {
+			socket.emit("reponse_pnj", {id: id, texte: undefined});; // Si aucune quete ne corresond, on affichera le texte de base
+		}
 	});
+
+	this.valider_quete = function(id) {
+		this.quetes[id].status = "locked";
+		for (var i=0 ; i<this.quetes[id].finish.length ; i++) {
+			this.quetes[this.quetes[id].finish[i]].status = "unlocked";
+		}
+	}
 
 }
 
