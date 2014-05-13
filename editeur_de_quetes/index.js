@@ -1,16 +1,3 @@
-/*
-var chargement = function() {
-	console.log(exports.liste);
-	for (var i=0 ; i<exports.liste.length ; i++) {
-			
-	}
-}
-
-chargement();
-*/
-
-
-
 var App = {
 	Models: {},
 	Views: {},
