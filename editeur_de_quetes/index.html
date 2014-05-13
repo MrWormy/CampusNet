@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta charset="utf-8">
+		<link type="text/css" rel="stylesheet" href="index.css">
+	</head>
+	<body>
+		<div id="main_menu">
+			Id : <span id="id"></span><br />
+			<input type="checkbox" name="immediat" id="immediat" /><label for="immediat">Disponibilité immédiate</label><br />
+			Pnj : <span id="pseudo"></span><br />
+			Texte : <input type="texte" id="dialogue" size=60 /><input type="button" id="dialogue_button" value="Modifier" /><br />
+			Texte hors quête : <input type="texte" id="texte" size=60 /><input type="button" id="texte_button" value="Modifier" /><br />
+			Quêtes débloquée par cette quête : <input type="number" id="numero_quete" /><input type="button" id="ajouter_suite" value="Ajouter" /><input type="button" id="retirer_suite" value="Retirer" /><br />
+			<span id="quetes_debloquees"></span><br />
+			<input type="button" name="exporter" id="exporter" />
+		</div>
+		<div id="liste_persos">
+		</div>
+
+		<script type="text/javascript" src="../assets/jquery/dist/jquery.js"></script>
+		<script type="text/javascript" src="../assets/underscore/underscore.js"></script>
+		<script type="text/javascript" src="../assets/backbone/backbone.js"></script>
+
+		<script type="text/javascript">
+			var exports = {};
+		</script>
+		<script type="text/javascript" src="../quete.js"></script>
+		<script type="text/javascript" src="index.js"></script>
+	</body>
+
+</html>
