@@ -21,6 +21,9 @@ app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 app.use( '/editeur_de_quetes', express.static( __dirname + '/editeur_de_quetes' ) );
+app.get( '/quete.js', function ( req, res ) {
+  res.sendfile( __dirname + '/quete.js' );
+} );
 
 io.sockets.on( 'connection', function ( socket ) {
   socket.on('ready', function(data){
