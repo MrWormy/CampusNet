@@ -7,6 +7,17 @@ var App = {
 App.Models.Pnj = Backbone.Model.extend({
 	initialize: function() {
 		ListePNJs.afficher_pnj(this.get("id"), this.get("pName"));
+	},
+
+	getObject: function() {
+		var objet = {};
+		objet.id = this.get("id");
+		objet.objet = {};
+		objet.objet.dialogue = this.get("dialogue");
+		objet.objet.type = "parler_pnj";
+		objet.objet.id_pnj = this.get("id");
+		objet.status = this.get("status");
+		return objet;
 	}
 });
 
@@ -125,7 +136,12 @@ App.Views.Coordonnees = Backbone.View.extend({
 	},
 
 	exporter: function() {
-		alert("Cette fonctionnalité de marche pas encore ! C'est bête hein ?");
+		var objet = [];
+		for(var i=0 ; i<Pnjs.size() ; i++) {
+			objet.push(Pnjs.get(i).getObject());
+		}
+		console.log(objet);
+		alert("Cette fonctionnalité ne marche pas encore ! C'est bête hein ?");
 	}
 });
 

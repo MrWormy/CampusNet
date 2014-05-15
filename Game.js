@@ -100,12 +100,12 @@ var Map = function() {
 				return null;
 			}
 		}
-		if (this.idnew == this.guys.length) {
-			this.guys.unshift(new Guy(socket, this.guys.length, pName, initPos, this));
-		} else {
-			this.guys[this.guys.length - 1 - this.idnew] = new Guy(socket, this.guys.length, pName, initPos, this);
-		}
 		this.calculeridnew();
+		if (this.idnew == this.guys.length) {
+			this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this));
+		} else {
+			this.guys[this.guys.length - 1 - this.idnew] = new Guy(socket, this.idnew, pName, initPos, this);
+		}
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {
@@ -117,7 +117,7 @@ var Map = function() {
 	/**
 	*/
 	this.calculeridnew = function() {
-		for (var i=this.idnew ; i<this.guys.length-1 ; i++) {
+		for (var i=0 ; i<this.guys.length ; i++) {
 			if (this.guys[this.guys.length - 1 - i] == undefined) {
 				this.idnew = i;
 				return 0;
@@ -143,7 +143,11 @@ var Map = function() {
 		@param {} id
 	*/
 	this.deletePlayer = function(id) {
+		console.log(this.guys);
 		delete this.guys[this.guys.length - 1 - id];
+		this.guys.splice(this.guys.length - 1 - id, 1);
+		console.log(this.guys);
+		console.log(this.guys.length);
 		this.emit("aurevoir", id, id);
 	}
 }
