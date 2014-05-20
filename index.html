@@ -18,14 +18,14 @@
             <div id="navbar">
                 <form id="message" onSubmit="app.trigger('message', this);
                         return false;" target = "_blank" name = "dialogue">
-                        <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/talk48.png')" title="Discussion">
-                    <input id="messageInput" type="text" autocomplete="off" maxlength=140 name="texte" title="Saisir un message">
-                    <input id="messageSend" type="submit" class="navbutton" name="parler" style="background-image: url('assets/resources/icons/send48.png');" title="Envoyer">
-                    <span class="espace"></span>
+                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/talk48.png')" title="Discussion">
+                    <span id="messaging">
+                        <input id="messageInput" type="text" autocomplete="off" maxlength=140 name="texte" title="Saisir un message">
+                        <input id="messageSend" type="submit" class="navbutton" name="parler" style="background-image: url('assets/resources/icons/send48.png'); margin-right: 63px;" title="Envoyer">
+                    </span>
                     <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/quest48.png')" title="Quetes">
                     <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/position48.png')" title="Carte">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/profile48.png')" title="Profil">
-                    <span class="espace"></span>
+                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/profile48.png'); margin-right: 63px;" title="Profil">
                     <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/loud48.png')" title="Son">
                     <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/help48.png')" title="Aide">
                     <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/param48.png')" title="Parametres">
