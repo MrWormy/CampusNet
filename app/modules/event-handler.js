@@ -12,6 +12,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
   initialize: function ( ) {
     this.preload( );
     this.afterLoad( );
+    this.mobileEvents();
   },
 
   /**
@@ -43,6 +44,22 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
   */
   afterLoad: function ( ) {
     this.listenToOnce( app, 'load:ended', this.move );
+  },
+
+  mobileEvents: function(){
+    var isMobile = App.mobilecheck();
+    if(isMobile){
+      $("#register").click(function (e){
+        e.preventDefault();
+        playName = prompt("Entrez un pseudo de 6 lettres ou plus", "Ex: Michel");
+        app.trigger( "register", playName );
+      });
+      $("#messaging").click(function (e){
+        e.preventDefault();
+        sentMessage = prompt("Saisir un message");
+        app.trigger( "message", sentMessage );
+      });
+    }
   },
 
   /**
@@ -142,7 +159,8 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       hashMove = -1,
       that = this,
       myPerso = null,
-      myView, way;
+      myView, way,
+      isMobile = App.mobilecheck();
 
     $( "#register" ).css( "display", "block" );
     App.socket = socket;
@@ -169,7 +187,12 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         myMove.listenTo( app, 'move:bg', function ( data ) {
           console.log( data );
         } );
-        myPerso.listenTo( app, 'message', myPerso.sendMessage );
+        
+        if(isMobile){
+          myPerso.listenTo( app, 'message', myPerso.sendMessageMobile );
+        }else{
+          myPerso.listenTo( app, 'message', myPerso.sendMessage );
+        }
         App.map[ 2143 ] = 2;
         others.pop( {
           "id": 1000,
@@ -235,8 +258,11 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     socket.on("reponse_pnj", function(data) {
       pnjs.message(data);
     })
-
-    this.listenTo( app, 'register', this.registerPlayer );
+    if(isMobile){
+      this.listenTo( app, 'register', this.registerPlayerMobile );
+    }else{
+      this.listenTo( app, 'register', this.registerPlayer );
+    } 
     this.listenTo( app, 'send:message', this.sendMessage );
     this.listenTo( app, 'way:end', this.checkChange );
 
@@ -270,7 +296,21 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     @param {object} form Formulaire
   */
   registerPlayer: function ( form ) {
-    var pName = form.playerName.value.trim( );
+    var pName = form.playerName.value.trim( );  
+
+    this.pName = pName;
+
+    if ( pName && pName.length > 5 ) {
+      App.socket.emit( 'ready', {
+        initPos: this.initialPos,
+        pName: pName,
+        map: this.curMap
+      } );
+    }
+  },
+
+  registerPlayerMobile: function (playName){
+    var pName = playName;
 
     this.pName = pName;
 

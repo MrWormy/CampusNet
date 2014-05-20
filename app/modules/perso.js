@@ -123,6 +123,19 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
     }
   },
 
+  sendMessageMobile: function(sentMessage){
+    var info, message = sentMessage,
+     data = {};
+    if ( message != "" ) {
+      data = this.parseData( message );
+      if ( data.msg ) {
+        if ( data.destinataire != "me" )
+          app.trigger( "send:message", data );
+        App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ), data.destinataire );
+      }
+    }
+  },
+
   moving: {}
 } );
 
