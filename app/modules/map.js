@@ -124,10 +124,15 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
       tileWidth = this.model.get( "tilewidth" ),
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" ),
+      layerHeight = this.model.get( "height" ),
       tileSet = this.model.get( "tilesets" )[ 0 ],
       tsW = Math.floor( tileSet.imagewidth / tileWidth ),
       ll = layers.length,
       dl;
+
+      for ( var k = 0; k < layerWidth * layerHeight; k++ ) {
+        App.map[ k ] = 2;
+      }
 
     for ( var i = 1; i <= ll; i++ ) {
       var type, layer = this.model.get( "layers" )[ i - 1 ],
