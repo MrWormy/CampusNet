@@ -126,6 +126,18 @@ a {
 	transition: background 0.5s;
 }
 
+#main_menu {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
+#menu_pnjs {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
 aside {
 	min-width: 300px;
 	background-color: grey;

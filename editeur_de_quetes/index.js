@@ -55,7 +55,7 @@ App.Views.ListePNJs = Backbone.View.extend({
 	},
 
 	afficher_pnj: function(id, nom) {
-		var element = "<div class='pnj'>" + id + " - " + nom + "</div>";
+		var element = "<option class='pnj'>" + id + " - " + nom;
 		this.el.innerHTML += element;
 	},
 
