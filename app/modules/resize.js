@@ -54,6 +54,9 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
       charCan = $( "#charactersCanvas" )[ 0 ],
       contCan = $( "#canvasContainer" ),
       navbar = $("#navbar");
+      if(/WebKit/.test(navigator.userAgent)){
+        $("#messaging").css({'position' : 'relative', 'bottom' : '14px'})
+      }
     this.set( {
       'height': height,
       'width': width
