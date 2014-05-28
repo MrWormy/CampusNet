@@ -11,7 +11,6 @@ exports.Game = function() {
 
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
-		console.log(data.map);
 	}
 }
 
@@ -35,7 +34,7 @@ var Guy = function(socket, id, pName, initPos, Map) {
 
 	socket.on("iMove", function(data) {
 		that.pos = data;
-		socket.broadcast.emit("iMove", {id: that.id, pos: data});
+		Map.emit("iMove", {id: that.id, pos: data});
 	});
 
 	socket.on("disconnect", function() {
@@ -81,6 +80,13 @@ var Guy = function(socket, id, pName, initPos, Map) {
 		for (var i=0 ; i<this.quetes[id].finish.length ; i++) {
 			this.quetes[this.quetes[id].finish[i]].status = "unlocked";
 		}
+	}
+
+	this.removeMap = function() {
+		socket._events.iMove = null;
+		socket._events.disconnect = null;
+		socket._events.quitMap = null;
+		socket._events.parler_pnj = null;
 	}
 
 }
@@ -147,11 +153,9 @@ var Map = function() {
 		@param {} id
 	*/
 	this.deletePlayer = function(id) {
-		console.log(this.guys);
+		this.guys[this.guys.length - 1 - id].removeMap();
 		delete this.guys[this.guys.length - 1 - id];
 		this.guys.splice(this.guys.length - 1 - id, 1);
-		console.log(this.guys);
-		console.log(this.guys.length);
 		this.emit("aurevoir", id, id);
 	}
 }
