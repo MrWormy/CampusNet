@@ -2,9 +2,12 @@
 Game
 */
 exports.Game = function() {
+
+	var listeDesMaps = require("./assets/resources/map/transitions.json");
 	this.maps = [];
-	this.maps.push(new Map());
-	this.maps.push(new Map());
+	for ( var i=0 ; i<listeDesMaps.maps.length ; i++ ) {
+		this.maps.push(new Map());
+	}
 
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
