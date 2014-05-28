@@ -203,7 +203,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           myPerso = null;
           othersView = null;
 
-          console.log('ici', this.curMap);
+          console.log('ici', that.curMap);
           App.socket.emit( 'ready', {
             initPos: that.initialPos,
             pName: that.pName,

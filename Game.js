@@ -8,6 +8,7 @@ exports.Game = function() {
 
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
+		console.log(data.map);
 	}
 }
 
