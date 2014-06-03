@@ -166,11 +166,11 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
-        if ( !othersView ) //NOUVELLE MAP !!
+        if ( !othersView )
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
-        pnjs = new App.Collections.Pnjs( ),
+        pnjs = new App.Collections.Pnjs( 0 ), //Hum hum
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,

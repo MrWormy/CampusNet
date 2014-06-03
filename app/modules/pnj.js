@@ -2,7 +2,6 @@ App.Models.Pnj = Backbone.Model.extend( {
 	initialize: function() {
 
     //  App.map[ pos ] = 2; ligne 169, event-handler
-
 		var perso = new createjs.Sprite( App.perso ),
 			tw = App.tw,
 			that = this;
@@ -20,7 +19,14 @@ App.Models.Pnj = Backbone.Model.extend( {
 			App.socket.emit("parler_pnj", that.id);
 		});
 		this.set( "perso", perso );
-		App.Stages.characterStage.getChildByName( "others" ).addChild( perso );
+		this.afficher();
+	},
+
+	afficher: function(id_map) {
+		console.log(this.get("map"), id_map);
+		if (this.get("map") == id_map) {
+			App.Stages.characterStage.getChildByName( "others" ).addChild( this.get("perso") );
+		}
 	},
 
 	parler: function(texte) {
@@ -40,9 +46,13 @@ App.Collections.Pnjs = Backbone.Collection.extend({
 	url: "assets/resources/pnj.json",
 	model: App.Models.Pnj,
 
-	initialize: function() {
+	initialize: function(id_map) {
+		console.log("id_map = ", id_map);
 		this.fetch();
-
+		for (var i=0 ; i<this.length ; i++) {
+			console.log(id_map);
+			this.get(i).afficher(id_map);
+		}
 	},
 
 	message: function(data) {
