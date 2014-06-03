@@ -64,7 +64,7 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
   loadPerso: function ( ) {
     var that = this,
       perso = new Image( );
-    perso.src = "assets/resources/img/etu/etu-m-brown-blue.png";
+    perso.src = "assets/resources/img/skins/etu/etu-m-brown-blue.png";
     perso.onload = function ( ) {
       that.model.set( {
         "perso": perso,
