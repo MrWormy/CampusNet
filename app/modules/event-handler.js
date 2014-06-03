@@ -160,7 +160,8 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       that = this,
       myPerso = null,
       myView, way,
-      isMobile = App.mobilecheck();
+      isMobile = App.mobilecheck(),
+      navbarView = new App.Views.Navbar();
 
     $( "#register" ).css( "display", "block" );
     App.socket = socket;

@@ -2,7 +2,7 @@
 <html>
 
     <head>
-        <title>Bienvenue sur KsioP</title>
+        <title>Campusnet v2</title>
         <meta charset="utf-8">
         <link type="text/css" rel="stylesheet" href="app/css/style.css">
     </head>
@@ -32,9 +32,10 @@
                     <input id="quit" type="button" class="navbutton" style="background-image: url('assets/resources/icons/off64.png')" title="Quitter">
                 </form>
             </div>
+            <div id="infoBox"></div>
         </div>
         <div id="regCont">
-            <div class="shadow">
+            <div id="shadow">
             </div>
             <form id="register" onSubmit="app.trigger('register', this);
                         return false;" target = "_blank" name = "dialogue">
@@ -64,6 +65,7 @@
         <script type="text/javascript" src="app/modules/pnj.js"></script>
         <script type="text/javascript" src="app/modules/others.js"></script>
         <script type="text/javascript" src="app/modules/drawings.js"></script>
+        <script type="text/javascript" src="app/modules/navbar.js"></script>
     </body>
 
 </html>
