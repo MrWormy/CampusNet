@@ -64,7 +64,7 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
   loadPerso: function ( ) {
     var that = this,
       perso = new Image( );
-    perso.src = "assets/resources/img/simple-me.png";
+    perso.src = "assets/resources/img/etu/etu-m-brown-blue.png";
     perso.onload = function ( ) {
       that.model.set( {
         "perso": perso,
@@ -79,10 +79,10 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
     var data = {
       images: [ perso ],
       frames: {
-        width: map.get( "tilewidth" ),
-        height: map.get( "tileheight" ),
-        regX: 0,
-        regY: 0
+        width: map.get( "tilewidth" )*2,
+        height: map.get( "tileheight" )*2,
+        regX: 24,
+        regY: 34
       }
     },
       spriteSheet = new createjs.SpriteSheet( data );

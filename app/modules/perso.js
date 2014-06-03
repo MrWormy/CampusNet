@@ -6,7 +6,8 @@
 
 App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.prototype */ {
   defaults: {
-    "moving": false
+    "moving": false,
+    "curFrame": [0,0,0,0]
   },
 
   /**
@@ -83,7 +84,7 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
 
   pop: function ( ) {
     var perso = new createjs.Sprite( App.perso );
-    perso.gotoAndStop( 2 ),
+    perso.gotoAndStop( 28 ),
     tw = App.tw;
     perso.x = this.get( "currentPos" ).j * tw;
     perso.y = this.get( "currentPos" ).i * tw;
@@ -100,6 +101,7 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
   },
 
   doMove: function ( nextPos ) {
+    that = this;
     if ( nextPos ) {
       this.set( "currentPos", nextPos );
       App.socket.emit( 'iMove', nextPos );
@@ -121,6 +123,20 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
         App.views.drawings.drawText( data.msg, this.get( "currentPos" ), this.get( "id" ), data.destinataire );
       }
     }
+  },
+
+ moveAnim: function (dir) {
+    var curFrame = this.get("curFrame"),
+      that = this;
+    curFrame[dir] = (curFrame[dir] + 1) % 4;
+    setTimeout(function () {
+      that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
+      curFrame[dir] = (curFrame[dir] + 1) % 4;
+      setTimeout(function () {
+        that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
+        that.set("curFrame", curFrame);
+      }, 60);
+    }, 60);
   },
 
   sendMessageMobile: function(sentMessage){
@@ -155,11 +171,11 @@ App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prot
       curPos = e.get( "currentPos" );
 
     if ( prevPos.i == curPos.i ) {
-      ( prevPos.j + 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 1 );
-      ( prevPos.j - 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 3 );
+      ( prevPos.j + 1 ) == curPos.j && e.moveAnim(1);
+      ( prevPos.j - 1 ) == curPos.j && e.moveAnim(0);
     } else {
-      ( prevPos.i + 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 2 );
-      ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
+      ( prevPos.i + 1 ) == curPos.i && e.moveAnim(3);
+      ( prevPos.i - 1 ) == curPos.i && e.moveAnim(2);
     }
 
     App.views.drawings.moveAndText( e.get( "id" ), curPos.i - prevPos.i, curPos.j - prevPos.j );
