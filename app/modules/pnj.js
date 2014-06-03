@@ -1,5 +1,8 @@
 App.Models.Pnj = Backbone.Model.extend( {
 	initialize: function() {
+
+    //  App.map[ pos ] = 2; ligne 169, event-handler
+
 		var perso = new createjs.Sprite( App.perso ),
 			tw = App.tw,
 			that = this;

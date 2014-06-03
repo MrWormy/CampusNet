@@ -5,9 +5,9 @@
 
 App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/OtherPlayer.prototype */ {
 
-  /** 
+  /**
   * @augments Backbone.Model
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.pop( );
@@ -73,7 +73,8 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
     var id = data.id,
       nextPos = data.pos,
       perso = this.get( id );
-    perso.set( "pos", nextPos );
+    if(typeof(perso) != "undefined")
+      perso.set( "pos", nextPos );
 
   },
 
@@ -88,9 +89,9 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
 
 App.Views.OtherPlayers = Backbone.View.extend( /** @lends module:others.Views/OtherPlayers.prototype */ {
 
-  /** 
+  /**
   * @augments Backbone.View
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.newCont( );

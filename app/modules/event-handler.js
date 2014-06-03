@@ -166,7 +166,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
-        if ( !othersView )
+        if ( !othersView ) //NOUVELLE MAP !!
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
@@ -187,28 +187,12 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         myMove.listenTo( app, 'move:bg', function ( data ) {
           console.log( data );
         } );
-        
+
         if(isMobile){
           myPerso.listenTo( app, 'message', myPerso.sendMessageMobile );
         }else{
           myPerso.listenTo( app, 'message', myPerso.sendMessage );
         }
-        App.map[ 2143 ] = 2;
-        others.pop( {
-          "id": 1000,
-          "pos": {
-            "i": 21,
-            "j": 43
-          },
-          "pName": "pnj"
-        } );
-        others.get( 1000 ).get( "perso" ).gotoAndStop( 1 );
-        others.get( 1000 ).get( "perso" ).addEventListener( "click", function ( ) {
-          App.views.drawings.drawText( "Bravo tu as réussi à me parler !", {
-            "i": 21,
-            "j": 43
-          }, 1000, "all" );
-        } );
         myMove.listenTo( app, 'change:map', function ( ) {
           // myPerso.set( {
           //   "currentPos": that.initialPos
@@ -262,7 +246,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       this.listenTo( app, 'register', this.registerPlayerMobile );
     }else{
       this.listenTo( app, 'register', this.registerPlayer );
-    } 
+    }
     this.listenTo( app, 'send:message', this.sendMessage );
     this.listenTo( app, 'way:end', this.checkChange );
 
@@ -296,7 +280,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     @param {object} form Formulaire
   */
   registerPlayer: function ( form ) {
-    var pName = form.playerName.value.trim( );  
+    var pName = form.playerName.value.trim( );
 
     this.pName = pName;
 
