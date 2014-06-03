@@ -116,18 +116,27 @@ App.Views.Screen = Backbone.View.extend( /** @lends module:resize.Screen.prototy
 
   /** @constructs */
   initialize: function ( ) {
-    var win = $( window );
+    var win = $( window ),
+    isMobile = App.mobilecheck();
 
     $( "#loading" ).remove();
     $( "#message" ).css( "display", "block" );
     win.on( 'resize', {
       that: this
     }, this.resize );
-    this.model.on( 'change', this.resizeWin, this );
-    this.model.set( {
-      'height': window.innerHeight,
-      'width': window.innerWidth
-    } );
+    if(isMobile){
+      this.model.set( {
+        'height': window.innerHeight,
+        'width': window.innerWidth
+      } );
+      this.resizeWin();
+    }else{
+      this.model.on( 'change', this.resizeWin, this );
+      this.model.set( {
+        'height': window.innerHeight,
+        'width': window.innerWidth
+      } );
+    }
     this.listenTo( app, 'resize:on', this.resizeCan );
   },
 
