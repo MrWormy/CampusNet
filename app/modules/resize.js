@@ -53,9 +53,11 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
     var mapCan = $( "#mapCanvas" )[ 0 ],
       charCan = $( "#charactersCanvas" )[ 0 ],
       contCan = $( "#canvasContainer" ),
-      navbar = $("#navbar");
+      navbar = $("#navbar"),
+      isMobile = App.mobilecheck(),
+      navbarWidth = 1084;
       if(/WebKit/.test(navigator.userAgent)){
-        $("#messaging").css({'position' : 'relative', 'bottom' : '14px'})
+        $("#messaging").css({'position' : 'relative', 'bottom' : '22px'})
       }
     this.set( {
       'height': height,
@@ -68,10 +70,16 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
       'top': top + 'px',
       'left': left + 'px'
     } );
-
+    if(isMobile){
+      $("#messageInput").css({'display': 'none'});
+      navbar.css({'width': '710px'});
+      navbarWidth = 734;
+      $(".spaced").css({'margin-right' : '40px'});
+      $(".navbutton").css({'margin-left' : '8px'});
+    }
     navbar.css({
-        'top' : height - 80 + 'px',
-        'left' : (width-922)/2 + 'px' 
+        'top' : height - 84 + 'px',
+        'left' : (width-navbarWidth)/2 + 'px' 
     });
 
     mapCan.width = width;
@@ -108,18 +116,27 @@ App.Views.Screen = Backbone.View.extend( /** @lends module:resize.Screen.prototy
 
   /** @constructs */
   initialize: function ( ) {
-    var win = $( window );
+    var win = $( window ),
+    isMobile = App.mobilecheck();
 
     $( "#loading" ).remove();
     $( "#message" ).css( "display", "block" );
     win.on( 'resize', {
       that: this
     }, this.resize );
-    this.model.on( 'change', this.resizeWin, this );
-    this.model.set( {
-      'height': window.innerHeight,
-      'width': window.innerWidth
-    } );
+    if(isMobile){
+      this.model.set( {
+        'height': window.innerHeight,
+        'width': window.innerWidth
+      } );
+      this.resizeWin();
+    }else{
+      this.model.on( 'change', this.resizeWin, this );
+      this.model.set( {
+        'height': window.innerHeight,
+        'width': window.innerWidth
+      } );
+    }
     this.listenTo( app, 'resize:on', this.resizeCan );
   },
 

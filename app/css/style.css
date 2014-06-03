@@ -29,8 +29,8 @@ body  {
 
 #messageInput{
     width:350px;
-    height: 25px;
-    font-size: 14pt;
+    height: 30px;
+    font-size: 16pt;
     cursor: default;
     border-radius: 8px;
 }
@@ -78,8 +78,8 @@ body  {
 
 #navbar{
     position: absolute;
-    width: 922px;
-    height: 44px;
+    width: 1060px;
+    height: 60px;
     background-color: rgb(147, 169, 213);
     padding: 10px;
     border: 2px solid #cccccc;
@@ -87,12 +87,16 @@ body  {
 }
 
 .navbutton{
-    width: 39px;
-    height: 39px;
+    width: 55px;
+    height: 55px;
     border: 0;
     background: 0;
-    border-radius: 8px;
+    border-radius: 18px;
     margin: 3px;
+}
+
+.spaced{
+    margin-right: 63px;
 }
 
 .navbutton:hover{

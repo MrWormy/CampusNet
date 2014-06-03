@@ -130,7 +130,7 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
       ll = layers.length,
       dl;
 
-      for ( var k = 0; k < layerWidth * layerHeight; k++ ) {
+      for ( var k = 0; k < App.map.length; k++ ) {
         App.map[ k ] = 2;
       }
 
