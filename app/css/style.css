@@ -45,7 +45,7 @@ body  {
     overflow: hidden;
 }
 
-#shadow {
+.shadow {
     width: inherit;
     height: inherit;
     position:fixed;

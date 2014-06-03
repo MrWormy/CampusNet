@@ -18,23 +18,23 @@
             <div id="navbar">
                 <form id="message" onSubmit="app.trigger('message', this);
                         return false;" target = "_blank" name = "dialogue">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/talk64.png')" title="Discussion">
+                    <input id="discussion" type="button" class="navbutton" style="background-image: url('assets/resources/icons/talk64.png')" title="Discussion">
                     <span id="messaging">
                         <input id="messageInput" type="text" autocomplete="off" maxlength=140 name="texte" title="Saisir un message" placeholder="Saisir un message">
                         <input id="messageSend" type="submit" class="navbutton spaced" name="parler" style="background-image: url('assets/resources/icons/send64.png');" title="Envoyer">
                     </span>
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/quest64.png')" title="Quetes">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/position64.png')" title="Carte">
-                    <input type="button" class="navbutton spaced" style="background-image: url('assets/resources/icons/profile64.png');" title="Profil">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/loud64.png')" title="Son">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/help64.png')" title="Aide">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/param64.png')" title="Parametres">
-                    <input type="button" class="navbutton" style="background-image: url('assets/resources/icons/off64.png')" title="Quitter">
+                    <input id="quetes" type="button" class="navbutton" style="background-image: url('assets/resources/icons/quest64.png')" title="Quetes">
+                    <input id="carte" type="button" class="navbutton" style="background-image: url('assets/resources/icons/position64.png')" title="Carte">
+                    <input id="profil" type="button" class="navbutton spaced" style="background-image: url('assets/resources/icons/profile64.png');" title="Profil">
+                    <input id="son" type="button" class="navbutton" style="background-image: url('assets/resources/icons/loud64.png')" title="Son">
+                    <input id="aide" type="button" class="navbutton" style="background-image: url('assets/resources/icons/help64.png')" title="Aide">
+                    <input id="param" type="button" class="navbutton" style="background-image: url('assets/resources/icons/param64.png')" title="Parametres">
+                    <input id="quit" type="button" class="navbutton" style="background-image: url('assets/resources/icons/off64.png')" title="Quitter">
                 </form>
             </div>
         </div>
         <div id="regCont">
-            <div id="shadow">
+            <div class="shadow">
             </div>
             <form id="register" onSubmit="app.trigger('register', this);
                         return false;" target = "_blank" name = "dialogue">

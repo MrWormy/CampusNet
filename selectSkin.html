@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Choix d'avatar - CampusNet v2</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="app/css/selectstyle.css">
+</head>
+<body>
+	<header>
+		<span id="titre">CampusNet v2</span>
+		<span id="path">></span>Choix d'avatar
+	</header>
+	<h1>Bienvenue sur la page de choix d'avatar pour CampusNet v2</h1>
+	<section id="infos">
+		<h2> Veuillez spécifier les informations suivantes</h2>
+		<br>
+		<form name="infoAvatar" method="GET">
+			<table>
+				<tr>
+					<td><label>Rôle : </label></td><td><select name="role"><option value="adm">Administration / Professeur</option><option value="etu">Etudiant</option></select></td>
+				</tr>
+				<tr>
+					<td><label>Sexe : </label></td><td><select name="sexe"><option value="f">Femme</option><option value="m">Homme</option></select></td>
+				</tr>
+			</table>
+			<br>
+			<input onclick="showChoices(this.form);" type="button" name="button" value="Valider"/> 
+		</form>
+	</section>
+	<section id="selectSkin">
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+		<br>
+	</section>
+	<footer>
+		Copyright 2014 - CampusNet v2
+	</footer>
+	<script type="text/javascript" src="app/selectSkin.js"></script>
+</body>
+</html>
