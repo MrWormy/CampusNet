@@ -1,11 +1,19 @@
 @import url(http://fonts.googleapis.com/css?family=Open+Sans);
 
+html, body, #wrap {margin: 0px; height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#content{
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
 body {
 	margin: 0px;
 	min-width: 580px;
 	text-align: center;
 	font-family: 'Open Sans', 'sans-serif';
-	background-color: #EEEEEE;
 }
 
 header {
@@ -21,7 +29,7 @@ header #titre {
 	font-weight: bold;
 }
 
-header #nav {
+header #deco {
 	margin-top: 7px;
 	float: right;
 	text-align: right;
@@ -44,6 +52,7 @@ header #path {
 h1 {
 	margin: 0;
 	padding: 40px;
+	background-color: #EEEEEE;
 }
 
 h2 {
@@ -144,9 +153,23 @@ aside {
 }
 
 footer {
-	padding: 10px;
-	bottom: 0;
+	position: relative;
+	margin-top: -40px;
+	height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
 	clear: both;
 	background-color: #404040;
 	color: white;
 }
+
+.clearfix:after {content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */
