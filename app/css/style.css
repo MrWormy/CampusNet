@@ -64,6 +64,7 @@ body  {
     border: 2px solid #cccccc;
     border-radius: 15px;
     display: none;
+    overflow-y: auto;
 }
 
 #infoBox h1{

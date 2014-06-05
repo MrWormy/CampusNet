@@ -5,6 +5,10 @@
 
 App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/OtherPlayer.prototype */ {
 
+  defaults:{
+    "curFrame": [0,0,0,0]
+  },
+
   /**
   * @augments Backbone.Model
   * @constructs
@@ -32,18 +36,32 @@ App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/
     App.Stages.characterStage.getChildByName( "others" ).addChild( perso );
   },
 
+    moveAnim: function (dir) {
+    var curFrame = this.get("curFrame"),
+      that = this;
+    curFrame[dir] = (curFrame[dir] + 1) % 4;
+    setTimeout(function () {
+      that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
+      curFrame[dir] = (curFrame[dir] + 1) % 4;
+      setTimeout(function () {
+        that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
+        that.set("curFrame", curFrame);
+      }, 60);
+    }, 60);
+  },
+
   move: function ( e ) {
     var prevPos = e.previousAttributes( ).pos,
       curPos = e.get( "pos" ),
       tw = App.tw;
 
     if ( prevPos.i == curPos.i ) {
-      ( prevPos.j + 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 1 );
-      ( prevPos.j - 1 ) == curPos.j && e.get( "perso" ).gotoAndStop( 3 );
+      ( prevPos.j + 1 ) == curPos.j && e.moveAnim(1);
+      ( prevPos.j - 1 ) == curPos.j && e.moveAnim(0);
       e.get( "perso" ).x = curPos.j * tw;
     } else {
-      ( prevPos.i + 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 2 );
-      ( prevPos.i - 1 ) == curPos.i && e.get( "perso" ).gotoAndStop( 0 );
+      ( prevPos.i + 1 ) == curPos.i && e.moveAnim(3);
+      ( prevPos.i - 1 ) == curPos.i && e.moveAnim(2);
       e.get( "perso" ).y = curPos.i * tw;
     }
 

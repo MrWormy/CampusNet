@@ -170,8 +170,11 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
       currentI = this.model.get( "currentY" ) / tileHeight,
       toJ = Math.floor( ( this.stage.mouseX + this.stage.getChildAt( 0 ).regX ) / tileWidth ) + currentJ,
       toI = Math.floor( ( this.stage.mouseY + this.stage.getChildAt( 0 ).regY ) / tileHeight ) + currentI;
-    app.trigger('close:info');
-    app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
+    if($("#infoBox").css("display") != "none"){
+      app.trigger('close:info');
+    }else{
+       app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
+    }
   }
 
 } );
