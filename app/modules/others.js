@@ -79,7 +79,6 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
   },
 
   message: function ( data ) {
-    console.log(data);
     var pos = this.get( data.expediteur ).get( "pos" ),
       id = this.get( data.expediteur ).get( "id" );
     App.views.drawings.drawText( data.msg, pos, id, data.destinataire );

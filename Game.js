@@ -46,7 +46,7 @@ var Guy = function(socket, id, pName, initPos, Map) {
 	});
 
 	socket.on("message", function(data) {
-		var info = {};
+		var info = {}, tempGuy;
 		info.expediteur = that.id;
 		info.msg = data.msg;
 		info.destinataire = data.destinataire;
@@ -55,7 +55,8 @@ var Guy = function(socket, id, pName, initPos, Map) {
 			Map.emit("message", info, that.id);
 		} else {
 			info.prive = true;
-			Map.guys[Map.guys.length - data.destinataire - 1].socket.emit("message", info);
+			if(tempGuy = Map.findGuy(data.destinataire))
+				tempGuy.socket.emit("message", info);
 		}
 	});
 
@@ -111,11 +112,7 @@ var Map = function() {
 			}
 		}
 		this.calculeridnew();
-		if (this.idnew == this.guys.length) {
-			this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this));
-		} else {
-			this.guys[this.guys.length - 1 - this.idnew] = new Guy(socket, this.idnew, pName, initPos, this);
-		}
+		this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this))
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {
@@ -127,13 +124,24 @@ var Map = function() {
 	/**
 	*/
 	this.calculeridnew = function() {
+		var tempId = 0, tempGuy;
 		for (var i=0 ; i<this.guys.length ; i++) {
-			if (this.guys[this.guys.length - 1 - i] == undefined) {
-				this.idnew = i;
-				return 0;
+			tempGuy = this.guys[i];
+			if (tempGuy && tempGuy.id >= tempId) {
+				tempId = tempGuy.id + 1;
 			}
 		}
-		this.idnew = this.guys.length;
+		this.idnew = tempId;
+	}
+
+	this.findGuy = function(id){
+		var l = this.guys.length, tempGuy = null;
+		for(var i = 0; i<l; i++){
+			tempGuy = this.guys[i];
+			if(tempGuy.id == id)
+				break;
+		}
+		return tempGuy;
 	}
 
 	/**
@@ -153,9 +161,15 @@ var Map = function() {
 		@param {} id
 	*/
 	this.deletePlayer = function(id) {
-		this.guys[this.guys.length - 1 - id].removeMap();
-		delete this.guys[this.guys.length - 1 - id];
-		this.guys.splice(this.guys.length - 1 - id, 1);
+		console.log(id, this.guys);
+		for (var i = 0; i < this.guys.length; i++){
+			if(this.guys[i].id == id){
+				this.guys[i].removeMap();
+				delete this.guys[i];
+				this.guys.splice(i, 1);
+				break;
+			}
+		}
 		this.emit("aurevoir", id, id);
 	}
 }

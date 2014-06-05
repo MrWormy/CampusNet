@@ -211,7 +211,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           myPerso = null;
           othersView = null;
 
-          console.log('ici', that.curMap);
           App.socket.emit( 'ready', {
             initPos: that.initialPos,
             pName: that.pName,
@@ -224,7 +223,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         others.pop( data );
         App.oNames[ data.pName ] = data.id;
         that.oId[ data.id ] = data.pName;
-        console.log( App.oNames );
       }
 
     } );

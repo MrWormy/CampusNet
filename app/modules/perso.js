@@ -17,9 +17,9 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
     this.set( 'way', way );
   },
 
-  /** 
+  /**
   * @augments Backbone.Model
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.pop( );
@@ -157,9 +157,9 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
 
 App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prototype */ {
 
-  /** 
+  /**
   * @augments Backbone.View
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.createCont( );
@@ -185,7 +185,6 @@ App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prot
   createCont: function ( ) {
     var cont = new createjs.Container( ), perso = this.model.get( "perso" )
 
-    console.log(App.Stages.mapStage);
     cont.name = "player";
     cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
