@@ -84,10 +84,11 @@ var Guy = function(socket, id, pName, initPos, Map) {
 	}
 
 	this.removeMap = function() {
-		socket._events.iMove = null;
-		socket._events.disconnect = null;
-		socket._events.quitMap = null;
-		socket._events.parler_pnj = null;
+		socket.removeAllListeners("message");
+		socket.removeAllListeners("iMove");
+		socket.removeAllListeners("disconnect");
+		socket.removeAllListeners("quitMap");
+		socket.removeAllListeners("parler_pnj");
 	}
 
 }
