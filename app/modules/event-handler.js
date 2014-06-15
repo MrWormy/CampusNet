@@ -171,7 +171,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
-        pnjs = new App.Collections.Pnjs( 0 ), //Hum hum
+        pnjs = new App.Collections.Pnjs( 0 ), //Hum hum TODO
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,
