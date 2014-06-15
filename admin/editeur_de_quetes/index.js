@@ -23,7 +23,7 @@ App.Models.Pnj = Backbone.Model.extend({
 });
 
 App.Collections.Pnjs = Backbone.Collection.extend({
-	url: "../assets/resources/pnj.json",
+	url: "../../assets/resources/pnj.json",
 	model: App.Models.Pnj,
 
 	initialize: function() {

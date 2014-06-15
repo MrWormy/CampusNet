@@ -1,0 +1,175 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+html, body, #wrap {margin: 0px; height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#content{
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
+body {
+	margin: 0px;
+	min-width: 580px;
+	text-align: center;
+	font-family: 'Open Sans', 'sans-serif';
+}
+
+header {
+	color: white;
+	background-color: #404040;
+	padding: 15px;
+	text-align: left;
+	vertical-align: text-bottom;
+}
+
+header #titre {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+header #deco {
+	margin-top: 7px;
+	float: right;
+	text-align: right;
+}
+
+header a {
+	display: inline-block;
+	color: white;
+	text-decoration: none;
+}
+
+header a:hover {
+	text-decoration: underline;
+}
+
+header #path {
+	margin-left: 5px; 
+}
+
+h1 {
+	margin: 0;
+	padding: 40px;
+	background-color: #EEEEEE;
+}
+
+h2 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: #404040;
+}
+
+section {
+	margin: 0;
+	padding-top: 5px;
+	padding-bottom: 20px;
+	background-color: white;
+}
+
+a {
+	text-decoration: none;
+}
+
+.tile {
+	position: relative;
+	margin-top: 0px;
+	display: inline-block;
+	width: 320px;
+	height: 240px;
+	border: 1px solid black;
+	border-radius: 10px;
+	transition: box-shadow 0.5s;
+	cursor: pointer;
+}
+
+#users {
+	background-image: url(../../assets/resources/icons/data_users.png);
+}
+
+#rights {
+	background-image: url(../../assets/resources/icons/data_rights.png);
+}
+
+#maps {
+	background-image: url(../../assets/resources/icons/edit_maps.png);
+}
+
+#pnjs {
+	background-image: url(../../assets/resources/icons/edit_pnjs.png);
+}
+
+#quests {
+	background-image: url(../../assets/resources/icons/edit_quests.png);
+}
+
+.tile:hover {
+	box-shadow: 0px 0px 10px #000000;
+	transition: box-shadow 0.5s;
+}
+
+.bloc {
+	position: absolute;
+	top: 0;
+	width: 320px;
+	height: 240px;
+	background-color: rgba(0, 0, 0, 0);
+	transition: background 0.5s;
+	border-radius: 10px;
+}
+
+.tile:hover .bloc {
+	background-color: rgba(0, 0, 0, 0.3);
+	transition: background 0.5s;
+}
+
+.tile h3 {
+	padding: 5px;
+	background-color: rgba(255, 255, 255, 0.8);
+	transition: background 0.5s;
+}
+
+.tile:hover h3 {
+	background-color: rgba(255, 255, 255, 1);
+	transition: background 0.5s;
+}
+
+#main_menu {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
+#menu_pnjs {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
+aside {
+	min-width: 300px;
+	background-color: grey;
+}
+
+footer {
+	position: relative;
+	margin-top: -40px;
+	height: 40px;
+	line-height: 40px;
+	vertical-align: middle;
+	clear: both;
+	background-color: #404040;
+	color: white;
+}
+
+.clearfix:after {content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;}
+.clearfix {display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix { height: 1%;}
+.clearfix {display: block;}
+/* End hide from IE-mac */

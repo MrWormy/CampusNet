@@ -272,3 +272,8 @@ var Map = function() {
 		this.emit("aurevoir", id, id);
 	}
 }
+
+exports.isAdmin = function(login) {
+	var listeAdmins = ['benning', 'kimyonok', 'laurence', 'koenig_b'];
+	return (listeAdmins.indexOf(login) >= 0);
+}

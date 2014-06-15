@@ -11,7 +11,8 @@ var express = require( 'express' ),
   MemoryStore = session.MemoryStore,
   cookie = require("cookie"),
   sessionStore = new MemoryStore(),
-  game = new play.Game();
+  game = new play.Game(),
+  fs = require("node-fs");
 
 //variables serveur
 server.listen( 19872 );
@@ -24,6 +25,10 @@ app.use(cookieParser()) // required before session.
     store: sessionStore,
     key: "express.sid"
 }))
+
+app.get( '/404.html', function ( req, res ) {
+  res.sendfile( __dirname + '/404.html' );
+} );
 
 app.get( '/', function ( req, resp ) {
   var ticket = req.param('ticket');
@@ -69,26 +74,31 @@ app.use(function(req, res, next){
     res.redirect('/');
 });
 
-
-app.get( '/admin.html', function ( req, res ) {
-  res.sendfile( __dirname + '/admin.html' );
-} );
-
 app.get( '/index.html', function ( req, res ) {
   res.sendfile( __dirname + '/index.html' );
 } );
-
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
-app.use( '/editeur_de_quetes', express.static( __dirname + '/editeur_de_quetes' ) );
+
+app.use(function(req, res, next){
+  if(play.isAdmin(req.session.login))
+    next();
+  else
+    res.redirect('/');
+});
+app.use( '/admin', express.static( __dirname + '/admin' ) );
+app.use('/modifQuetes', function(req, res) {
+    fs.writeFile("quete.js", req.query.valeurjson);
+    res.sendfile( __dirname + '/modifQuetes.html' );
+});
 app.get( '/quete.js', function ( req, res ) {
   res.sendfile( __dirname + '/quete.js' );
 } );
 
 app.use( '*', function(req, res, next){
-  res.sendfile( __dirname + '/404.html');
-  });
+  res.redirect('/404.html');
+});
 
 io.use(function (socket, next) {
   var sid = cookie.parse(socket.request.headers.cookie)['express.sid'].split(":")[1].split(".")[0];
