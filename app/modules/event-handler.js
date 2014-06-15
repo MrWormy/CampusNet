@@ -148,13 +148,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     var myMove = new App.Models.Move( ),
       socket = io.connect( 'http://localhost:19872' ),
       others = new App.Collections.OtherPlayers( ),
-      //pnjs = new App.Collections.Pnjs( ),
-      /*othersView = new App.Views.OtherPlayers( {
-        collection: others
-      } ),
-      pnjsView = new App.Views.handlePnj(
-        {collection: pnjs}
-        ),*/
       othersView = null,
       hashMove = -1,
       that = this,
@@ -171,7 +164,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
-        pnjs = new App.Collections.Pnjs( 0 ), //Hum hum TODO
+        pnjs = new App.Collections.Pnjs( that.curMap ),
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,

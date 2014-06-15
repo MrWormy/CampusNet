@@ -1,12 +1,15 @@
-/*
-var mysql = require("mysql");
-var connection = mysql.createConnection({
-	host: "localhost",
-	user: "root",
-	password: "root"
-});
-connection.connect();
-*/
+useBDD = true;
+
+if (useBDD) {
+	var mysql = require("mysql");
+	var connection = mysql.createConnection({
+		host: "localhost",
+		user: "root",
+		password: "root"
+	});
+	connection.connect();
+}
+
 
 /**
 Game
@@ -190,7 +193,7 @@ var Guy = function(socket, id, initPos, Map, login) {
 		});
 	}
 
-	// this.loadBDD();
+	if (useBDD) {this.loadBDD(); }
 
 }
 

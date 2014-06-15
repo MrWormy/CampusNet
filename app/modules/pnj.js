@@ -2,28 +2,28 @@ App.Models.Pnj = Backbone.Model.extend( {
 	initialize: function() {
 
     //  App.map[ pos ] = 2; ligne 169, event-handler
-		var perso = new createjs.Sprite( App.perso ),
-			tw = App.tw,
-			that = this;
-		perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );
-		perso.name = "pnj " + this.id;
-		perso.x = this.get( "pos" ).j * tw;
-		perso.y = this.get( "pos" ).i * tw;
-		perso.addEventListener( "mouseover", function ( ) {
-			App.views.drawings.showName( that.get( "pos" ), that.get( "pName" ), that.get( "id" ) );
-		} );
-		perso.addEventListener( "mouseout", function ( ) {
-			App.views.drawings.removeName( that.get( "id" ) );
-		} );
-		perso.addEventListener("click", function ( ) {
-			App.socket.emit("parler_pnj", that.id);
-		});
-		this.set( "perso", perso );
-		this.afficher();
+    	if (this.id!=undefined) { // C'est dégueu mais ça marche
+			var perso = new createjs.Sprite( App.perso ),
+				tw = App.tw,
+				that = this;
+			perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );
+			perso.name = "pnj " + this.id;
+			perso.x = this.get( "pos" ).j * tw;
+			perso.y = this.get( "pos" ).i * tw;
+			perso.addEventListener( "mouseover", function ( ) {
+				App.views.drawings.showName( that.get( "pos" ), that.get( "pName" ), that.get( "id" ) );
+			} );
+			perso.addEventListener( "mouseout", function ( ) {
+				App.views.drawings.removeName( that.get( "id" ) );
+			} );
+			perso.addEventListener("click", function ( ) {
+				App.socket.emit("parler_pnj", that.id);
+			});
+			this.set( "perso", perso );
+		}
 	},
 
 	afficher: function(id_map) {
-		console.log(this.get("map"), id_map);
 		if (this.get("map") == id_map) {
 			App.Stages.characterStage.getChildByName( "others" ).addChild( this.get("perso") );
 		}
@@ -47,36 +47,16 @@ App.Collections.Pnjs = Backbone.Collection.extend({
 	model: App.Models.Pnj,
 
 	initialize: function(id_map) {
-		console.log("id_map = ", id_map);
-		this.fetch();
-		for (var i=0 ; i<this.length ; i++) {
-			console.log(id_map);
-			this.get(i).afficher(id_map);
-		}
+		var that = this;
+		console.log(id_map);
+		this.fetch().done(function() {
+			for (var i=0 ; i<that.models.length ; i++) {
+				that.models[i].afficher(id_map);
+			}
+		});
 	},
 
 	message: function(data) {
 		this.get(data.id).parler(data.texte);
 	}
 });
-
-/*
-App.Views.handlePnj = Backbone.View.extend({
-	el: "#charactersCanvas",
-
-	initialize: function ( ) {
-		this.newCont( );
-	},
-
-	newCont: function ( ) {
-		var cont = new createjs.Container( );
-		cont.name = "pnjs";
-		cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
-		cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
-		cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
-		cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
-		App.Stages.characterStage.addChild( cont );
-	},
-
-});
-*/
