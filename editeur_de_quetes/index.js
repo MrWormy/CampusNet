@@ -17,6 +17,7 @@ App.Models.Pnj = Backbone.Model.extend({
 		objet.objet.type = "parler_pnj";
 		objet.objet.id_pnj = this.get("id");
 		objet.status = this.get("status");
+		objet.finish = this.get("finish");
 		return objet;
 	}
 });
@@ -140,8 +141,9 @@ App.Views.Coordonnees = Backbone.View.extend({
 		for(var i=0 ; i<Pnjs.size() ; i++) {
 			objet.push(Pnjs.get(i).getObject());
 		}
-		console.log(objet);
-		alert("Cette fonctionnalité ne marche pas encore ! C'est bête hein ?");
+		console.log(JSON.stringify(objet));
+		document.getElementById("exportateurConteneur").value = "exports.liste = " + JSON.stringify(objet);
+		document.getElementById("exportateur").submit();
 	}
 });
 
