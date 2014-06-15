@@ -165,7 +165,7 @@ var Guy = function(socket, id, pName, initPos, Map, login) {
 	}
 
 	this.loadBDD = function() {
-		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`="+that.login+";";
+		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`='"+that.login+"';";
 		connection.query(requete, function(err, rows, fields) {
 			if (err) throw err;
 			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
