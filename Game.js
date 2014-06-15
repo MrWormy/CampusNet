@@ -18,7 +18,7 @@ exports.Game = function() {
 	}
 
 	this.appendGuy = function(socket, data) {
-		this.maps[data.map].appendGuy(socket, data.pName, data.initPos, data.login);
+		this.maps[data.map].appendGuy(socket, data.initPos, data.login);
 	}
 }
 
@@ -30,17 +30,17 @@ Variable Guy
 @param {} initPos
 @param {} Map
 */
-var Guy = function(socket, id, pName, initPos, Map, login) {
+var Guy = function(socket, id, initPos, Map, login) {
 	this.socket = socket;
 	var that = this;
 	this.pos = initPos;
-	this.pName = pName;
+	this.pName = login;
 	this.id = id;
 	this.quetes = require("./quete.js").liste;
 	this.login = login;
 	this.idBDD = null;
 
-	Map.emit("popGuy", {id: this.id, pName: pName, pos: this.pos}, this.id);
+	Map.emit("popGuy", {id: this.id, pName: that.pName, pos: this.pos}, this.id);
 
 	socket.on("iMove", function(data) {
 		that.pos = data;
@@ -107,6 +107,7 @@ var Guy = function(socket, id, pName, initPos, Map, login) {
 		}
 	});
 
+	/*
 	socket.on("setNom", function(nom) {
 		if (that.idBDD != null) {
 			var requete = "UPDATE `campusnet`.`users` SET `nom`="+nom+" WHERE `id`="+idBDD+";";
@@ -127,6 +128,7 @@ var Guy = function(socket, id, pName, initPos, Map, login) {
 			socket.emit("nom", "anonyme " + that.id);
 		}
 	});
+	*/
 
 	socket.on("setBio", function(bio) {
 		if (that.idBDD != null) {
@@ -142,7 +144,7 @@ var Guy = function(socket, id, pName, initPos, Map, login) {
 			var requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
 			connection.query(requete, function(err, rows, fields) {
 				if (err) throw err;
-				socket.emit("nom", rows[0].bio);
+				socket.emit("bio", rows[0].bio);
 			});
 		} else {
 			socket.emit("bio", "Inconnue");
@@ -177,7 +179,7 @@ var Guy = function(socket, id, pName, initPos, Map, login) {
 	}
 
 	this.signin = function() {
-		var requete = "INSERT INTO `campusnet`.`users` (`login`) VALUES ('"+that.login+"');";
+		var requete = "INSERT INTO `campusnet`.`users` (`login`, `nom`) VALUES ('"+that.login+"', '"+that.login+"');";
 		connection.query(requete, function(err, rows, fields) {
 			if (err) throw err;
 			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
@@ -202,15 +204,9 @@ var Map = function() {
 		@param {} pName
 		@param {} initPos
 	*/
-	this.appendGuy = function(socket, pName, initPos, login) {
-		for (var i=0 ; i<this.guys.length ; i++) {
-			if (this.guys[i]!=undefined && this.guys[i].pName==pName) {
-				socket.emit("pb_pseudo");
-				return null;
-			}
-		}
+	this.appendGuy = function(socket, initPos, login) {
 		this.calculeridnew();
-		this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this, login))
+		this.guys.unshift(new Guy(socket, this.idnew, initPos, this, login));
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {
