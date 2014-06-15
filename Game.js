@@ -18,7 +18,7 @@ exports.Game = function() {
 	}
 
 	this.appendGuy = function(socket, data) {
-		this.maps[data.map].appendGuy(socket, data.pName, data.initPos);
+		this.maps[data.map].appendGuy(socket, data.pName, data.initPos, data.login);
 	}
 }
 
@@ -30,13 +30,14 @@ Variable Guy
 @param {} initPos
 @param {} Map
 */
-var Guy = function(socket, id, pName, initPos, Map) {
+var Guy = function(socket, id, pName, initPos, Map, login) {
 	this.socket = socket;
 	var that = this;
 	this.pos = initPos;
 	this.pName = pName;
 	this.id = id;
 	this.quetes = require("./quete.js").liste;
+	this.login = login;
 	this.idBDD = null;
 
 	Map.emit("popGuy", {id: this.id, pName: pName, pos: this.pos}, this.id);
@@ -83,30 +84,6 @@ var Guy = function(socket, id, pName, initPos, Map) {
 		if (!hesaidit) {
 			socket.emit("reponse_pnj", {id: id, texte: undefined}); // Si aucune quete ne corresond, on affichera le texte de base
 		}
-	});
-
-	socket.on("Identification", function(login) {
-		// TODO Vérification CAS du login
-		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`="+login+";";
-		connection.query(requete, function(err, rows, fields) {
-			if (err) throw err;
-			if (parseInt(rows[0].id) >= 0) {
-				that.idBDD = parseInt(rows[0].id);
-				socket.emit("login", true);
-			} else {
-				socket.emit("login", false);
-			}
-		});
-	});
-
-	socket.on("Sign in", function(login) {
-		// TODO Vérification CAS du login
-		var requete = "INSERT INTO `campusnet`.`users` (`login`) VALUES ('"+login+"');";
-		connection.query(requete, function(err, rows, fields) {
-			if (err) throw err;
-			// console.log('The solution is: ', rows[0].solution);
-			socket.emit("signin", true);
-		});
 	});
 
 	socket.on("setAvatar", function(avatar) {
@@ -187,6 +164,30 @@ var Guy = function(socket, id, pName, initPos, Map) {
 		socket.removeAllListeners("parler_pnj");
 	}
 
+	this.loadBDD = function() {
+		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`="+that.login+";";
+		connection.query(requete, function(err, rows, fields) {
+			if (err) throw err;
+			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
+				that.idBDD = parseInt(rows[0].id);
+			} else { // Creer un nouveau
+				that.signin();
+			}
+		});
+	}
+
+	this.signin = function() {
+		var requete = "INSERT INTO `campusnet`.`users` (`login`) VALUES ('"+that.login+"');";
+		connection.query(requete, function(err, rows, fields) {
+			if (err) throw err;
+			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
+				that.idBDD = parseInt(rows[0].id);
+			}
+		});
+	}
+
+	this.loadBDD();
+
 }
 
 /**
@@ -201,7 +202,7 @@ var Map = function() {
 		@param {} pName
 		@param {} initPos
 	*/
-	this.appendGuy = function(socket, pName, initPos) {
+	this.appendGuy = function(socket, pName, initPos, login) {
 		for (var i=0 ; i<this.guys.length ; i++) {
 			if (this.guys[i]!=undefined && this.guys[i].pName==pName) {
 				socket.emit("pb_pseudo");
@@ -209,7 +210,7 @@ var Map = function() {
 			}
 		}
 		this.calculeridnew();
-		this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this))
+		this.guys.unshift(new Guy(socket, this.idnew, pName, initPos, this, login))
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {

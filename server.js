@@ -27,6 +27,7 @@ app.get( '/quete.js', function ( req, res ) {
 
 io.sockets.on( 'connection', function ( socket ) {
   socket.on('ready', function(data){
+    data.login = "koenig_b"; // A modifier avec le CAS
     game.appendGuy(socket, data);
   });
 } );
