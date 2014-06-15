@@ -55,7 +55,7 @@ io.use(function (socket, next) {
 io.sockets.on( 'connection', function ( socket ) {
   console.log(socket.login.login);
   socket.on('ready', function(data){
-    data.login = "koenig_b"; // A modifier avec le CAS
+    data.login = socket.login.login; // A modifier avec le CAS
     game.appendGuy(socket, data);
   });
 } );
