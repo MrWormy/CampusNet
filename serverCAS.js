@@ -8,6 +8,8 @@ var express = require( 'express' ),
   server = require( 'http' ).createServer( app ),
   io = require( 'socket.io' ).listen( server ),
   play = require("./Game.js"),
+  //MemoryStore = session.MemoryStore,
+  //sessionStore = new MemoryStore(),
   game = new play.Game();
 
 //variables serveur
@@ -17,7 +19,9 @@ var casURL = 'https://localhost:8443/cas', // URL de base du service CAS, ex. ht
 
 app.use(cookieParser()) // required before session.
   app.use(session({
-    secret: 'session user'
+    secret: 'session user',
+    // store: sessionStore,
+    // key: "express.sid"
 }))
 
 app.get( '/', function ( req, resp ) {
@@ -30,7 +34,7 @@ app.get( '/', function ( req, resp ) {
       port:validateURL.port,
       path:validateURL.path,
       rejectUnauthorized: false // à supprimer sur serveur de prod
-      }, 
+      },
       function(res){
       res.on('error', function(e) {
         callback(e);
@@ -85,7 +89,23 @@ app.use( '*', function(req, res, next){
   res.sendfile( __dirname + '/404.html');
   });
 
+// io.set('authorization', function (handshake, callback) {
+//  handshake.cookie = require("cookie").parse(handshake.headers.cookie);
+//  handshake.sessionID = handshake.cookie['express.sid'].split(":")[1].split(".")[0];
+//  sessionStore.get(data.sessionID, function (err, login) {
+//           if (err || !session) {
+//               // if we cannot grab a session, turn down the connection
+//               callback('Error', false);
+//           } else {
+//               // save the session data and accept the connection
+//               handshake.login = login;
+//               callback(null, true);
+//           }
+//       });
+// });
+
 io.sockets.on( 'connection', function ( socket ) {
+  // console.log(socket.handshake.login);
   socket.on('ready', function(data){
     game.appendGuy(socket, data);
   } );
