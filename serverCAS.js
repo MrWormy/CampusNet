@@ -90,8 +90,8 @@ app.use( '*', function(req, res, next){
   });
 
 // io.set('authorization', function (handshake, callback) {
-//  handshake.cookie = require("cookie").parse(data.headers.cookie);
-//  handshake.sessionID = data.cookie['express.sid'].split(":")[1].split(".")[0];
+//  handshake.cookie = require("cookie").parse(handshake.headers.cookie);
+//  handshake.sessionID = handshake.cookie['express.sid'].split(":")[1].split(".")[0];
 //  sessionStore.get(data.sessionID, function (err, login) {
 //           if (err || !session) {
 //               // if we cannot grab a session, turn down the connection
