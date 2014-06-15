@@ -1,3 +1,4 @@
+/*
 var mysql = require("mysql");
 var connection = mysql.createConnection({
 	host: "localhost",
@@ -5,6 +6,7 @@ var connection = mysql.createConnection({
 	password: "root"
 });
 connection.connect();
+*/
 
 /**
 Game
@@ -188,7 +190,7 @@ var Guy = function(socket, id, initPos, Map, login) {
 		});
 	}
 
-	this.loadBDD();
+	// this.loadBDD();
 
 }
 
