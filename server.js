@@ -25,7 +25,13 @@ app.get( '/quete.js', function ( req, res ) {
   res.sendfile( __dirname + '/quete.js' );
 } );
 
+io.set('authorization', function (handshake, callback) {
+  handshake.foo = 'bar';
+  callback(null, true);
+});
+
 io.sockets.on( 'connection', function ( socket ) {
+  console.log(socket.handshake.foo);
   socket.on('ready', function(data){
     data.login = "koenig_b"; // A modifier avec le CAS
     game.appendGuy(socket, data);
