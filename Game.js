@@ -1,4 +1,4 @@
-useBDD = true;
+useBDD = false;
 
 if (useBDD) {
 	var mysql = require("mysql");
@@ -274,6 +274,6 @@ var Map = function() {
 }
 
 exports.isAdmin = function(login) {
-	var listeAdmins = ['benning', 'kimyonok', 'laurence', 'koenig_b'];
+	var listeAdmins = ['admin', 'benning', 'kimyonok', 'laurence', 'koenig_b'];
 	return (listeAdmins.indexOf(login) >= 0);
 }

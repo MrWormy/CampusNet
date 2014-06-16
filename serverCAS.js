@@ -39,7 +39,7 @@ app.get( '/', function ( req, resp ) {
       hostname:validateURL.hostname,
       port:validateURL.port,
       path:validateURL.path
-      // , rejectUnauthorized: false // pour autoriser un certificat auto-signé
+      , rejectUnauthorized: false // pour autoriser un certificat auto-signé
       },
       function(res){
       res.on('error', function(e) {
@@ -80,23 +80,22 @@ app.get( '/index.html', function ( req, res ) {
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
+app.get( '/quete.js', function ( req, res ) {
+  res.sendfile( __dirname + '/quete.js' );
+} );
 
 app.use(function(req, res, next){
   if(play.isAdmin(req.session.login))
     next();
   else
-    res.redirect('/');
+    res.redirect('/404.html');
 });
 app.use( '/admin', express.static( __dirname + '/admin' ) );
-app.use('/modifQuetes', function(req, res) {
+app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
     fs.writeFile("quete.js", req.query.valeurjson);
-    res.sendfile( __dirname + '/modifQuetes.html' );
+    res.sendfile( __dirname + '/admin/editeur_de_quetes/modifQuetes.html' );
 });
-app.get( '/quete.js', function ( req, res ) {
-  res.sendfile( __dirname + '/quete.js' );
-} );
-
-app.use( '*', function(req, res, next){
+app.use(function(req, res, next){
   res.redirect('/404.html');
 });
 
