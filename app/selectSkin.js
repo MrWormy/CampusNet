@@ -7,7 +7,7 @@ function showChoices (form){
 	if(role == "adm" && sexe == "m"){
 		color[2] = "black";
 	}
-	skinTable = '<h2> Choisissez votre avatar</h2><h2 class="warning">Attention, ce choix est définitif !</h2><table>';
+	skinTable = '<h2> Choisissez votre avatar</h2><h2 class="warning">Attention, ce choix est définitif !</h2><form id="exportSkin" method="GET" action="modifAvatar"><input id="valeurAvatar" name="avatar" type="hidden"/></form><table>';
 	for(var i = 0; i < 3; i++){
 		skinTable += '<tr>';
 		for(var j = 0; j < 3; j++){
@@ -21,5 +21,6 @@ function showChoices (form){
 function sendChoice (choice){
 	// Envoi du choix vers la base de donnée
 	console.log(choice);
-	window.location.replace("http://campusnet.tem-tsp.eu:8090/");
+	document.getElementById('valeurAvatar').value = choice;
+	document.getElementById('exportSkin').submit();
 }

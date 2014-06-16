@@ -65,7 +65,6 @@ app.use('/modifQuetes', function(req, res) {
 });
 
 app.use('/modifAvatar', function(req, res) {
-  // TODO 
   var requete = "UPDATE `campusnet`.`users` SET AVATAR='"+req.query.avatar+"' WHERE `login`="+req.session.login+";";
   var connection = play.openConnectionBDD();
   connection.query(requete, function(err, rows, fields) {
