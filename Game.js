@@ -1,4 +1,4 @@
-useBDD = true;
+useBDD = false;
 
 if (useBDD) {
 	var mysql = require("mysql");
@@ -91,14 +91,14 @@ var Guy = function(socket, id, initPos, Map, login) {
 		}
 	});
 
-	socket.on("setAvatar", function(avatar) {
+	/*socket.on("setAvatar", function(avatar) {
 		if (that.idBDD != null) {
 			var requete = "UPDATE `campusnet`.`users` SET `avatar`="+avatar+" WHERE `id`="+idBDD+";";
 			connection.query(requete, function(err, rows, fields) {
 				if (err) throw err;
 			});
 		}
-	});
+	});*/
 
 	socket.on("getAvatar", function(avatar) {
 		if (that.idBDD != null) {
@@ -274,6 +274,6 @@ var Map = function() {
 }
 
 exports.isAdmin = function(login) {
-	var listeAdmins = ['benning', 'kimyonok', 'laurence', 'koenig_b'];
+	var listeAdmins = ['admin', 'benning', 'kimyonok', 'laurence', 'koenig_b'];
 	return (listeAdmins.indexOf(login) >= 0);
 }
