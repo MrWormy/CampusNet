@@ -15,6 +15,9 @@ var express = require( 'express' ),
   fs = require("node-fs"),
   mysql = require("mysql");;
 
+//variables serveur
+server.listen( 19872 );
+
 if (true) {
   var connection = mysql.createConnection({
     host: "localhost",
@@ -62,14 +65,12 @@ app.use('/modifQuetes', function(req, res) {
 });
 
 app.use('/modifAvatar', function(req, res) {
-  // TODO et c'est ultra important : vérifier l'identité CAS. C'est pas compliqué mais c'est ultra-important
-
   var requete = "UPDATE `campusnet`.`users` SET AVATAR='"+req.query.avatar+"' WHERE `login`="+req.session.login+";";
   connection.query(requete, function(err, rows, fields) {
     if (err) throw err;
   });
 
-  res.sendfile( __dirname + '/modifQuetes.html' );
+  res.sendfile( __dirname + '/index.html' );
 });
 
 app.get( '/quete.js', function ( req, res ) {
