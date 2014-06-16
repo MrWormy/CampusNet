@@ -1,15 +1,18 @@
-useBDD = false;
+var mysql = require("mysql");
+var connection = mysql.createConnection({
+	host: "localhost",
+	user: "root"/*,
+	password: "root"*/
+});
 
-if (useBDD) {
-	var mysql = require("mysql");
-	var connection = mysql.createConnection({
-		host: "localhost",
-		user: "root",
-		password: "root"
-	});
+exports.openConnectionBDD = function() {
 	connection.connect();
+	return connection;
 }
 
+exports.closeConnectionBDD = function() {
+	connection.end();
+}
 
 /**
 Game
@@ -274,6 +277,6 @@ var Map = function() {
 }
 
 exports.isAdmin = function(login) {
-	var listeAdmins = ['admin', 'benning', 'kimyonok', 'laurence', 'koenig_b'];
+	var listeAdmins = ['admin', 'benning', 'kimyonok', 'laurence', 'koenig_b', 'nouveau'];
 	return (listeAdmins.indexOf(login) >= 0);
 }

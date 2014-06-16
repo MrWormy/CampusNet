@@ -12,27 +12,17 @@ var express = require( 'express' ),
   cookie = require("cookie"),
   sessionStore = new MemoryStore(),
   game = new play.Game(),
-  fs = require("node-fs"),
-  mysql = require("mysql");;
+  fs = require("node-fs");
 
 //variables serveur
 server.listen( 19872 );
-
-if (true) {
-  var connection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root"
-  });
-  connection.connect();
-}
 
 app.use(cookieParser()) // required before session.
   app.use(session({
     secret: 'session user',
     store: sessionStore,
     key: "express.sid"
-}))
+}));
 
 app.get( '/404.html', function ( req, res ) {
   res.sendfile( __dirname + '/404.html' );
@@ -52,7 +42,17 @@ app.use(function(req, res, next){
 });
 
 app.get( '/index.html', function ( req, res ) {
-  res.sendfile( __dirname + '/index.html' );
+  var requete = "SELECT login, avatar FROM `campusnet`.`users` WHERE `login`="+req.session.login+";";
+  var connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+    if (rows[0] && rows[0].login == req.session.login && rows[0].avatar != null && rows[0].avatar != "") {
+      res.sendfile( __dirname + '/index.html' );
+    } else {
+      res.sendfile( __dirname + '/selectSkin.html' );
+    }
+  });
+  play.closeConnectionBDD();
 } );
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
@@ -65,15 +65,14 @@ app.use('/modifQuetes', function(req, res) {
 });
 
 app.use('/modifAvatar', function(req, res) {
-  // TODO et c'est ultra important : vérifier l'identité CAS. C'est pas compliqué mais c'est ultra-important
-
+  // TODO 
   var requete = "UPDATE `campusnet`.`users` SET AVATAR='"+req.query.avatar+"' WHERE `login`="+req.session.login+";";
+  var connection = play.openConnectionBDD();
   connection.query(requete, function(err, rows, fields) {
     if (err) throw err;
   });
-
-  res.sendfile( __dirname + '/modifQuetes.html' );
-});
+  play.closeConnectionBDD();
+} );
 
 app.get( '/quete.js', function ( req, res ) {
   res.sendfile( __dirname + '/quete.js' );
