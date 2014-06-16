@@ -15,6 +15,9 @@ var express = require( 'express' ),
   fs = require("node-fs"),
   mysql = require("mysql");;
 
+//variables serveur
+server.listen( 19872 );
+
 if (true) {
   var connection = mysql.createConnection({
     host: "localhost",

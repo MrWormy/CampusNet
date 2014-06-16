@@ -8,6 +8,15 @@ body {
 	background-color: #EEEEEE;
 }
 
+html, body, #wrap {margin: 0px; height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#content{
+	padding-top: 10px;
+	padding-bottom: 40px;
+}
+
 header {
 	color: white;
 	background-color: #404040;
@@ -63,8 +72,8 @@ table{
 }
 
 form td{
-	padding-top: 30px;
-	padding-bottom: 30px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	text-align: left;
 	font-size: 16pt;
 }
@@ -92,8 +101,11 @@ aside {
 }
 
 footer {
-	padding: 10px;
-	bottom: 0;
+	position: relative;
+	margin-top: -140px;
+	height: 140px;
+	line-height: 40px;
+	vertical-align: middle;
 	clear: both;
 	background-color: #404040;
 	color: white;

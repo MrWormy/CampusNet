@@ -85,23 +85,23 @@ a {
 }
 
 #users {
-	background-image: url(../../assets/resources/icons/data_users.png);
+	background-image: url(../assets/resources/icons/data_users.png);
 }
 
 #rights {
-	background-image: url(../../assets/resources/icons/data_rights.png);
+	background-image: url(../assets/resources/icons/data_rights.png);
 }
 
 #maps {
-	background-image: url(../../assets/resources/icons/edit_maps.png);
+	background-image: url(../assets/resources/icons/edit_maps.png);
 }
 
 #pnjs {
-	background-image: url(../../assets/resources/icons/edit_pnjs.png);
+	background-image: url(../assets/resources/icons/edit_pnjs.png);
 }
 
 #quests {
-	background-image: url(../../assets/resources/icons/edit_quests.png);
+	background-image: url(../assets/resources/icons/edit_quests.png);
 }
 
 .tile:hover {
@@ -154,8 +154,8 @@ aside {
 
 footer {
 	position: relative;
-	margin-top: -40px;
-	height: 40px;
+	margin-top: -140px;
+	height: 140px;
 	line-height: 40px;
 	vertical-align: middle;
 	clear: both;
