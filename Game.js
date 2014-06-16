@@ -100,18 +100,6 @@ var Guy = function(socket, id, initPos, Map, login) {
 		}
 	});*/
 
-	socket.on("getAvatar", function(avatar) {
-		if (that.idBDD != null) {
-			var requete = "SELECT `avatar` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-				socket.emit("avatar", parseInt(rows[0].avatar));
-			});
-		} else {
-			socket.emit("avatar", 0);
-		}
-	});
-
 	/*
 	socket.on("setNom", function(nom) {
 		if (that.idBDD != null) {
@@ -193,6 +181,18 @@ var Guy = function(socket, id, initPos, Map, login) {
 		});
 	}
 
+	this.getSkin = function() {
+		if (that.idBDD != null) {
+			var requete = "SELECT `avatar` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
+			connection.query(requete, function(err, rows, fields) {
+				if (err) throw err;
+				return rows[0];
+			});
+		} else {
+			return null;
+		}
+	}
+
 	if (useBDD) {this.loadBDD(); }
 
 }
@@ -215,7 +215,7 @@ var Map = function() {
 		for (var i=0 ; i<this.guys.length ; i++) {
 			var guy = this.guys[i];
 			if (guy != undefined) {
-				socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName});
+				socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName, skin: guy.getSkin()});
 			}
 		}
 	}
