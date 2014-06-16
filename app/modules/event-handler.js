@@ -169,9 +169,11 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         myPerso = new App.Models.Perso( {
           'id': data.id,
           'currentPos': data.pos,
-          'pName': data.pName
+          'pName': data.pName,
+          'skin': data.skin
         } );
-
+        var perso = this.model.get( "perso" );
+        perso.src = "assets/resources/img/skins/etu/" + myPerso.skin;
         myView = new App.Views.Perso( {
           model: myPerso
         } );
