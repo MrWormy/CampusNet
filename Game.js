@@ -91,14 +91,14 @@ var Guy = function(socket, id, initPos, Map, login) {
 		}
 	});
 
-	socket.on("setAvatar", function(avatar) {
+	/*socket.on("setAvatar", function(avatar) {
 		if (that.idBDD != null) {
 			var requete = "UPDATE `campusnet`.`users` SET `avatar`="+avatar+" WHERE `id`="+idBDD+";";
 			connection.query(requete, function(err, rows, fields) {
 				if (err) throw err;
 			});
 		}
-	});
+	});*/
 
 	socket.on("getAvatar", function(avatar) {
 		if (that.idBDD != null) {
