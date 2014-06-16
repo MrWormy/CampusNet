@@ -73,7 +73,7 @@ app.use('/modifAvatar', function(req, res) {
 });
 
 app.get( '/quete.js', function ( req, res ) {
-  res.sendfile( __dirname + '/quete.js' );
+  res.sendfile( __dirname + '/index.html' );
 } );
 
 app.use(function(req, res, next){
