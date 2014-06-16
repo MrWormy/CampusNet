@@ -7,7 +7,7 @@ function showChoices (form){
 	if(role == "adm" && sexe == "m"){
 		color[2] = "black";
 	}
-	skinTable = '<h2> Choisissez votre avatar</h2><h2 class="warning">Attention, ce choix est définitif !</h2><br><table>';
+	skinTable = '<h2> Choisissez votre avatar</h2><h2 class="warning">Attention, ce choix est définitif !</h2><table>';
 	for(var i = 0; i < 3; i++){
 		skinTable += '<tr>';
 		for(var j = 0; j < 3; j++){
