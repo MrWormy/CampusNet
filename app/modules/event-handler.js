@@ -49,11 +49,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
   mobileEvents: function(){
     var isMobile = App.mobilecheck();
     if(isMobile){
-      $("#register").click(function (e){
-        e.preventDefault();
-        playName = prompt("Entrez un pseudo de 6 lettres ou plus", "Ex: Michel");
-        app.trigger( "register", playName );
-      });
       $("#messaging").click(function (e){
         e.preventDefault();
         sentMessage = prompt("Saisir un message");
@@ -156,7 +151,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       isMobile = App.mobilecheck(),
       navbarView = new App.Views.Navbar();
 
-    $( "#register" ).css( "display", "block" );
     App.socket = socket;
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
@@ -164,7 +158,8 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
-        pnjs = new App.Collections.Pnjs( that.curMap ),
+        pnjs = new App.Collections.Pnjs( that.curMap );
+        this.pName = data.pName;
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,
@@ -172,8 +167,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           'pName': data.pName,
           'skin': data.skin
         } );
-        var perso = this.model.get( "perso" );
-        perso.src = "assets/resources/img/skins/etu/" + myPerso.skin;
         myView = new App.Views.Perso( {
           model: myPerso
         } );
@@ -236,13 +229,9 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     socket.on("reponse_pnj", function(data) {
       pnjs.message(data);
     })
-    if(isMobile){
-      this.listenTo( app, 'register', this.registerPlayerMobile );
-    }else{
-      this.listenTo( app, 'register', this.registerPlayer );
-    }
     this.listenTo( app, 'send:message', this.sendMessage );
     this.listenTo( app, 'way:end', this.checkChange );
+    this.registerPlayer();
 
   },
 
@@ -273,32 +262,12 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     Enregistrement d'un joueur
     @param {object} form Formulaire
   */
-  registerPlayer: function ( form ) {
-    var pName = form.playerName.value.trim( );
+  registerPlayer: function ( ) {
 
-    this.pName = pName;
-
-    if ( pName && pName.length > 5 ) {
-      App.socket.emit( 'ready', {
-        initPos: this.initialPos,
-        pName: pName,
-        map: this.curMap
-      } );
-    }
-  },
-
-  registerPlayerMobile: function (playName){
-    var pName = playName;
-
-    this.pName = pName;
-
-    if ( pName && pName.length > 5 ) {
-      App.socket.emit( 'ready', {
-        initPos: this.initialPos,
-        pName: pName,
-        map: this.curMap
-      } );
-    }
+    App.socket.emit( 'ready', {
+      initPos: this.initialPos,
+      map: this.curMap
+    } );
   },
 
   /**

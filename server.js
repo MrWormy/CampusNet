@@ -42,7 +42,7 @@ app.use(function(req, res, next){
 });
 
 app.get( '/index.html', function ( req, res ) {
-  var requete = "SELECT login, avatar FROM `campusnet`.`users` WHERE `login`="+req.session.login+";";
+  var requete = "SELECT login, avatar FROM campusnet.users WHERE login="+req.session.login+";";
   var connection = play.openConnectionBDD();
   connection.query(requete, function(err, rows, fields) {
     if (err) throw err;
@@ -52,29 +52,22 @@ app.get( '/index.html', function ( req, res ) {
       res.sendfile( __dirname + '/selectSkin.html' );
     }
   });
-  play.closeConnectionBDD();
+  connection.end();
 } );
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
-app.use( '/editeur_de_quetes', express.static( __dirname + '/editeur_de_quetes' ) );
-app.use('/modifQuetes', function(req, res) {
-  // TODO et c'est ultra important : vérifier l'identité CAS. C'est pas compliqué mais c'est ultra-important
-  fs.writeFile("quete.js", req.query.valeurjson);
-  res.sendfile( __dirname + '/modifQuetes.html' );
-});
-
+app.get( '/quete.js', function ( req, res ) {
+  res.sendfile( __dirname + '/quete.js' );
+} );
 app.use('/modifAvatar', function(req, res) {
   var requete = "UPDATE `campusnet`.`users` SET AVATAR='"+req.query.avatar+"' WHERE `login`="+req.session.login+";";
   var connection = play.openConnectionBDD();
   connection.query(requete, function(err, rows, fields) {
     if (err) throw err;
   });
-  play.closeConnectionBDD();
-} );
-
-app.get( '/quete.js', function ( req, res ) {
-  res.sendfile( __dirname + '/quete.js' );
+  connection.end();
+  res.sendfile( __dirname + '/index.html' );
 } );
 
 app.use(function(req, res, next){

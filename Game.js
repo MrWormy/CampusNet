@@ -1,19 +1,18 @@
-var mysql = require("mysql");
-var connection = mysql.createConnection({
-	host: "localhost",
-	user: "root"/*,
-	password: "root"*/
-});
+var useBDD = true;
 
-exports.openConnectionBDD = function() {
+var mysql = require("mysql");
+
+var openConnectionBDD = function() {
+	var connection = mysql.createConnection({
+		host: "localhost",
+		user: "root"/*,
+		password: "root"*/
+	});
 	connection.connect();
 	return connection;
 }
 
-exports.closeConnectionBDD = function() {
-	connection.end();
-}
-
+exports.openConnectionBDD = openConnectionBDD;
 /**
 Game
 */
@@ -164,6 +163,7 @@ var Guy = function(socket, id, initPos, Map, login) {
 
 	this.loadBDD = function() {
 		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`='"+that.login+"';";
+		var connection = openConnectionBDD();
 		connection.query(requete, function(err, rows, fields) {
 			if (err) throw err;
 			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
@@ -171,26 +171,31 @@ var Guy = function(socket, id, initPos, Map, login) {
 			} else { // Creer un nouveau
 				that.signin();
 			}
-		});
+		})
+		connection.end();
 	}
 
 	this.signin = function() {
 		var requete = "INSERT INTO `campusnet`.`users` (`login`, `nom`) VALUES ('"+that.login+"', '"+that.login+"');";
+		var connection = openConnectionBDD();
 		connection.query(requete, function(err, rows, fields) {
 			if (err) throw err;
 			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
 				that.idBDD = parseInt(rows[0].id);
 			}
 		});
+		connection.end();
 	}
 
 	this.getSkin = function() {
 		if (that.idBDD != null) {
 			var requete = "SELECT `avatar` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
+			var connection = openConnectionBDD();
 			connection.query(requete, function(err, rows, fields) {
 				if (err) throw err;
 				return rows[0];
 			});
+			connection.end();
 		} else {
 			return null;
 		}

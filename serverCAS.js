@@ -75,13 +75,32 @@ app.use(function(req, res, next){
 });
 
 app.get( '/index.html', function ( req, res ) {
-  res.sendfile( __dirname + '/index.html' );
+  var requete = "SELECT login, avatar FROM campusnet.users WHERE login='"+req.session.login+"';";
+  var connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+    if (rows[0] && rows[0].login == req.session.login && rows[0].avatar != null && rows[0].avatar != "") {
+      res.sendfile( __dirname + '/index.html' );
+    } else {
+      res.sendfile( __dirname + '/selectSkin.html' );
+    }
+  });
+  connection.end();
 } );
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
 app.get( '/quete.js', function ( req, res ) {
   res.sendfile( __dirname + '/quete.js' );
+} );
+app.use('/modifAvatar', function(req, res) {
+  var requete = "UPDATE campusnet.users SET AVATAR='"+req.query.avatar+"' WHERE login='"+req.session.login+"';";
+  var connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+  });
+  connection.end();
+  res.sendfile( __dirname + '/index.html' );
 } );
 
 app.use(function(req, res, next){
