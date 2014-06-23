@@ -96,6 +96,7 @@ body  {
 }
 
 #navbar{
+    display: none;
     position: absolute;
     width: 1060px;
     height: 60px;

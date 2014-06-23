@@ -3,7 +3,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 
     //  App.map[ pos ] = 2; ligne 169, event-handler
     	if (this.id!=undefined) { // C'est dégueu mais ça marche
-			var perso = new createjs.Sprite( App.perso ),
+			var perso = new createjs.Sprite( App.persos["etu-m-brown-blue.png"] ),
 				tw = App.tw,
 				that = this;
 			perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );

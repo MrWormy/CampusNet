@@ -2,12 +2,14 @@
 
 app/modules/move-*
 
+npm-debug.log
+
 # Folders
 
 node_modules/
 
 assets/
 
-npm-debug.log
+live/
 
 docs/

@@ -34,7 +34,6 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         currentX: that.initialPos.j * App.tw,
         currentY: that.initialPos.i * App.tw
       } );
-      preloadView.loadPersos( );
       that.drawMap( map );
     } )
   },
@@ -141,7 +140,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
 
   move: function ( ) {
     var myMove = new App.Models.Move( ),
-      socket = io.connect( 'http://localhost:19872' ),
+      socket = App.socket,
       others = new App.Collections.OtherPlayers( ),
       othersView = null,
       hashMove = -1,
@@ -151,7 +150,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       isMobile = App.mobilecheck(),
       navbarView = new App.Views.Navbar();
 
-    App.socket = socket;
+    $('#navbar').css("display", "block");
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
         if ( !othersView )

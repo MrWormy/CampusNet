@@ -83,7 +83,7 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
   },
 
   pop: function ( ) {
-    var perso = new createjs.Sprite( App.perso );
+    var perso = new createjs.Sprite( App.persos[this.get("skin")] );
     console.log(perso);
     perso.gotoAndStop( 28 ),
     tw = App.tw;

@@ -18,15 +18,29 @@ Game
 */
 exports.Game = function() {
 
-	var listeDesMaps = require("./assets/resources/map/transitions.json");
+	var listeDesMaps = require("./assets/resources/map/transitions.json"),
+		listeDesAvatars = require("./assets/resources/avatars.json");
 	this.maps = [];
 	for ( var i=0 ; i<listeDesMaps.maps.length ; i++ ) {
 		this.maps.push(new Map());
 	}
 
+	this.testAvatar = function (ava) {
+		if(ava){
+			for (var i = listeDesAvatars.avatars.length - 1; i >= 0; i--) {
+				if(listeDesAvatars.avatars[i] == ava){
+					console.log("\n client choice : " + ava);
+					return ava;
+				}
+			}
+		}
+		console.log("\n client's avatar choice doesn't exist, default has been asigned : " + ava);
+		return "etu-m-brown-blue.png";
+	};
+
 	this.appendGuy = function(socket, data) {
 		this.maps[data.map].appendGuy(socket, data.initPos, data.login);
-	}
+	};
 }
 
 /**
@@ -37,7 +51,7 @@ Variable Guy
 @param {} initPos
 @param {} Map
 */
-var Guy = function(socket, id, initPos, Map, login) {
+var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 	this.socket = socket;
 	var that = this;
 	this.pos = initPos;
@@ -45,9 +59,10 @@ var Guy = function(socket, id, initPos, Map, login) {
 	this.id = id;
 	this.quetes = require("./quete.js").liste;
 	this.login = login;
-	this.idBDD = null;
+	this.idBDD = idBdd;
+	this.skin = skin;
 
-	Map.emit("popGuy", {id: this.id, pName: that.pName, pos: this.pos}, this.id);
+	Map.emit("popGuy", {id: this.id, pName: that.pName, pos: this.pos, skin: this.skin}, this.id);
 
 	socket.on("iMove", function(data) {
 		that.pos = data;
@@ -169,13 +184,13 @@ var Guy = function(socket, id, initPos, Map, login) {
 			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
 				that.idBDD = parseInt(rows[0].id);
 			} else { // Creer un nouveau
-				that.signin();
+				//that.signin();
 			}
 		})
 		connection.end();
 	}
 
-	this.signin = function() {
+	/* this.signin = function() {
 		var requete = "INSERT INTO `campusnet`.`users` (`login`, `nom`) VALUES ('"+that.login+"', '"+that.login+"');";
 		var connection = openConnectionBDD();
 		connection.query(requete, function(err, rows, fields) {
@@ -185,7 +200,7 @@ var Guy = function(socket, id, initPos, Map, login) {
 			}
 		});
 		connection.end();
-	}
+	} */
 
 	this.getSkin = function() {
 		if (that.idBDD != null) {
@@ -200,8 +215,6 @@ var Guy = function(socket, id, initPos, Map, login) {
 			return null;
 		}
 	}
-
-	if (useBDD) {this.loadBDD(); }
 
 }
 
@@ -218,14 +231,25 @@ var Map = function() {
 		@param {} initPos
 	*/
 	this.appendGuy = function(socket, initPos, login) {
-		this.calculeridnew();
-		this.guys.unshift(new Guy(socket, this.idnew, initPos, this, login));
-		for (var i=0 ; i<this.guys.length ; i++) {
-			var guy = this.guys[i];
-			if (guy != undefined) {
-				socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName, skin: guy.getSkin()});
+		var requete = "SELECT `id`, `avatar`  FROM `campusnet`.`users` WHERE `login`='"+login+"';",
+		 connection = openConnectionBDD(),
+		 that = this;
+		connection.query(requete, function(err, rows, fields) {
+			if (err) throw err;
+			if (rows[0] != undefined && parseInt(rows[0].id) >= 0 && rows[0].avatar) {
+				that.calculeridnew();
+				that.guys.unshift(new Guy(socket, that.idnew, initPos, that, login, rows[0].id, rows[0].avatar));
+				for (var i=0 ; i<that.guys.length ; i++) {
+					var guy = that.guys[i];
+					if (guy != undefined) {
+						socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName, skin: guy.skin});
+					}
+				}
+			} else { // Un erreur dans le processus de connection est survenue, il faut recommencer
+				socket.disconnect();
 			}
-		}
+		})
+		connection.end();
 	}
 
 	/**
@@ -268,7 +292,6 @@ var Map = function() {
 		@param {} id
 	*/
 	this.deletePlayer = function(id) {
-		console.log(id, this.guys);
 		for (var i = 0; i < this.guys.length; i++){
 			if(this.guys[i].id == id){
 				this.guys[i].removeMap();

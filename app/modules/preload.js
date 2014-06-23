@@ -9,11 +9,11 @@ App.Models.preload = Backbone.Model.extend( /** @lends module:preload.Models/pre
     "loadMap": false,
     "loadPerso": false
   },
-  
-  /** 
+
+  /**
   * @property {} defaults
   * @augments Backbone.Model
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.on( 'change', this.checkLoad );
@@ -30,9 +30,9 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
 
   el: "#mapCanvas",
 
-  /** 
+  /**
   * @augments Backbone.View
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
     this.loadTransitions( );
@@ -63,31 +63,56 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
 
   loadPerso: function ( ) {
     var that = this,
-      perso = new Image( );
-    perso.src = "assets/resources/img/skins/etu/etu-m-brown-blue.png";
-    perso.onload = function ( ) {
-      that.model.set( {
-        "perso": perso,
-        "loadPerso": true
-      } );
+      compt = 0,
+      baseurl = "assets/resources/img/skins",
+      names = ["adm-f-blond-blue.png", "adm-f-blond-green.png", "adm-f-blond-red.png", "adm-f-brown-blue.png", "adm-f-brown-green.png",
+        "adm-f-brown-red.png", "adm-f-red-blue.png", "adm-f-red-green.png", "adm-f-red-red.png", "adm-m-blond-black.png", "adm-m-blond-blue.png",
+        "adm-m-blond-green.png", "adm-m-brown-black.png", "adm-m-brown-blue.png", "adm-m-brown-green.png", "adm-m-red-black.png",
+        "adm-m-red-blue.png", "adm-m-red-green.png", "etu-f-blond-blue.png", "etu-f-blond-green.png", "etu-f-blond-red.png",
+        "etu-f-brown-blue.png", "etu-f-brown-green.png", "etu-f-brown-red.png", "etu-f-red-blue.png",
+        "etu-f-red-green.png", "etu-f-red-red.png", "etu-m-blond-blue.png", "etu-m-blond-green.png",
+        "etu-m-blond-red.png", "etu-m-brown-blue.png", "etu-m-brown-green.png", "etu-m-brown-red.png",
+        "etu-m-red-blue.png", "etu-m-red-green.png", "etu-m-red-red.png"
+      ],
+      persos = [];
+
+    for(var i = 0; i < 36; i++){
+      var perso = new Image(),
+        name = names[i],
+        uri = baseurl;
+      uri += (i < 18) ? "/adm/" : "/etu/";
+      perso.src = uri + name;
+      perso.name = name;
+      persos.push(perso);
+      perso.onload = function(e){
+        compt ++;
+        if(compt == 36){
+          that.loadPersos(persos);
+        }
+      }
     }
   },
 
-  loadPersos: function ( ) {
-    var perso = this.model.get( "perso" ),
-      map = this.model.get( "map" );
-    var data = {
-      images: [ perso ],
-      frames: {
-        width: map.get( "tilewidth" )*2,
-        height: map.get( "tileheight" )*2,
-        regX: 24,
-        regY: 34
-      }
-    },
-      spriteSheet = new createjs.SpriteSheet( data );
+  loadPersos: function ( persos ) {
+    console.log('ici');
+    var map = this.model.get("map"),
+      spriteSheets = {};
+    for (var i = persos.length - 1; i >= 0; i--) {
+      var data = {
+        images: [ persos[i] ],
+        frames: {
+          width: map.get( "tilewidth" )*2,
+          height: map.get( "tileheight" )*2,
+          regX: 24,
+          regY: 34
+        }
+      };
+      var spriteSheet = new createjs.SpriteSheet( data );
+      spriteSheets[persos[i].name] = spriteSheet;
+    };
 
-    App.perso = spriteSheet;
+    App.persos = spriteSheets;
+    this.model.set("loadPerso", true);
   },
 
   loadTileSet: function ( ) {

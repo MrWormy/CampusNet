@@ -19,7 +19,7 @@ App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/
   },
 
   pop: function ( ) {
-    var perso = new createjs.Sprite( App.perso ),
+    var perso = new createjs.Sprite( App.persos[this.get("skin")] ),
       tw = App.tw,
       that = this;
     perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );
