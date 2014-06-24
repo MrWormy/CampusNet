@@ -1,5 +1,5 @@
 /**
-  Module de redimensionnement 
+  Module de redimensionnement
   @module resize
 */
 
@@ -79,7 +79,7 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
     }
     navbar.css({
         'top' : height - 84 + 'px',
-        'left' : (width-navbarWidth)/2 + 'px' 
+        'left' : (width-navbarWidth)/2 + 'px'
     });
     $("#infoBox").css({
       'width': width - 200 + 'px',
@@ -101,6 +101,7 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
     mapCan.height = height;
     charCan.width = width;
     charCan.height = height;
+
     app.trigger( 'resized:ok', width, height );
   },
 

@@ -77,7 +77,6 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
   initContainer: function ( container, width, height ) {
     var that = this;
     this.addFrames( container );
-    container.cache( 0, 0, this.model.get( "mapWidth" ), this.model.get( "mapHeight" ) );
     this.drawContainer( container, width, height );
     this.stage.addChild( container );
     app.trigger( 'load:ended' );
@@ -86,8 +85,8 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
   drawContainer: function ( container, width, height ) {
     container.x = -this.model.get( "currentX" );
     container.y = -this.model.get( "currentY" );
-    container.regX = -width / 2;
-    container.regY = -height / 2;
+    container.regX = -Math.round(width / 2);
+    container.regY = -Math.round(height / 2);
     var charac = App.Stages.mapStage.getChildByName( "player" ),
       others = App.Stages.characterStage.getChildByName( "others" );
     if ( charac ) {
@@ -125,15 +124,21 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" ),
       layerHeight = this.model.get( "height" ),
+      lines = [],
       tileSet = this.model.get( "tilesets" )[ 0 ],
       tsW = Math.floor( tileSet.imagewidth / tileWidth ),
       ll = layers.length,
       dl;
 
-      for ( var k = 0; k < App.map.length; k++ ) {
-        App.map[ k ] = 2;
-      }
-
+    App.map = [];
+    App.layerWidth = layerWidth;
+    for ( var k = 0; k < layerHeight*layerWidth; k++ ) {
+      App.map[ k ] = 2;
+    }
+    for( var i = 0; i < layerHeight; i++){
+      lines[i] = new createjs.Container();
+      lines[i].y = i*tileHeight;
+    }
     for ( var i = 1; i <= ll; i++ ) {
       var type, layer = this.model.get( "layers" )[ i - 1 ],
         data = layer.data,
@@ -146,14 +151,18 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
           line = Math.floor( j / layerWidth );
         if ( frame >= 0 ) {
           App.map[ j ] = type;
-          this.addFrame( container, frame, col * tileWidth, line * tileHeight, tileWidth, tileHeight, tsW );
+          this.addFrame( lines[line], frame, col * tileWidth, 0, tileWidth, tileHeight, tsW );
         }
       }
+    }
+    for(var i = 0; i < layerHeight; i++){
+      lines[i].cache(0,0,tileWidth*layerWidth, tileHeight);
+      container.addChild(lines[i]);
     }
   },
 
   addFrame: function ( container, frame, posX, posY, tw, th, tsW ) {
-    var sourceRect = new createjs.Rectangle( ( frame % tsW ) * tw, ( Math.floor( frame / tsW ) ) * th, tw, th ),
+    var sourceRect = new createjs.Rectangle( ( frame % tsW ) * tw, ( Math.floor( frame / tsW ) ) * th, tw , th ),
       tempsFrame = new createjs.Bitmap( App.tileset );
 
     tempsFrame.sourceRect = sourceRect;

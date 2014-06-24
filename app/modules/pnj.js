@@ -3,10 +3,10 @@ App.Models.Pnj = Backbone.Model.extend( {
 
     //  App.map[ pos ] = 2; ligne 169, event-handler
     	if (this.id!=undefined) { // C'est dégueu mais ça marche
-			var perso = new createjs.Sprite( App.persos["etu-m-brown-blue.png"] ),
+			var perso = new createjs.Sprite( App.persos[this.get("skin") || "etu-m-brown-blue.png"] || App.persos["etu-m-brown-blue.png"] ),
 				tw = App.tw,
 				that = this;
-			perso.gotoAndStop( Math.floor( 4 * Math.random( ) ) );
+			perso.gotoAndStop( this.get("orientation") || 0 );
 			perso.name = "pnj " + this.id;
 			perso.x = this.get( "pos" ).j * tw;
 			perso.y = this.get( "pos" ).i * tw;
@@ -25,6 +25,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	afficher: function(id_map) {
 		if (this.get("map") == id_map) {
+			App.map[this.get("pos").i * App.layerWidth + this.get("pos").j] = 2;
 			App.Stages.characterStage.getChildByName( "others" ).addChild( this.get("perso") );
 		}
 	},
@@ -46,14 +47,22 @@ App.Collections.Pnjs = Backbone.Collection.extend({
 	url: "assets/resources/pnj.json",
 	model: App.Models.Pnj,
 
-	initialize: function(id_map) {
+	initialize: function() {
+	},
+
+	newMap: function (id_map) {
 		var that = this;
-		console.log(id_map);
-		this.fetch().done(function() {
+	  if(this.models.length > 0){
 			for (var i=0 ; i<that.models.length ; i++) {
 				that.models[i].afficher(id_map);
 			}
-		});
+	  } else {
+			this.fetch().done(function() {
+				for (var i=0 ; i<that.models.length ; i++) {
+					that.models[i].afficher(id_map);
+				}
+			});
+	  }
 	},
 
 	message: function(data) {

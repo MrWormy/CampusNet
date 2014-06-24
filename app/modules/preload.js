@@ -94,7 +94,6 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
   },
 
   loadPersos: function ( persos ) {
-    console.log('ici');
     var map = this.model.get("map"),
       spriteSheets = {};
     for (var i = persos.length - 1; i >= 0; i--) {

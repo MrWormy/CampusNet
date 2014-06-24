@@ -14,7 +14,8 @@ var App = {
   tileset: {},
   oNames: {},
   map: [ ],
-  perso: {},
+  persos: {},
+  layerWidth: 0,
   tw: 0,
 
   /**
@@ -39,7 +40,7 @@ _.extend( app, Backbone.Events );
 
 
 $( function ( ) {
-  App.socket = io.connect( 'http://localhost:19872' );
+  App.socket = io.connect( 'http://localhost:19872', {"reconnection" : false} );
   App.socket.on('error',  function (data){$
     console.log(data);
     window.location.replace('dejala.html');

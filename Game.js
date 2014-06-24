@@ -171,7 +171,6 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 	this.removeMap = function() {
 		socket.removeAllListeners("message");
 		socket.removeAllListeners("iMove");
-		socket.removeAllListeners("disconnect");
 		socket.removeAllListeners("quitMap");
 		socket.removeAllListeners("parler_pnj");
 	}

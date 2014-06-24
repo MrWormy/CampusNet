@@ -27,8 +27,8 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
 
     preloadView.listenToOnce( app, 'preload:ended', function ( map ) {
       that.initialPos = {
-        "i": map.get( "height" ) / 2,
-        "j": map.get( "width" ) / 2
+        "i": Math.round(map.get( "height" ) / 2),
+        "j": Math.round(map.get( "width" ) / 2)
       };
       map.set( {
         currentX: that.initialPos.j * App.tw,
@@ -148,6 +148,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       myPerso = null,
       myView, way,
       isMobile = App.mobilecheck(),
+      pnjs = new App.Collections.Pnjs(),
       navbarView = new App.Views.Navbar();
 
     $('#navbar').css("display", "block");
@@ -157,7 +158,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           othersView = new App.Views.OtherPlayers( {
             collection: others
           } )
-        pnjs = new App.Collections.Pnjs( that.curMap );
+        pnjs.newMap( that.curMap );
         this.pName = data.pName;
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
