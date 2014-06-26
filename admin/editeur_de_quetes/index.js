@@ -155,8 +155,8 @@ App.Views.Gestion = Backbone.View.extend({
 			obj = {};
 
 		this.splitInAnArray(formQ.QEforDispo.value, QEforDispo);
-		this.splitInAnArray(formQ.QCforDispo.value, QEforDispo);
-		this.splitInAnArray(formQ.QneededToEnd.value, QEforDispo);
+		this.splitInAnArray(formQ.QCforDispo.value, QCforDispo);
+		this.splitInAnArray(formQ.QneededToEnd.value, QneededToEnd);
 		id = parseInt(document.getElementById("id").innerHTML);
 		nameQ = formQ.nameQ.value.trim();
 		if(temp = formQ.idPnj.options[formQ.idPnj.selectedIndex])
@@ -183,6 +183,9 @@ App.Views.Gestion = Backbone.View.extend({
 
 		if(typeof(quest = this.collection.get(id)) !== "undefined"){
 			quest.set(obj, {validate: true});
+			formQ.QEforDispo.value = QEforDispo;
+			formQ.QCforDispo.value = QCforDispo;
+			formQ.QneededToEnd.value = QneededToEnd;
 		}
 	},
 

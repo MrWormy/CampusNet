@@ -136,6 +136,7 @@ app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
       obj += data.toString();
     })
     req.on('end', function(){
+      console.log("\n Quest file updated : ", req.session.login);
       fs.writeFile("./admin/editeur_de_quetes/quetes.json", obj);
     })
     res.send(200);
@@ -181,7 +182,7 @@ if(sid){
 
 
 io.sockets.on( 'connection', function ( socket ) {
-  console.log("\n new connexion : " + socket.login.login);
+  console.log("\n new socket connexion : " + socket.login.login);
   var quetes = new play.quests(socket.login.login, socket);
   socket.on('ready', function(data){
     data.login = socket.login.login;
@@ -189,7 +190,7 @@ io.sockets.on( 'connection', function ( socket ) {
   });
   socket.on("disconnect", function() {
     var i;
-    console.log(" \n client disconnected : ", socket.login.login);
+    console.log(" \n client socket disconnected : ", socket.login.login);
     quetes = null;
     if((i = getInd(socket.login.login, loggedIn)) >= 0){
       loggedIn.splice(i, 1);
