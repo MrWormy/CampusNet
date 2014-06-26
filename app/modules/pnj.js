@@ -31,7 +31,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 	},
 
 	parler: function(texte) {
-		if (texte==undefined) {
+		if (texte=="default") {
 			texte = this.get("text");
 		}
 		var that = this;

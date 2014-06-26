@@ -17,45 +17,49 @@
 		<h1>Bienvenue sur la page d'édition des quêtes</h1>
 
 		<section id="content">
-
-		<div id="main_menu">
-			Id : <span id="id"></span><br />
-			<input type="checkbox" name="immediat" id="immediat" /><label for="immediat">Disponibilité immédiate</label><br />
-			Nom : <span id="pseudo"></span><br />
-			Texte : <input type="texte" id="dialogue" size=60 /><input type="button" id="dialogue_button" value="Modifier" /><br />
-			Texte hors quête : <input type="texte" id="texte" size=60 /><input type="button" id="texte_button" value="Modifier" style="display: none;"/><br />
-			Quêtes débloquée par cette quête : <input type="number" id="numero_quete" /><input type="button" id="ajouter_suite" value="Ajouter" /><input type="button" id="retirer_suite" value="Retirer" /><br />
-			<span id="quetes_debloquees"></span><br />
-			<input type="button" name="exporter" id="exporter" value="Exporter" />
-		</div>
-
-		<div id="menu_pnjs">
-			<form>
-				<select id="liste_persos" size="15">
-				</select>
-			</form>
-		</div>
-
+			<div id = "menu">
+				<div id = "menu-left" class="content-menu">
+					<span id="title">liste des quêtes</span><br/>
+					<select id="listeQ" size="12">
+					</select><br />
+					<input class="Qbutton" type="button" name="saveQ" id="saveQ" value="Sauvegarder la quête" /><br />
+					<input class="Qbutton" type="button" name="newQ" id="newQ" value="Nouvelle quête" /><br />
+					<input class="Qbutton" type="button" name="removeQ" id="removeQ" value="Supprimer cette quête" /><br />
+					<input class="Qbutton" type="button" name="sendAllQ" id="sendAllQ" value="Envoyer au serveur" /><br />
+				</div>
+				<div id = "menu-right" class="content-menu">
+					Id : <span id="id"></span><br />
+					<form id="detailQ" name="detailQ">
+						Nom de la quête : <input type="texte" id="nameQ" size=40 /><br />
+						Pnj qui déclenche la quête : <select id="idPnj" class="pnjsListe" ></select><br />
+						Pnj qui affiche les dialogues de la quête : <select id="speaker" class="pnjsListe"></select><br />
+						Texte d'introduction de la quête : <br /><input type="texte" id="dialInit" size="90" maxlength="200" /><br />
+						Texte affiché durant la quête : <br /><input type="texte" id="dialQ" size="90" maxlength="200" /><br />
+						Texte affiché à la validation de la quête : <br /><input type="texte" id="dialEnd" size="90" maxlength="200" /><br />
+						Texte affiché après la quête : <br /><input type="texte" id="dialEnded" size="90" maxlength="200"/><br />
+						Ids des quêtes qui doivent avoir été complétées pour que l'on puisse débuter la quête <br />
+						(séparés par des virgules) : <input type="texte" id="QEforDispo" size=40><br />
+						Ids des quêtes qui doivent avoir être en cours pour que l'on puisse débuter la quête <br />
+						(séparés par des virgules) : <input type="texte" id="QCforDispo" size=40><br />
+						Ids des quêtes qui doivent avoir été complétées pour que l'on puisse valider la quête <br />
+						(séparés par des virgules) : <input type="texte" id="QneededToEnd" size=40><br />
+					</form>
+				</div>
+			</div>
 		</section>
 
 	</div>
 		<footer>
 			Copyright 2014 - CampusNet v2<br>
-			<img src="../../assets/resources/logos.png"/>
+			<img src="/assets/resources/logos.png"/>
 		</footer>
 
-		<form method="GET" action="modifQuetes" id="exportateur">
-			<input type="hidden" name="valeurjson" id="exportateurConteneur">
-		</form>
-
-		<script type="text/javascript" src="../../assets/jquery/dist/jquery.js"></script>
-		<script type="text/javascript" src="../../assets/underscore/underscore.js"></script>
-		<script type="text/javascript" src="../../assets/backbone/backbone.js"></script>
+		<script type="text/javascript" src="/assets/jquery/dist/jquery.js"></script>
+		<script type="text/javascript" src="/assets/underscore/underscore.js"></script>
+		<script type="text/javascript" src="/assets/backbone/backbone.js"></script>
 
 		<script type="text/javascript">
-			var exports = {};
 		</script>
-		<script type="text/javascript" src="../../quete.js"></script>
 		<script type="text/javascript" src="index.js"></script>
 
 	</body>

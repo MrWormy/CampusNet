@@ -57,7 +57,6 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 	this.pos = initPos;
 	this.pName = login;
 	this.id = id;
-	this.quetes = require("./quete.js").liste;
 	this.login = login;
 	this.idBDD = idBdd;
 	this.skin = skin;
@@ -89,22 +88,6 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 			info.prive = true;
 			if(tempGuy = Map.findGuy(data.destinataire))
 				tempGuy.socket.emit("message", info);
-		}
-	});
-
-	socket.on("parler_pnj", function(id) {
-		var hesaidit = false;
-		for (var i=0 ; i<that.quetes.length ; i++) {
-			if (that.quetes[i].status=="unlocked") {
-				if (that.quetes[i].objet.type=="parler_pnj" && that.quetes[i].objet.id_pnj==id) {
-					socket.emit("reponse_pnj", {id: id, texte: that.quetes[i].objet.dialogue});
-					that.valider_quete(i);
-					hesaidit = true;
-				}
-			}
-		}
-		if (!hesaidit) {
-			socket.emit("reponse_pnj", {id: id, texte: undefined}); // Si aucune quete ne corresond, on affichera le texte de base
 		}
 	});
 
@@ -161,18 +144,10 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 		}
 	});
 
-	this.valider_quete = function(id) {
-		this.quetes[id].status = "locked";
-		for (var i=0 ; i<this.quetes[id].finish.length ; i++) {
-			this.quetes[this.quetes[id].finish[i]].status = "unlocked";
-		}
-	}
-
 	this.removeMap = function() {
 		socket.removeAllListeners("message");
 		socket.removeAllListeners("iMove");
 		socket.removeAllListeners("quitMap");
-		socket.removeAllListeners("parler_pnj");
 	}
 
 	this.loadBDD = function() {
@@ -303,7 +278,115 @@ var Map = function() {
 	}
 }
 
+function isIn (el, list) {
+	var bool = false;
+	for (var i = list.length - 1; i >= 0; i--) {
+		if(list[i] == el){
+			bool = true;
+			break;
+		}
+	};
+	return bool;
+}
+
 exports.isAdmin = function(login) {
 	var listeAdmins = ['admin', 'benning', 'kimyonok', 'laurence', 'koenig_b', 'nouveau'];
 	return (listeAdmins.indexOf(login) >= 0);
+}
+
+exports.quests = function(login, socket){
+	var that = this;
+	this.quetes = require("./admin/editeur_de_quetes/quetes.json");
+	this.nbPnj = require("./assets/resources/pnj.json").length;
+	this.QenCours = [];
+	this.Qterminees = [];
+	// var requete = "SELECT `avatar` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";",
+	// 	connection = openConnectionBDD();
+	// connection.query(requete, function(err, rows, fields) {
+	// 	if (err) throw err;
+	// 	return rows[0];
+	// });
+	// connection.end();
+
+	socket.on("parler_pnj", function(idPnj) {
+		var dial = "default",
+			idSpeaker = idPnj;
+		if(typeof(idPnj) == "number" && (0 <= idPnj) && (idPnj < that.nbPnj)){
+			for(var i = 0; i < that.quetes.length; i++){
+				var curQ = that.quetes[i];
+				if(idPnj == curQ.idPnj){
+					if(isIn(curQ.id, that.QenCours)){
+						var bool = that.checkEndQ(curQ);
+						idSpeaker = curQ.speaker;
+						if(bool){
+							that.endQ(curQ.id);
+							that.Qterminees.push(curQ.id);
+							dial = curQ.dialEnd;
+							break;
+						}
+						else {
+							dial = curQ.dialQ;
+							break;
+						}
+					}
+					else if(isIn(curQ.id, that.Qterminees)) {
+						idSpeaker = curQ.speaker;
+						dial = curQ.dialEnded;
+					}
+					else {
+						var bool = true;
+						for(var j = 0; j < curQ.QEforDispo.length; j++){
+							if(!isIn(curQ.QEforDispo[j], that.Qterminees)){
+								bool = false;
+								break;
+							}
+						}
+						if(bool){
+							for(var j = 0; j < curQ.QCforDispo.length; j++){
+								if(!isIn(curQ.QCforDispo[j], that.QenCours)){
+									bool = false;
+									break;
+								}
+							}
+						}
+						if(bool){
+							var bool2 = that.checkEndQ(curQ);
+							idSpeaker = curQ.speaker;
+							if(bool2) {
+								that.Qterminees.push(curQ.id);
+								dial = curQ.dialEnd;
+								break;
+							}
+							else {
+								that.QenCours.push(curQ.id);
+								dial = curQ.dialInit;
+								break;
+							}
+						}
+					}
+				}
+			}
+			socket.emit("reponse_pnj", {"id":idSpeaker, "texte":dial});
+		}
+	});
+
+	this.checkEndQ = function(Quest){
+		var bool = true
+		for(var i = 0; i<Quest.QneededToEnd.length; i++){
+			if(!isIn(Quest.QneededToEnd[i], this.Qterminees)){
+				bool = false;
+				break;
+			}
+		}
+		return bool;
+	}
+
+	this.endQ = function(qId){
+		for(var i = 0; i<this.QenCours.length; i++){
+			if(this.QenCours[i] == qId){
+				this.QenCours.splice(i, 1);
+			}
+		}
+	}
+
 }

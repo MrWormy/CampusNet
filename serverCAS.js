@@ -130,8 +130,19 @@ app.use(function(req, res, next){
 });
 app.use( '/admin', express.static( __dirname + '/admin' ) );
 app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
-    fs.writeFile("quete.js", req.query.valeurjson);
-    res.sendfile( __dirname + '/admin/editeur_de_quetes/modifQuetes.html' );
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      fs.writeFile("./admin/editeur_de_quetes/quetes.json", obj);
+    })
+    res.send(200);
+  }
+  else{
+    res.redirect('/404.html');
+  }
 });
 app.use(function(req, res, next){
   res.redirect('/404.html');
@@ -140,11 +151,10 @@ app.use(function(req, res, next){
 io.use(function (socket, next) {
 var sid = "";
   if(socket.request){
-    console.log("\n requête reçue");
     if(socket.request.headers){
-      console.log(" headers : ", socket.request.headers);
       if(socket.request.headers.cookie && (sid = cookie.parse(socket.request.headers.cookie)['express.sid'])){
-            sid = sid.split(":")[1].split(".")[0];
+        console.log("\n attempt to connect a new client");
+        sid = sid.split(":")[1].split(".")[0];
       }
     }
   }
@@ -152,9 +162,11 @@ var sid = "";
 if(sid){
   sessionStore.get(sid, function (err, login) {
     if (err || !login) {
+      console.log("\n connexion denied");
       next(new Error("connexion refusée"));
     } else {
       if(isIn(login.login, loggedIn)){
+        console.log("\n connexion denied, the client is already connected : ", login.login);
         next(new Error("connexion refusée, personne déjà connectée"));
       } else {
         loggedIn.push(login.login);
@@ -170,6 +182,7 @@ if(sid){
 
 io.sockets.on( 'connection', function ( socket ) {
   console.log("\n new connexion : " + socket.login.login);
+  var quetes = new play.quests(socket.login.login, socket);
   socket.on('ready', function(data){
     data.login = socket.login.login;
     game.appendGuy(socket, data);
@@ -177,6 +190,7 @@ io.sockets.on( 'connection', function ( socket ) {
   socket.on("disconnect", function() {
     var i;
     console.log(" \n client disconnected : ", socket.login.login);
+    quetes = null;
     if((i = getInd(socket.login.login, loggedIn)) >= 0){
       loggedIn.splice(i, 1);
     }

@@ -46,7 +46,7 @@ header a:hover {
 }
 
 header #path {
-	margin-left: 5px; 
+	margin-left: 5px;
 }
 
 h1 {
@@ -161,6 +161,27 @@ footer {
 	clear: both;
 	background-color: #404040;
 	color: white;
+}
+
+/* Quest edition style*/
+.content-menu {
+	display: inline-block;
+	vertical-align: top;
+	margin: 20px;
+	text-align: left;
+}
+
+.Qbutton{
+	font-family: 'Open Sans', 'sans-serif';
+	height: 35px;
+	width: 150px;
+	text-align: center;
+	margin-top: 8px;
+}
+
+#listeQ{
+	font-family: 'Open Sans', 'sans-serif';
+	width: 150px;
 }
 
 .clearfix:after {content: ".";
