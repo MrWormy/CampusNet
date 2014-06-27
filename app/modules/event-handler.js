@@ -148,8 +148,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       myPerso = null,
       myView, way,
       isMobile = App.mobilecheck(),
-      pnjs = new App.Collections.Pnjs(),
-      navbarView = new App.Views.Navbar();
+      pnjs = new App.Collections.Pnjs();
 
     $('#navbar').css("display", "block");
     socket.on( 'popGuy', function ( data ) {
@@ -226,9 +225,9 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     socket.on( "message", function ( data ) {
       others.message( data );
     } );
-    socket.on("reponse_pnj", function(data) {
+    socket.on("reponse_pnj", function ( data ) {
       pnjs.message(data);
-    })
+    });
     this.listenTo( app, 'send:message', this.sendMessage );
     this.listenTo( app, 'way:end', this.checkChange );
     this.registerPlayer();

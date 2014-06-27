@@ -13,6 +13,7 @@ var express = require( 'express' ),
   sessionStore = new MemoryStore(),
   game = new play.Game(),
   loggedIn = [],
+  quests = require("./quetes");
   fs = require("node-fs");
 
 //variables serveur
@@ -106,18 +107,19 @@ app.use('/modifAvatar', function(req, res) {
   var connection = play.openConnectionBDD();
   connection.query(requeteSel, function(err, rows, fields) {
     if (err) throw err;
-    connection = play.openConnectionBDD();
+    var oConnection = play.openConnectionBDD();
     if (rows[0] && rows[0].login == req.session.login) {
-      connection.query(requeteUp, function(err, rows, fields) {
+      oConnection.query(requeteUp, function(err, rows, fields) {
         if (err) throw err;
         res.redirect('index.html');
       });
     } else {
-      connection.query(requeteNew, function(err, rows, fields) {
+      oConnection.query(requeteNew, function(err, rows, fields) {
         if (err) throw err;
         res.redirect('index.html');
       });
     }
+    oConnection.end();
   });
   connection.end();
 } );
@@ -137,7 +139,7 @@ app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
     })
     req.on('end', function(){
       console.log("\n Quest file updated : ", req.session.login);
-      fs.writeFile("./admin/editeur_de_quetes/quetes.json", obj);
+      quests.validate(obj);
     })
     res.send(200);
   }
@@ -164,11 +166,11 @@ if(sid){
   sessionStore.get(sid, function (err, login) {
     if (err || !login) {
       console.log("\n connexion denied");
-      next(new Error("connexion refusée"));
+      next(new Error("ERR_CONN_DEN"));
     } else {
       if(isIn(login.login, loggedIn)){
         console.log("\n connexion denied, the client is already connected : ", login.login);
-        next(new Error("connexion refusée, personne déjà connectée"));
+        next(new Error("ERR_CONN_ALR"));
       } else {
         loggedIn.push(login.login);
         // save the session data and accept the connection
@@ -183,7 +185,7 @@ if(sid){
 
 io.sockets.on( 'connection', function ( socket ) {
   console.log("\n new socket connexion : " + socket.login.login);
-  var quetes = new play.quests(socket.login.login, socket);
+  var quetes = new quests.ClientQuest(socket.login.login, socket);
   socket.on('ready', function(data){
     data.login = socket.login.login;
     game.appendGuy(socket, data);

@@ -1,3 +1,53 @@
+App.Models.Navbar = Backbone.Model.extend({
+  defaults: {
+    "quetes": "",
+    "discussion": "",
+    "carte": '<img id="imgmap" src="./assets/resources/img/carte.png"><br>',
+    "profil": '<div class="info"> Pseudo : Inconnu<br><br>Biographie : <br><br><br><br>Avatar :<br><img src="assets/resources/img/select/etu-m/brown-blue.png"><br><br></div>',
+    "son": '<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>',
+    "param": '<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>',
+    "aide": '<div class="info">Bienvenue sur Campusnet v2.<br><br>Bientôt vous pourrez trouvez l\'aide pour le jeu ici.<br><br>Crédits:<br><br>Campusnet v2 a été développé par Nicolas Benning, Thomas Laurence, Bilgé Kimyonok et Benoît Koenig.</div>',
+    "quit": "",
+    "curQ": [],
+    "endedQ": []
+  },
+
+  newQ: function (newQ) {
+    var curQ = "", endedQ = "", ret = "";
+    for (var i = 0; i < newQ.length; i++) {
+      var tempQ = newQ[i];
+      switch(tempQ.type){
+        case 1:
+          this.get("curQ").push(tempQ.name);
+          break;
+        case 2:
+          this.get("endedQ").push(tempQ.name);
+          break;
+        case 3:
+          var curQt = this.get("curQ");
+          for (var j = curQt.length - 1; j >= 0; j--) {
+            if(curQt[j] == tempQ.name){
+              curQt.splice(j, 1);
+              break;
+            }
+          };
+          this.get("endedQ").push(tempQ.name);
+          break;
+      }
+    };
+    for (var i = this.get("curQ").length - 1; i >= 0; i--) {
+      curQ += this.get("curQ")[i];
+      curQ += "<br />";
+    };
+    for (var j = this.get("endedQ").length - 1; j >= 0; j--) {
+      endedQ += this.get("endedQ")[j];
+      endedQ += "<br />";
+    };
+    ret = "<div class='info'><h2> Quêtes en cours </h2>"+curQ+"<br /><h2> Quêtes terminées </h2>"+endedQ+"</div>";
+    this.set("quetes", ret);
+  }
+});
+
 App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototype */ {
 
   el: '#navbar',
@@ -11,63 +61,52 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   * @constructs
   */
   initialize: function ( ) {
+    var that = this;
     this.listenTo(app, 'close:info', this.closeInfo);
+    App.socket.on("newQuests", function(data){
+      that.model.newQ(data.data);
+    });
   },
 
   navAction: function (e){
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
       this.closeInfo();
+      infoBox.css({'display' : 'block'});
     switch(e.target.id){
       case "quetes" :
-        console.log("quetes");
         infoBox.html(title);
-        infoBox.append('<div class="info">Aucune quête en cours</div>');
-        infoBox.css({'display' : 'block'});
+        infoBox.append(this.model.get("quetes"));
         break;
       case "discussion" :
-        console.log("discussion");
         infoBox.html(title);
-        infoBox.css({'display' : 'block'});
         break;
       case "carte" :
-        console.log("carte");
         infoBox.html(title);
         var width = infoBox.css("width").slice(0,-2),
           height = infoBox.css('height').slice(0,-2);
-        infoBox.append('<img id="imgmap" src="./assets/resources/img/carte.png"><br>');
+        infoBox.append(this.model.get("carte"));
         $('#imgmap').css({
           'width' : width - 50 + 'px'
         });
-        infoBox.css({'display' : 'block'});
         break;
       case "profil" :
-        console.log("profil");
         infoBox.html(title);
-        var bio = 'Pseudo : Inconnu<br><br>Biographie : <br><br>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed malesuada semper augue eu scelerisque. Vestibulum accumsan iaculis erat, ut malesuada purus rutrum in. Nulla malesuada tincidunt velit, a vehicula magna commodo eu. Vivamus neque ipsum, vestibulum in imperdiet vel, porttitor sit amet lectus. Vivamus cursus, odio in imperdiet gravida, magna magna consequat leo, ac iaculis enim sem sit amet tortor. Aenean pharetra rutrum turpis vitae molestie. Curabitur interdum sit amet dolor sit amet sagittis.<br><br>Avatar :<br><img src="assets/resources/img/select/etu-m/brown-blue.png"><br><br>';
-        infoBox.append('<div class="info">' + bio + '</div>');
-        infoBox.css({'display' : 'block'});
+        infoBox.append(this.model.get("profil"));
         break;
       case "son" :
-        console.log("son");
         infoBox.html(title);
-        infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
-        infoBox.css({'display' : 'block'});
+        infoBox.append(this.model.get("son"));
         break;
       case "aide" :
-        console.log("aide");
         infoBox.html(title);
-        infoBox.append('<div class="info">Bienvenue sur Campusnet v2.<br><br>Bientôt vous pourrez trouvez l\'aide pour le jeu ici.<br><br>Crédits:<br><br>Campusnet v2 a été développé par Nicolas Benning, Thomas Laurence, Bilgé Kimyonok et Benoît Koenig.</div>');
-        infoBox.css({'display' : 'block'});
+        infoBox.append(this.model.get("aide"));
         break;
       case "param" :
-        console.log("param");
         infoBox.html(title);
         infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
-        infoBox.css({'display' : 'block'});
         break;
       case "quit" :
-        console.log("quit");
         break;
       default:
         break;
