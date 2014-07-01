@@ -15,7 +15,7 @@ body  {
 
 #mapCanvas {
     position: absolute;
-    background-color: transparent;
+    background-color: #DADADA;
 }
 
 #charactersCanvas{

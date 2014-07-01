@@ -170,6 +170,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
           model: myPerso
         } );
 
+        App.views.navbar.loadPerso(data.pName, data.skin);
         myMove.listenTo( app, 'move', myMove.move );
         myPerso.listenTo( app, 'move:ok', myPerso.changeWay );
         myMove.listenTo( app, 'move:bg', function ( data ) {

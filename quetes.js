@@ -17,6 +17,10 @@ quests.ClientQuest = function (login, socket) {
 
   connection.query(reqGetId, function(err, row, fields) {
     if (err) throw err;
+    if(!(row[0] && typeof(row[0].id) != "undefined")){
+      socket.disconnect();
+      return 0;
+    }
     that.idBDD = row[0].id;
     console.log("\n idBDD : ", that.idBDD);
     var requete = "SELECT `id_quest` FROM `campusnet`.`quests` WHERE `id_user` = "+that.idBDD+" ;",
@@ -41,14 +45,13 @@ quests.ClientQuest = function (login, socket) {
 
        for(var k = 0; k < that.Qterminees.length; k++){
         var name = that.getQName(that.Qterminees[k]);
-        console.log(name);
         if(name)
           sendQ.push({"type": 2, "name": name});
        }
-       socket.emit("newQuests", {"data": sendQ});
+       socket.emit("newQuests", {"data": sendQ, "init": true});
        console.log("\n sending quests : ", sendQ, " to client : ", that.login);
 
-       console.log("\n quetes chargées : \n QenCours : ", that.QenCours, "\n Qterminees : ", that.Qterminees);
+       console.log("\n quests loaded : \n QenCours : ", that.QenCours, "\n Qterminees : ", that.Qterminees);
        socket.on("parler_pnj", function(idPnj){
          var ret = that.treatQ(idPnj, that, socket),
           name = null;
@@ -57,7 +60,7 @@ quests.ClientQuest = function (login, socket) {
          /* on revoie ret au client (avec nom de la quête) */
          name = that.getQName(ret.idQ);
            if(name){
-            socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}]});
+            socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}], "init": false});
            }
          }
        });
@@ -108,14 +111,14 @@ quests.ClientQuest.prototype.updateQ = function (ret) {
       connection.query(requete, function(err, rows, fields) {
         if (err) throw err;
       });
-      console.log("\n nouvelle quête en cours : ", ret.idQ, " ", this.login);
+      console.log("\n new quest in progress : ", ret.idQ, " ", this.login);
       break;
     case 2:
-      requete = "DELETE FROM `campusnet`.`quests` WHERE `quests`.`id_user` = "+this.idBDD+" AND `quests`.`id_quest` = "+ret.idQ+";";
+      requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ)+"\');";
       connection.query(requete, function(err, rows, fields) {
         if (err) throw err;
       });
-      console.log("\n quête achevée : ", ret.idQ, " ", this.login);
+      console.log("\n quest ended : ", ret.idQ, " ", this.login);
       break;
     case 3:
       requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ)+"\');";
@@ -126,7 +129,7 @@ quests.ClientQuest.prototype.updateQ = function (ret) {
       connection.query(requete, function(err, rows, fields) {
         if (err) throw err;
       });
-      console.log("\n quête achevée et quête en cours supprimée : ", ret.idQ, " ", this.login);
+      console.log("\n quest ended and quest in progress deleted : ", ret.idQ, " ", this.login);
       break;
     default:
       break;
@@ -225,7 +228,7 @@ quests.validate = function(newQuestsStr){
   fs.writeFile("./admin/editeur_de_quetes/quetes.json", JSON.stringify(rigthQ));
 
   function fillRQ(q, key, obj){
-    if(pnjIds.indexOf(q.idPnj) >=  0 && pnjIds.indexOf(q.speaker)){
+    if(pnjIds.indexOf(q.idPnj) >=  0 && pnjIds.indexOf(q.speaker) >= 0){
       rigthQ.push(q);
     }
   };

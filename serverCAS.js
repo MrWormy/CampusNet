@@ -13,7 +13,7 @@ var express = require( 'express' ),
   sessionStore = new MemoryStore(),
   game = new play.Game(),
   loggedIn = [],
-  quests = require("./quetes");
+  quests = require("./quetes"),
   fs = require("node-fs");
 
 //variables serveur
@@ -138,7 +138,7 @@ app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
       obj += data.toString();
     })
     req.on('end', function(){
-      console.log("\n Quest file updated : ", req.session.login);
+      console.log("\n Quests file updated : ", req.session.login);
       quests.validate(obj);
     })
     res.send(200);

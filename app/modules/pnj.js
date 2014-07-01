@@ -10,12 +10,6 @@ App.Models.Pnj = Backbone.Model.extend( {
 			perso.name = "pnj " + this.id;
 			perso.x = this.get( "pos" ).j * tw;
 			perso.y = this.get( "pos" ).i * tw;
-			perso.addEventListener( "mouseover", function ( ) {
-				App.views.drawings.showName( that.get( "pos" ), that.get( "pName" ), that.get( "id" ) );
-			} );
-			perso.addEventListener( "mouseout", function ( ) {
-				App.views.drawings.removeName( that.get( "id" ) );
-			} );
 			perso.addEventListener("click", function ( ) {
 				App.socket.emit("parler_pnj", that.id);
 			});
@@ -25,6 +19,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	afficher: function(id_map) {
 		if (this.get("map") == id_map) {
+			App.views.drawings.showName( this.get( "pos" ), this.get( "pName" ), this.get( "id" ), true );
 			App.map[this.get("pos").i * App.layerWidth + this.get("pos").j] = 2;
 			App.Stages.characterStage.getChildByName( "others" ).addChild( this.get("perso") );
 		}

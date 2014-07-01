@@ -10,9 +10,9 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
   */
   el: '#mapCanvas',
 
-  /**  
+  /**
   * @augments Backbone.View
-  * @constructs 
+  * @constructs
   */
   initialize: function ( ) {
 
@@ -102,7 +102,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     @param {name} name Nom du personnage
     @param {number} id Id du personnage
   */
-  showName: function ( pos, name, id ) {
+  showName: function ( pos, name, id, bool ) {
     var former, tName = "name" + id,
       h = Math.ceil( name.length / 15 ),
       textContainer = new createjs.Container( ),
@@ -113,6 +113,9 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     textContainer.name = tName;
     textContainer.addChild( dText );
     textContainer.x = pos.j * App.tw + App.tw / 2;
+    if(bool){
+      textContainer.x -= dText.getMeasuredWidth()/2;
+    }
     textContainer.y = (pos.i + 1)* App.tw;
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
@@ -128,6 +131,20 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
       text = others.getChildByName( "name" + id );
     if ( text )
       others.removeChild( text );
+  },
+
+  displayQ: function (bool, name) {
+    var player = App.Stages.mapStage.getChildByName( "player" ),
+      display = (bool && ("Nouvelle quête : " + name)) || ("Quête achevée : " + name);
+      console.log(player, display);
+      var text = player.getChildByName("quest") || player.addChild(new createjs.Text(" ", "40px Arial", "#000000"));
+      text.text = display;
+      text.x = 15 - player.x + player.regX;
+      text.y = 15 - player.y + player.regY;
+      setTimeout(function(){
+        if(text)
+          text.text = "";
+      }, 4000);
   }
 
 } );

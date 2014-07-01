@@ -12,13 +12,16 @@ App.Models.Navbar = Backbone.Model.extend({
     "endedQ": []
   },
 
-  newQ: function (newQ) {
+  newQ: function (newQ, init) {
     var curQ = "", endedQ = "", ret = "";
     for (var i = 0; i < newQ.length; i++) {
       var tempQ = newQ[i];
       switch(tempQ.type){
         case 1:
           this.get("curQ").push(tempQ.name);
+          if(!init){
+            App.views.drawings.displayQ(true, tempQ.name);
+          }
           break;
         case 2:
           this.get("endedQ").push(tempQ.name);
@@ -32,6 +35,11 @@ App.Models.Navbar = Backbone.Model.extend({
             }
           };
           this.get("endedQ").push(tempQ.name);
+          if(!init){
+            App.views.drawings.displayQ(false, tempQ.name);
+          }
+          break;
+        default:
           break;
       }
     };
@@ -62,9 +70,10 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   */
   initialize: function ( ) {
     var that = this;
+    this.ind = -1;
     this.listenTo(app, 'close:info', this.closeInfo);
     App.socket.on("newQuests", function(data){
-      that.model.newQ(data.data);
+      that.model.newQ(data.data, data.init);
     });
   },
 
@@ -72,50 +81,80 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
       this.closeInfo();
-      infoBox.css({'display' : 'block'});
     switch(e.target.id){
       case "quetes" :
-        infoBox.html(title);
-        infoBox.append(this.model.get("quetes"));
+        if(this.ind != 1){
+          this.ind = 1
+          infoBox.html(title);
+          infoBox.append(this.model.get("quetes"));
+        } else this.ind = -1;
         break;
       case "discussion" :
-        infoBox.html(title);
+        if(this.ind != 2){
+          this.ind = 2;
+          infoBox.html(title);
+        } else this.ind = -1
         break;
       case "carte" :
-        infoBox.html(title);
-        var width = infoBox.css("width").slice(0,-2),
-          height = infoBox.css('height').slice(0,-2);
-        infoBox.append(this.model.get("carte"));
-        $('#imgmap').css({
-          'width' : width - 50 + 'px'
-        });
+        if(this.ind != 3){
+          this.ind = 3;
+          infoBox.html(title);
+          var width = infoBox.css("width").slice(0,-2),
+            height = infoBox.css('height').slice(0,-2);
+          infoBox.append(this.model.get("carte"));
+          $('#imgmap').css({
+            'width' : width - 50 + 'px'
+          });
+        } else this.ind = -1;
         break;
       case "profil" :
-        infoBox.html(title);
-        infoBox.append(this.model.get("profil"));
+        if(this.ind != 4){
+          this.ind = 4;
+          infoBox.html(title);
+          infoBox.append(this.model.get("profil"));
+        } else this.ind = -1;
         break;
       case "son" :
-        infoBox.html(title);
-        infoBox.append(this.model.get("son"));
+        if(this.ind != 5){
+          this.ind = 5;
+          infoBox.html(title);
+          infoBox.append(this.model.get("son"));
+        } else this.ind = -1;
         break;
       case "aide" :
-        infoBox.html(title);
-        infoBox.append(this.model.get("aide"));
+        if(this.ind != 6){
+          this.ind = 6;
+          infoBox.html(title);
+          infoBox.append(this.model.get("aide"));
+        } else this.ind = -1;
         break;
       case "param" :
-        infoBox.html(title);
-        infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
+        if(this.ind != 3){
+          this.ind = 3;
+          infoBox.html(title);
+          infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
+        } else this.ind = -1;
         break;
       case "quit" :
+        this.ind = -1;
         break;
       default:
+        this.ind = -1;
         break;
+    }
+    if(this.ind > 0){
+      infoBox.css({'display' : 'block'});
     }
   },
 
   closeInfo: function (){
     $("#infoBox").css({'display' : 'none'});
     $("#infoBox").html("");
+  },
+
+  loadPerso: function (name, skin) {
+    var uri = skin.substr(0, 5).concat("/").concat(skin.substring(6, skin.length));
+    this.model.set("profil", "<div class=\"info\"> Pseudo : " + name + "<br><br>Biographie : <br><br><br><br>Avatar :<br><img src=\"assets/resources/img/select/" + uri + "\"><br><br></div>");
   }
 
 });
