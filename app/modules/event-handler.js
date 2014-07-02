@@ -26,6 +26,15 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       } );
 
     preloadView.listenToOnce( app, 'preload:ended', function ( map ) {
+
+      App.spriteSheet = new createjs.SpriteSheet({
+        images: [App.tileset],
+        frames: {
+          width : App.tw,
+          height : App.tw
+        }
+      });
+
       that.initialPos = {
         "i": Math.round(map.get( "height" ) / 2),
         "j": Math.round(map.get( "width" ) / 2)
@@ -149,13 +158,13 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       myView, way,
       isMobile = App.mobilecheck(),
       pnjs = new App.Collections.Pnjs();
-
     $('#navbar').css("display", "block");
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
         if ( !othersView )
           othersView = new App.Views.OtherPlayers( {
-            collection: others
+            collection: others,
+            curMap: that.curMap
           } )
         pnjs.newMap( that.curMap );
         this.pName = data.pName;
@@ -219,6 +228,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       others.move( data );
     } );
     socket.on( "aurevoir", function ( id ) {
+      App.views.drawings.removeText(id);
       others.kill( id );
       App.oNames[ that.oId[ id ] ] = null;
       that.oId[ id ] = null;

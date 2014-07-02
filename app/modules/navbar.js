@@ -20,7 +20,8 @@ App.Models.Navbar = Backbone.Model.extend({
         case 1:
           this.get("curQ").push(tempQ.name);
           if(!init){
-            App.views.drawings.displayQ(true, tempQ.name);
+            setTimeout(function(){
+            App.views.drawings.displayQ(true, tempQ.name);}, 3000);
           }
           break;
         case 2:
@@ -36,7 +37,8 @@ App.Models.Navbar = Backbone.Model.extend({
           };
           this.get("endedQ").push(tempQ.name);
           if(!init){
-            App.views.drawings.displayQ(false, tempQ.name);
+            setTimeout(function(){
+            App.views.drawings.displayQ(false, tempQ.name);}, 3000);
           }
           break;
         default:
@@ -71,7 +73,9 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   initialize: function ( ) {
     var that = this;
     this.ind = -1;
-    this.listenTo(app, 'close:info', this.closeInfo);
+    this.listenTo(app, 'close:info', function(){
+      this.ind = -1;
+      this.closeInfo();});
     App.socket.on("newQuests", function(data){
       that.model.newQ(data.data, data.init);
     });

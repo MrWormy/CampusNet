@@ -51,11 +51,16 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
     App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
-    if ( dest != "all" ) {
+    if ( dest != "all" && dest != "pnj" ) {
       setTimeout( function ( ) {
         if ( textContainer )
           others.removeChild( textContainer );
       }, 5000 );
+    } else if ( dest === "pnj" ) {
+      setTimeout( function ( ) {
+        if ( textContainer )
+          others.removeChild( textContainer );
+      }, 10000 );
     }
   },
 
@@ -65,7 +70,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     @returns {String} Couleur à utiliser
   */
   selectColor: function ( dest ) {
-    return ( ( dest == "me" && "red" ) || ( dest == "classic" && "black" ) || ( dest == "all" && "brown" ) || "blue" );
+    return ( ( dest == "me" && "red" ) || ( dest == "classic" && "black" ) || ( (dest == "all" || dest == "pnj") && "brown" ) || "blue" );
   },
 
   /**
@@ -136,7 +141,6 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
   displayQ: function (bool, name) {
     var player = App.Stages.mapStage.getChildByName( "player" ),
       display = (bool && ("Nouvelle quête : " + name)) || ("Quête achevée : " + name);
-      console.log(player, display);
       var text = player.getChildByName("quest") || player.addChild(new createjs.Text(" ", "40px Arial", "#000000"));
       text.text = display;
       text.x = 15 - player.x + player.regX;
@@ -144,7 +148,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
       setTimeout(function(){
         if(text)
           text.text = "";
-      }, 4000);
+      }, 5500);
   }
 
 } );

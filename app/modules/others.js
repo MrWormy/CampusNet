@@ -77,12 +77,13 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
 
   pop: function ( data ) {
     var player = new this.model( data );
-    this.add( player );
+    this.add( player, {merge: true} );
   },
 
   kill: function ( id ) {
     var mapOthers = App.Stages.characterStage.getChildByName( "others" );
     mapOthers.removeChild( mapOthers.getChildByName( "joueur " + id ) );
+    this.remove(this.get(id));
   },
 
   model: App.Models.OtherPlayer,
@@ -110,11 +111,11 @@ App.Views.OtherPlayers = Backbone.View.extend( /** @lends module:others.Views/Ot
   * @augments Backbone.View
   * @constructs
   */
-  initialize: function ( ) {
-    this.newCont( );
+  initialize: function ( opts ) {
+    this.newCont( opts.curMap );
   },
 
-  newCont: function ( ) {
+  newCont: function ( idMap ) {
     var cont = new createjs.Container( );
 
     cont.name = "others";
@@ -122,7 +123,34 @@ App.Views.OtherPlayers = Backbone.View.extend( /** @lends module:others.Views/Ot
     cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
     cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
     cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
+    this.initListener(cont, idMap);
     App.Stages.characterStage.addChild( cont );
+  },
+
+  initListener: function( cont, idMap ){
+    var changeMapTiles = new createjs.Container(),
+      exits = App.models.transitions.get("transitions")[idMap],
+      nameExitsName = App.models.transitions.get("mapsName"),
+      tw = App.tw;
+
+    for (var i = exits.length - 1; i >= 0; i--) {
+      var sprite = new createjs.Sprite(App.spriteSheet),
+        exit = exits[i];
+
+      sprite.gotoAndStop(212);
+
+      sprite.name = ("direction : " + nameExitsName[exit[2]]) || "default";
+      sprite.x = exit[1]*App.tw;
+      sprite.y = exit[0]*App.tw;
+      sprite.addEventListener("mouseover", function(e){
+        App.views.drawings.drawText(e.target.name, {i: e.target.y / App.tw + 0.2, j: e.target.x / App.tw}, 10001, "all");
+      });
+      sprite.addEventListener("mouseout", function(e){
+        App.views.drawings.removeText(10001);
+      });
+      changeMapTiles.addChild(sprite);
+    };
+    cont.addChild(changeMapTiles);
   }
 
 } );

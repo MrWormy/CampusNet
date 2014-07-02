@@ -19,9 +19,9 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	afficher: function(id_map) {
 		if (this.get("map") == id_map) {
-			App.views.drawings.showName( this.get( "pos" ), this.get( "pName" ), this.get( "id" ), true );
+			App.views.drawings.showName( this.get( "pos" ), this.get( "pName" ), - this.get( "id" ) - 1, true );
 			App.map[this.get("pos").i * App.layerWidth + this.get("pos").j] = 2;
-			App.Stages.characterStage.getChildByName( "others" ).addChild( this.get("perso") );
+			App.Stages.characterStage.getChildByName( "others" ).addChildAt( this.get("perso"), 0 );
 		}
 	},
 
@@ -33,7 +33,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 		App.views.drawings.drawText( texte, {
 			"i": parseInt(that.get("pos").i),
 			"j": parseInt(that.get("pos").j)
-		}, 1000, "all" );
+		}, 10000, "pnj" );
 	}
 
 } );
