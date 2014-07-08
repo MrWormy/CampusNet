@@ -76,17 +76,17 @@ App.Views.preload = Backbone.View.extend( /** @lends module:preload.Views/preloa
       ],
       persos = [];
 
-    for(var i = 0; i < 36; i++){
+    for(var i = 0, l = names.length; i < l; i++){
       var perso = new Image(),
         name = names[i],
         uri = baseurl;
-      uri += (i < 18) ? "/adm/" : "/etu/";
+      uri += (i < l/2) ? "/adm/" : "/etu/";
       perso.src = uri + name;
       perso.name = name;
       persos.push(perso);
       perso.onload = function(e){
         compt ++;
-        if(compt == 36){
+        if(compt == l){
           that.loadPersos(persos);
         }
       }

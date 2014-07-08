@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Edition de pnjs - CampusNet v2</title>
+		<meta charset="utf-8">
+		<link type="text/css" rel="stylesheet" href="../adminstyle.css">
+	</head>
+	<body>
+		<div id="wrap">
+		<header>
+			<a id='titre' href="../../index.html">CampusNet v2</a>
+			<span id="path">></span> <a href="..">Administration</a>
+			<span id="path">></span> <a href="">Edition de pnjs</a>
+   			<a id ="deco" href="../../logout.html">Déconnexion</a>
+		</header>
+
+		<h1>Bienvenue sur la page d'édition de Pnjs</h1>
+
+		<section id="content">
+			<div id = "loading" style="font-size: xx-large;">
+				Chargement des données en cours,<br/> veuillez patienter
+			</div>
+			<div id = "menu" style="display: none;">
+				<div id = "menu-right" class="content-menu">
+					<form id="detailPnj" name="detailPnj">
+					<div id"section1" class="content-menu">
+						<select id="listePnj"></select><br />
+						Id : <span id="id"></span><br />
+						Nom du pnj : <input type="texte" id="pName" size=40 /><br />
+						Map sur laquelle apparaît le pnj : <select id="map" ></select><br />
+						Aspect du pnj : <input type="radio" id="perso" name="choixAspect" class="choixAspect" value="Personnage"/><label for="perso">Personnage</label><input type="radio" id="objet" name="choixAspect" class="choixAspect" value="Objet"/><label for="objet">Objet</label><br />
+						<div id="apercuPerso" class="persoPreview" style="display: none" >
+							Sexe : <select id="hf" class="aspectSelect">
+								<option value="m">Homme</option>
+								<option value="f">Femme</option>
+							</select><br />
+							Status : <select id="admEtu" class="aspectSelect">
+								<option value="etu">Etudiant</option>
+								<option value="adm">Professeur</option>
+							</select><br />
+							Frame : <select id="frameSkin"></select><br />
+							<canvas id="apercuFrame" height="90" width="90"></canvas><br />
+						</div>
+					</div>
+					<div id"section2" class="content-menu">
+						<div id="apercuSkin" class="persoPreview"/></div>
+						<div id="apercuObjet" class="objectPreview" style="display: none" >
+							Objet : <select id="obj"></select><br />
+							<img id="apercuObj" src=""/><br />
+						</div><br/>
+					</div>
+							<div>
+								Position sur la map : <br />
+							</div>
+							<div id="mapContainer" style="overflow: scroll; width: 1000px; height: 600px;">
+								<canvas id="mapDisplay" ></canvas><br />
+							</div>
+							Dialogue par defaut : <input type="texte" id="dialDefault" size="90" maxlength="300"/><br />
+							<input type="checkbox" id="showName" value="Afficher le nom du pnj" checked/><label for="showName">Afficher le nom</label><br />
+							<input class="Qbutton" type="button" name="savePnj" id="savePnj" value="Sauvegarder le Pnj" />
+							<input class="Qbutton" type="button" name="newPnj" id="newPnj" value="Nouveau Pnj" />
+							<input class="Qbutton" type="button" name="removePnj" id="removePnj" value="Supprimer ce Pnj" />
+							<input class="Qbutton" type="button" name="sendAllPnj" id="sendAllPnj" value="Envoyer au serveur" /><br />
+							<input id="posI" type="hidden" value="0" />
+							<input id="posJ" type="hidden" value="0" />
+						</form>
+				</div>
+			</div>
+		</section>
+
+	</div>
+		<footer>
+			Copyright 2014 - CampusNet v2<br>
+			<img src="/assets/resources/logos.png"/>
+		</footer>
+
+		<script type="text/javascript" src="/assets/jquery/dist/jquery.js"></script>
+		<script type="text/javascript" src="/assets/underscore/underscore.js"></script>
+		<script type="text/javascript" src="/assets/backbone/backbone.js"></script>
+    <script type="text/javascript" src="/assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
+
+		<script type="text/javascript" src="index.js"></script>
+
+	</body>
+
+</html>
