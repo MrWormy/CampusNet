@@ -126,7 +126,7 @@ App.Views.Quetes = Backbone.View.extend({
 
 	saveQforExport: function(quest, options) {
 		if(options.validate){
-			App.collections.quetesForExport.add(quest, {merge: true})
+			App.collections.quetesForExport.add(quest, {merge: true});
 		}
 	}
 
@@ -244,7 +244,7 @@ App.Views.Gestion = Backbone.View.extend({
 		  	alert("les modifications ont bien été enregistrées");
 		  }
 		});
-		}
+	}
 
 });
 

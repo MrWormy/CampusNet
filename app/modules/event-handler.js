@@ -167,7 +167,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
             curMap: that.curMap
           } )
         pnjs.newMap( that.curMap );
-        this.pName = data.pName;
+        that.pName = data.pName;
         that.destroyReg( );
         myPerso = new App.Models.Perso( {
           'id': data.id,

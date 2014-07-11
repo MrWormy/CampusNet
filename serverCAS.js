@@ -14,6 +14,7 @@ var express = require( 'express' ),
   game = new play.Game(),
   loggedIn = [],
   quests = require("./quetes"),
+  sRequests = require("./socketRequests"),
   fs = require("node-fs");
 
 //variables serveur
@@ -44,8 +45,8 @@ app.get( '/', function ( req, resp ) {
     https.get({
       hostname:validateURL.hostname,
       port:validateURL.port,
-      path:validateURL.path
-      , rejectUnauthorized: false // pour autoriser un certificat auto-signé
+      path:validateURL.path,
+      rejectUnauthorized: false // pour autoriser un certificat auto-signé
       },
       function(res){
       res.on('error', function(e) {
@@ -147,6 +148,22 @@ app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
     res.redirect('/404.html');
   }
 });
+app.use('/admin/editeur_de_pnjs/modifPnjs', function(req, res) {
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      console.log("\n Pnjs file updated : ", req.session.login);
+      quests.validatePnjs(obj);
+    })
+    res.send(200);
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
 app.use(function(req, res, next){
   res.redirect('/404.html');
 });
@@ -186,16 +203,17 @@ if(sid){
 io.sockets.on( 'connection', function ( socket ) {
   console.log("\n new socket connexion : " + socket.login.login);
   var quetes = new quests.ClientQuest(socket.login.login, socket);
+  sRequests.listenSocket(socket);
   socket.on('ready', function(data){
     data.login = socket.login.login;
     game.appendGuy(socket, data);
   });
   socket.on("disconnect", function() {
     var i;
-    console.log(" \n client socket disconnected : ", socket.login.login);
     quetes = null;
-    if((i = getInd(socket.login.login, loggedIn)) >= 0){
+    if((i = loggedIn.indexOf(socket.login.login)) >= 0){
       loggedIn.splice(i, 1);
+      console.log(" \n client socket disconnected : ", socket.login.login);
     }
   });
 
@@ -207,12 +225,4 @@ function isIn (el, tab) {
       return true;
   };
   return false;
-}
-
-function getInd (el, tab) {
-  for (var i = tab.length - 1; i >= 0; i--) {
-    if(tab[i] == el)
-      return i;
-  };
-  return -1;
 }

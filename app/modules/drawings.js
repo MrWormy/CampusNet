@@ -78,10 +78,12 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     @param {number} id Id du joueur
   */
   removeText: function ( id ) {
-    var others = App.Stages.characterStage.getChildByName( "others" ),
-      text = others.getChildByName( "texte" + id );
-    if ( text )
-      others.removeChild( text );
+    var others = App.Stages.characterStage.getChildByName( "others" );
+    if(others){
+      var text = others.getChildByName( "texte" + id );
+      if ( text )
+        others.removeChild( text );
+    }
   },
 
   /**

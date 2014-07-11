@@ -35,15 +35,13 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	afficher: function(id_map) {
 		if (this.get("map") == id_map) {
-			if(this.get("height") && this.get("width")){
-				for (var k = 0; k<this.get("height"); k++){
-					App.map[(this.get("pos").i+k) * App.layerWidth + this.get("pos").j] = 2;
-				}
-				for (var l = 0; l<this.get("width"); l++){
-					App.map[this.get("pos").i * App.layerWidth + this.get("pos").j + l] = 2;
+			var obj = this.get("object");
+			if(obj){
+				for (var k = 0; k<obj.length; k+=3){
+					App.map[(this.get("pos").i + obj[k+2]) * App.layerWidth + this.get("pos").j + obj[k+1]] = 2;
 				}
 				if(this.get("showName")){
-					App.views.drawings.showName( {i: this.get("pos").i + k - 1, j: this.get("pos").j + (l - 1)/2}, this.get( "pName" ), - this.get( "id" ) - 1, true );
+					App.views.drawings.showName( {i: this.get("pos").i + this.get("height") - 1, j: this.get("pos").j + (this.get("width")-1)/2}, this.get( "pName" ), - this.get( "id" ) - 1, true );
 				}
 			} else {
 				App.map[this.get("pos").i * App.layerWidth + this.get("pos").j] = 2;

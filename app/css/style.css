@@ -99,6 +99,7 @@ body  {
 #navbar{
     display: none;
     position: absolute;
+    overflow: hidden;
     width: 1060px;
     height: 60px;
     background-color: rgb(147, 169, 213);

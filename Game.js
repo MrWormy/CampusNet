@@ -81,6 +81,8 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 		info.expediteur = that.id;
 		info.msg = data.msg;
 		info.destinataire = data.destinataire;
+
+		console.log("\n message : ", data, " sent by : ", socket.login.login);
 		if (!data.private) {
 			info.prive = false;
 			Map.emit("message", info, that.id);
@@ -88,59 +90,6 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 			info.prive = true;
 			if(tempGuy = Map.findGuy(data.destinataire))
 				tempGuy.socket.emit("message", info);
-		}
-	});
-
-	/*socket.on("setAvatar", function(avatar) {
-		if (that.idBDD != null) {
-			var requete = "UPDATE `campusnet`.`users` SET `avatar`="+avatar+" WHERE `id`="+idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-			});
-		}
-	});*/
-
-	/*
-	socket.on("setNom", function(nom) {
-		if (that.idBDD != null) {
-			var requete = "UPDATE `campusnet`.`users` SET `nom`="+nom+" WHERE `id`="+idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-			});
-		}
-	});
-
-	socket.on("getNom", function(nom) {
-		if (that.idBDD != null) {
-			var requete = "SELECT `nom` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-				socket.emit("nom", rows[0].nom);
-			});
-		} else {
-			socket.emit("nom", "anonyme " + that.id);
-		}
-	});
-	*/
-
-	socket.on("setBio", function(bio) {
-		if (that.idBDD != null) {
-			var requete = "UPDATE `campusnet`.`users` SET `bio`="+bio+" WHERE `id`="+idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-			});
-		}
-	});
-
-	socket.on("getBio", function(bio) {
-		if (that.idBDD != null) {
-			var requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-				socket.emit("bio", rows[0].bio);
-			});
-		} else {
-			socket.emit("bio", "Inconnue");
 		}
 	});
 

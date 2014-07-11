@@ -64,6 +64,7 @@ App.Models.Preload = Backbone.Model.extend({
       document.getElementById("menu").style.display = "block";
       App.models.resources = new App.Models.Resources(this.get("ret"));
       App.collections.pnjs = new App.Collections.Pnjs();
+      App.collections.pnjsForExport = new App.Collections.PnjsForExport();
       App.views.pnjs = new App.Views.Pnjs({
         collection: App.collections.pnjs,
         model: App.models.resources
@@ -95,8 +96,8 @@ App.Models.Preload = Backbone.Model.extend({
 
   loadObjects: function (){
     var that = this,
-      obj = new App.Models.Obj,
-      objs = new App.Collections.Objs;
+      obj = new App.Models.Obj(),
+      objs = App.collections.objs = new App.Collections.Objs();
 
     objs.add(obj);
     objs.fetch({
@@ -319,7 +320,19 @@ App.Collections.Objs = Backbone.Collection.extend({
   model: App.Models.Obj
 });
 
-App.Models.Pnj = Backbone.Model.extend({});;
+App.Models.Pnj = Backbone.Model.extend({
+
+  clearInfos: function () {
+    if(this.get("object")){
+      this.unset("height", {silent: true});
+      this.unset("width", {silent: true});
+      this.unset("objectName", {silent: true});
+    } else {
+      this.unset("skin", {silent: true});
+      this.unset("orientation", {silent: true});
+    }
+  }
+});;
 
 App.Collections.Pnjs = Backbone.Collection.extend({
   model: App.Models.Pnj,
@@ -331,6 +344,19 @@ App.Collections.Pnjs = Backbone.Collection.extend({
         return i;
     }
     return -1;
+  },
+
+  newId: function () {
+    return this.at(this.length - 1).id + 1;
+  }
+});
+
+App.Collections.PnjsForExport = Backbone.Collection.extend({
+  model: App.Models.Pnj,
+  url: "/assets/resources/pnj.json",
+
+  initialize: function () {
+    this.fetch();
   }
 });
 
@@ -349,7 +375,7 @@ App.Views.Pnjs = Backbone.View.extend({
 
   initialize: function () {
     this.collection.on('add', function(pnj){
-      this.listenTo(pnj, "change:pName", this.updateTitle);
+      this.listenTo(pnj, "change:pName", this.updateName);
       this.listenTo(pnj, "change", this.savePnjforExport);
       this.displayNewPnj(pnj);
     }, this);
@@ -405,18 +431,29 @@ App.Views.Pnjs = Backbone.View.extend({
     App.views.gestionPnjs.positionSelected({offsetX: pos.j*48, offsetY: pos.i*48});
     /* appeler positionSelected avec offset = pos * 48 */
     formPnj.dialDefault.value = pnj.get("text");
+    // a faire plus tard formPnj.displayName.checked = !(!pnj.get("displayName"));
   },
 
-  updateTitle: function (title) {
-
+  updateName: function (pnj, pName) {
+    console.log(pnj, pName);
+    document.getElementById("pnj"+pnj.id).innerHTML = pName;
   },
 
   savePnjforExport: function (pnj) {
-
+    var p = App.collections.pnjsForExport.get(pnj.id);
+    if(p){
+      App.collections.pnjsForExport.remove(p);
+    }
+    App.collections.pnjsForExport.add(pnj.clone(), {merge: true});
   },
 
   removePnj: function (pnj, option) {
-
+    var s = this.$el[0],
+      si = s.selectedIndex;
+    s.selectedIndex = si - 1;
+    s.remove(si);
+    this.$el.focus();
+    this.$el.change();
   }
 
 });
@@ -431,7 +468,11 @@ App.Views.GestionPnjs = Backbone.View.extend({
     "click #apercuSkin": "skinSelected",
     "change #frameSkin": "frameSelected",
     "change #obj": "objectSelected",
-    "click #mapDisplay": "positionSelected"
+    "click #mapDisplay": "positionSelected",
+    "click #newPnj": "newPnj",
+    "click #savePnj": "savePnj",
+    "click #removePnj": "removePnj",
+    "click #sendAllPnjs": "sendAllPnjs"
   },
 
   initialize: function () {
@@ -652,6 +693,126 @@ App.Views.GestionPnjs = Backbone.View.extend({
 
     display.parentNode.replaceChild(newDisplay, display);
     this.updatePreviewPnj(newDisplay, false);
+  },
+
+  newPnj: function () {
+    var newP = new App.Models.Pnj({
+      "id": this.collection.newId(),
+      "skin": "etu-m-brown-blue.png",
+      "orientation": 24,
+      "object": false,
+      "pName": "nouveau pnj",
+      "displayName": true,
+      "pos": {i:15, j:50},
+      "map": 0,
+      "text": ""
+    });
+
+    this.collection.push(newP);
+  },
+
+  savePnj: function () {
+    var formPnj = document.getElementById("detailPnj"),
+      pnj = {},
+      isValid = true,
+      id = parseInt(document.getElementById("id").innerHTML),
+      pName = formPnj.pName.value.trim(),
+      map = formPnj.map.selectedIndex,
+      pos = {i: parseInt(formPnj.posI.value), j: parseInt(formPnj.posJ.value)},
+      persoSelected = formPnj.perso.checked,
+      objectSelected = formPnj.objet.checked,
+      text = formPnj.dialDefault.value,
+      err = "",
+      showName = formPnj.showName.checked;
+
+      if(persoSelected && !objectSelected){
+        var skin = formPnj.frameSkin.name,
+          orientation = parseInt(formPnj.frameSkin.value),
+          ts;
+
+        if(!(skin && (ts = this.model.get("characters").tilesets[skin]) && orientation >= 0 && orientation < ts.getNumFrames())){
+          err += " veuillez sélectionner un aperçu de personnage valide,";
+          isValid = false;
+        } else {
+          pnj.object = false
+          pnj.skin = skin;
+          pnj.orientation = orientation;
+        }
+      } else if(objectSelected && !persoSelected){
+        var obj = App.collections.objs.get(formPnj.obj.selectedIndex);
+
+      if(obj){
+        pnj.object = obj.get("tiles");
+        pnj.height = obj.get("height");
+        pnj.width = obj.get("width");
+        pnj.objectName = obj.get("name");
+      } else{
+        err += " veuillez délectionner un objet valide,";
+        isValid = false;
+      }
+    } else {
+      err += " veuillez sélectionner un aspect de pnj,";
+      isValid = false;
+    }
+
+    if(pos.i < 0 || pos.j < 0 ){
+      err += " veuillez sélectionner une position valide pour votre pnj";
+      isValid = false;
+    }
+
+    if(pName == ""){
+      err += " veuillez saisir un nom valide pour votre pnj";
+      isValid = false;
+    }
+
+    if(!(this.model.get("maps")[formPnj.map.value])){
+      err += " veuillez sélectionner une map valide";
+      isValid = false;
+    }
+
+    if(!this.collection.get(id)){
+      err += " id de pnj invalide";
+      isValid = false;
+    }
+
+    if(!isValid){
+      err += " merci."
+      alert(err);
+    }else{
+      pnj.id = id;
+      pnj.pName = pName;
+      pnj.map = map;
+      pnj.pos = pos;
+      pnj.text = text;
+      pnj.showName = showName;
+      this.collection.get(id).clearInfos();
+      this.collection.get(id).set(pnj);
+    }
+  },
+
+  removePnj: function () {
+    var id = parseInt(document.getElementById("id").innerHTML);
+      pnj = this.collection.get(id),
+      pnjForExp = App.collections.pnjsForExport.get(id);
+
+      if(pnj){
+        this.collection.remove(pnj);
+      }
+      if(pnjForExp){
+        App.collections.pnjsForExport.remove(pnjForExp);
+      }
+  },
+
+  sendAllPnjs: function () {
+    var data = JSON.stringify(App.collections.pnjsForExport.toJSON());
+    $.ajax({
+      type: "POST",
+      url: "modifPnjs",
+      data: data,
+      success: function(data, status){
+        alert("les modifications ont bien été enregistrées");
+      }
+    });
   }
 
 });

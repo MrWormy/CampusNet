@@ -84,7 +84,6 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   navAction: function (e){
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
-      this.closeInfo();
     switch(e.target.id){
       case "quetes" :
         if(this.ind != 1){
@@ -133,11 +132,28 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
         } else this.ind = -1;
         break;
       case "param" :
-        if(this.ind != 3){
-          this.ind = 3;
-          infoBox.html(title);
-          infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
-        } else this.ind = -1;
+        // if(this.ind != 3){
+        //   this.ind = 3;
+        //   infoBox.html(title);
+        //   infoBox.append('<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>');
+        // } else this.ind = -1;
+        if (!document.mozFullScreen && !document.webkitIsFullScreen && !document.msFullscreenElement) {
+          if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          } else if(document.documentElement.webkitRequestFullScreen) {
+            document.documentElement.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else if(document.documentElement.msRequestFullscreen){
+            document.documentElement.msRequestFullscreen();
+          }
+        } else {
+          if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
         break;
       case "quit" :
         this.ind = -1;
@@ -148,6 +164,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     }
     if(this.ind > 0){
       infoBox.css({'display' : 'block'});
+    } else {
+      this.closeInfo();
     }
   },
 

@@ -1,9 +1,12 @@
 var quetes = require('./admin/editeur_de_quetes/quetes.json'),
   pnjs = require("./assets/resources/pnj.json"),
   fs = require("node-fs"),
+  pnjsQ = [],
   openConnectionBDD = require("./Game").openConnectionBDD;
 
 var quests = exports = module.exports = {};
+
+pnjsQ = fillPnjsQ(quetes);
 
 quests.ClientQuest = function (login, socket) {
   var that = this;
@@ -142,8 +145,9 @@ quests.ClientQuest.prototype.treatQ = function (idPnj, that, socket) {
     ret = {"type": 0, "idQ": -1},
     idSpeaker = idPnj;
   if(typeof(idPnj) == "number" && (0 <= idPnj) && (idPnj < pnjs.length)){
-    for(var i = 0; i < quetes.length; i++){
-      var curQ = quetes[i];
+    var pnjQ = pnjsQ[idPnj] || [];
+    for(var i = 0; i < pnjQ.length; i++){
+      var curQ = quetes[pnjQ[i]];
       ret.idQ = curQ.id;
       if(idPnj == curQ.idPnj){
         if(isIn(curQ.id, that.QenCours)){
@@ -224,6 +228,7 @@ quests.validate = function(newQuestsStr){
   rigthQ.forEach(testRQ);
 
   quetes = rigthQ;
+  pnjsQ = fillPnjsQ(rigthQ);
 
   fs.writeFile("./admin/editeur_de_quetes/quetes.json", JSON.stringify(rigthQ));
 
@@ -249,9 +254,15 @@ quests.validate = function(newQuestsStr){
     }
     return tempL;
   };
+};
 
+quests.validatePnjs = function (newPnjsString) {
+  var newPnjs = JSON.parse(newPnjsString);
 
+  /* validate here */
 
+  pnjs = newPnjs;
+  fs.writeFile("./assets/resources/pnj.json", JSON.stringify(newPnjs));
 };
 
 function isIn (el, list) {
@@ -263,4 +274,17 @@ function isIn (el, list) {
     }
   };
   return bool;
+}
+
+function fillPnjsQ (quetes){
+  var ret = []
+  for(var i = 0, l = quetes.length; i < l; i++){
+    var curQ = quetes[i],
+      pnjQ = ret[curQ.idPnj];
+    if(pnjQ)
+      ret[curQ.idPnj].push(i);
+    else
+      ret[curQ.idPnj] = [i];
+  }
+  return ret;
 }

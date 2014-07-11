@@ -67,8 +67,8 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
     } );
 
     contCan.css( {
-      'top': top + 'px',
-      'left': left + 'px'
+      'margin-top': top + 'px',
+      'margin-left': left + 'px'
     } );
     if(isMobile){
       $("#messageInput").css({'display': 'none'});
@@ -78,14 +78,14 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
       $(".navbutton").css({'margin-left' : '8px'});
     }
     navbar.css({
-        'top' : height - 84 + 'px',
-        'left' : (width-navbarWidth)/2 + 'px'
+        'margin-top' : height - 84 + 'px',
+        'margin-left' : (width-navbarWidth)/2 + 'px'
     });
     $("#infoBox").css({
       'width': width - 200 + 'px',
       'height': height - 200 + 'px',
-      'top' : '50px',
-      'left' : '80px'
+      'margin-top' : '50px',
+      'margin-left' : '80px'
     });
     $('#imgmap').css({
       'max-width' : width - 250 + 'px',
@@ -115,8 +115,8 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
       playName = $( "#register" );
 
     playName.css( {
-      "left": ( width - playName.width( ) ) / 2 + "px",
-      "top": ( height - playName.height( ) ) / 2 + "px"
+      "margin-left": ( width - playName.width( ) ) / 2 + "px",
+      "margin-top": ( height - playName.height( ) ) / 2 + "px"
     } );
     cont.css( {
       "width": width + "px",
