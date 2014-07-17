@@ -147,6 +147,10 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     app.trigger( 'change:map' );
   },
 
+  initNavBar: function ( ) {
+    App.views.navbar = new App.Views.Navbar({model: new App.Models.Navbar});
+  },
+
   move: function ( ) {
     var myMove = new App.Models.Move( ),
       socket = App.socket,
@@ -158,7 +162,9 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       myView, way,
       isMobile = App.mobilecheck(),
       pnjs = new App.Collections.Pnjs();
-    $('#navbar').css("display", "block");
+
+    this.initNavBar();
+
     socket.on( 'popGuy', function ( data ) {
       if ( !myPerso ) {
         if ( !othersView )
@@ -259,6 +265,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       if ( tempChange[ 0 ] == pos.i ) {
         if ( tempChange[ 1 ] == pos.j ) {
           this.curMap = tempChange[ 2 ];
+          app.trigger("numMap", this.curMap);
           nextPos = App.models.transitions.get( "transitions" )[ tempChange[ 2 ] ][ tempChange[ 3 ] ];
           this.initialPos.i = nextPos[ 0 ];
           this.initialPos.j = nextPos[ 1 ];

@@ -14,6 +14,7 @@ exports.listenSocket = function(socket){
       requete = "UPDATE `campusnet`.`users` SET `bio`='"+bio+"' WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
       if (err) throw err;
+      console.log("\n " + login + "'s bio updated : ", bio);
     });
     connection.end();
   });
@@ -36,7 +37,11 @@ exports.listenSocket = function(socket){
     connection.query(requete, function(err, rows, fields) {
       if (err) throw err;
       var bio = rows[0].bio,
-        cal = bio.match(url)[0];
+        cal = bio.match(url);
+
+      if(cal){
+        cal = cal[0];
+      }
         /* récupérer le cal */
       if(cal){
         cal = cal.replace("url=https://webservices.int-evry.fr/agenda", "").replace(";","");
@@ -70,6 +75,8 @@ exports.listenSocket = function(socket){
           console.log(e);
         });
         req.end();
+      } else {
+        socket.emit("todayCalendar", null);
       }
     });
     connection.end();

@@ -69,10 +69,7 @@ body  {
 }
 
 #imgmap{
-    border-radius: 10px;
     position: relative;
-    margin-left: 25px;
-    margin-right: 25px;
 }
 
 #register{
