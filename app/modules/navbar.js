@@ -126,10 +126,10 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
           var width = infoBox.css("width").slice(0,-2),
             height = infoBox.css('height').slice(0,-2);
           infoBox.append(this.model.get("carte"));
-          this.displayOwnMap();
           $('#imgmap').css({
             'width' : width + 'px'
           });
+          this.displayOwnMap();
         } else this.ind = -1;
         break;
       case "profil" :
@@ -257,7 +257,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
   showOnMap: function (input) {
     $("#carte").click();
-    this.displayLayerName(input.name, "showOnMap");
+    this.displayOwnMap(input.name, "pointOnMap", "#2593e5");
+    //this.displayLayerName(input.name, "showOnMap");
   },
 
   getFhour: function (date) {
@@ -322,15 +323,17 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     return map;
   },
 
-  displayOwnMap: function(){
+  displayOwnMap: function(layName, cName, pColor){
     var cont =  this.model.get("stage").getChildAt(0),
-      info = cont.getChildByName("ownMap"),
-      layerName = App.models.transitions.get("mapsName")[this.model.get("curMap")]
+      contName = (typeof cName !== "undefined") ? cName : "ownMap",
+      color = (typeof pColor !== "undefined") ? pColor : "#ee0000",
+      info = cont.getChildByName(contName),
+      layerName = (typeof layName !== "undefined") ? layName : App.models.transitions.get("mapsName")[this.model.get("curMap")],
       layer = this.model.get("layers")[layerName];
 
     if(!info){
-      info = this.createPosMarker();
-      info.name = "ownMap";
+      info = this.createPosMarker(color);
+      info.name = contName;
       cont.addChild(info);
     }
 
@@ -350,12 +353,19 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     this.model.get("stage").update();
   },
 
-  createPosMarker: function () {
-    var cont = new createjs.Container(),
+  createPosMarker: function (color) {
+    var map = document.getElementById("imgmap"),
+      ratio = map.width / parseInt(map.style.width.split("px")[0]),
+      cont = new createjs.Container(),
       g = new createjs.Graphics();
 
-    g.beginFill(createjs.Graphics.getRGB(255,0,0));
-    g.drawCircle(0,0,40);
+    g.beginFill(color);
+    g.setStrokeStyle(2*ratio,"round").beginStroke("#ffffff");
+    g.moveTo(0,0);
+    g.lineTo(-ratio * 8, - ratio * 20);
+    g.arc(0,-ratio * 20,ratio * 8,Math.PI, 2*Math.PI);
+    g.lineTo(0,0)
+    g.endStroke();
     g.endFill();
 
     var s = new createjs.Shape(g);

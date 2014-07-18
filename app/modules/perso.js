@@ -32,6 +32,8 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
 
     switch ( cmd ) {
     case '/w':
+    case '/mp':
+    case '/pm':
     case '/whisper':
       if ( App.oNames[ parsedMsg[ 1 ] ] != null ) {
         dest = parsedMsg[ 1 ];
@@ -128,6 +130,7 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
  moveAnim: function (dir) {
     var curFrame = this.get("curFrame"),
       that = this;
+    that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
     curFrame[dir] = (curFrame[dir] + 1) % 4;
     setTimeout(function () {
       that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
