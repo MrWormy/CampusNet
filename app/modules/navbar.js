@@ -154,6 +154,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
         } else this.ind = -1;
         break;
       case "param" :
+        // param option must be still implemented since people could change their skin, def, ...
         // if(this.ind != 3){
         //   this.ind = 3;
         //   infoBox.html(title);
@@ -468,10 +469,15 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       i = 0,
       j = 0;
 
-    i = Math.floor(e.layerY * ratio / App.tw);
-    j = Math.floor(e.layerX * ratio / App.tw);
-
-    /* write IE < 9 compatibility : x instead of layerX */
+    if("layerX" in e){
+      i = Math.floor(e.layerY * ratio / App.tw);
+      j = Math.floor(e.layerX * ratio / App.tw);
+    }
+    /* IE < 9 compatibility */
+    else if("x" in e){
+      i = Math.floor(e.y * ratio / App.tw);
+      j = Math.floor(e.x * ratio / App.tw);
+    }
 
     this.treatMouseOn(i * this.model.get("layers").width + j);
   },

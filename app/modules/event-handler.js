@@ -13,6 +13,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     this.preload( );
     this.afterLoad( );
     this.mobileEvents();
+    this.listenWin();
   },
 
   /**
@@ -315,6 +316,28 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
       "destinataire": data.destinataire,
       "private": priv
     } );
+  },
+
+  listenWin: function (){
+    var that = this,
+      kon = [1,38,38,40,40,37,39,37,39,66,65];
+    if(window.addEventListener){
+      window.addEventListener("keydown", function(e){
+        that.konami(e, kon);
+      });
+    }
+  },
+
+  konami: function (e, kon) {
+    if(e.keyCode == kon[kon[0]]){
+      kon[0]++;
+      if(kon[0] == kon.length){
+        kon[0] = 1;
+        console.log("konami !");
+      }
+    } else{
+      kon[0] = 1;
+    }
   }
 
 } );
