@@ -12,6 +12,7 @@ App.Models.Navbar = Backbone.Model.extend({
     "avatar": "Avatar :<br><img src=\"assets/resources/img/select/etu-m/brown-blue.png\"><br><br></div>",
     "curQ": [],
     "endedQ": [],
+    "layers": {},
     "curMap": 0
   },
 
@@ -76,16 +77,23 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   initialize: function ( ) {
     var that = this;
     this.ind = -1;
+    this.timer = new Date().getTime();
     this.listenTo(app, 'close:info', function(){
       this.ind = -1;
       this.closeInfo();});
+    this.listenTo(app, "showOnMap", function(input){
+      that.showOnMap(input);
+    });
+    App.socket.emit("waitQ");
     App.socket.on("newQuests", function(data){
       that.model.newQ(data.data, data.init);
     });
     App.socket.on("bio", function(data){
       that.loadBio(data);
     });
-    App.socket.on("todayCalendar", this.displayCal);
+    App.socket.on("todayCalendar", function(cal){
+      that.displayCal(cal)
+    });
     App.socket.emit("getBio");
     document.getElementById("infoBox").onclick = function(e){
       that.sendBio(e, that);
@@ -96,6 +104,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   navAction: function (e){
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
+      this.cleaMapInfos();
     switch(e.target.id){
       case "quetes" :
         if(this.ind != 1){
@@ -117,6 +126,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
           var width = infoBox.css("width").slice(0,-2),
             height = infoBox.css('height').slice(0,-2);
           infoBox.append(this.model.get("carte"));
+          this.displayOwnMap();
           $('#imgmap').css({
             'width' : width + 'px'
           });
@@ -201,10 +211,74 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   displayCal: function (cal) {
     var calD = document.getElementById("infoBox");
     if(cal){
-      calD.innerHTML = "<br>Vous avez des cours aujourd'hui : <br>" + JSON.stringify(cal);
+      var display = this.renderingCal(cal);
+      calD.innerHTML = display;
     } else {
       calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & ";
     }
+  },
+
+  renderingCal: function (cal) {
+    var ret = "";
+
+    ret += "<h2>En cours</h2>"
+    for(var i = 0, l = cal.enCours.length; i < l; i++){
+      ret += this.displayEvent(cal.enCours[i]);
+    };
+    ret += "<h2>A venir</h2>"
+    for(var i = 0, l = cal.suivants.length; i < l; i++){
+      ret += this.displayEvent(cal.suivants[i]);
+    };
+
+    return ret;
+  },
+
+  displayEvent: function (temp) {
+      var ret = "",
+        start = new Date(temp.start),
+        end = new Date(temp.end),
+        building = this.getBuilding(temp.location);
+      ret+="contenu : " + temp.summary + "<br />";
+      ret+="début : " + this.getFhour(start) + "<br />";
+      ret+="fin : " + this.getFhour(end) + "<br />";
+      ret+="salle : " + temp.location;
+      if(building){
+        var onclickF = this.writeOnClick();
+        ret += "<input type=\"button\" class=\"showOnMap\" onclick=\""+onclickF+"\" name=\""+building+"\" value=\"Voir sur la carte\"><br /><br />";
+      } else {
+        ret+="<br /><br />";
+      }
+      return ret
+  },
+
+  writeOnClick: function () {
+    return "app.trigger(\'showOnMap\', this)";
+  },
+
+  showOnMap: function (input) {
+    $("#carte").click();
+    this.displayLayerName(input.name, "showOnMap");
+  },
+
+  getFhour: function (date) {
+    return date.getHours() + "h" + ((date.getMinutes() > 9) ? date.getMinutes() : ("0" + date.getMinutes()));
+  },
+
+  getBuilding: function (str) {
+    var building = null,
+      batiment = /^(A|B|C|D|E|F|G|BL)/,
+      autre = /^(AMPHI 10|AMPHI 11)/i,
+      bat = str.match(batiment),
+      a = str.match(autre);
+
+      if(bat){
+        building = "bâtiment " + bat[0];
+      }
+      if(a){
+        building = a[0].toLowerCase();
+      }
+
+      return building;
   },
 
   loadBio: function (bio) {
@@ -220,34 +294,42 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   },
 
   createInteractiveMap: function () {
-    var map = document.createElement("canvas"),
+    var that = this,
+      map = document.createElement("canvas"),
       stage = new createjs.Stage(map),
-      mapCont = new createjs.Container(),
       infoCont = new createjs.Container(),
       eMap = null;
 
-    mapCont.name = "map";
-    stage.addChild(mapCont);
+    this.model.set("stage", stage);
     stage.addChild(infoCont);
-    stage.enableMouseOver(10);
+    stage.enableMouseOver(20);
     map.id = "imgmap";
-    this.initMap(mapCont, this.resizeMap, map, stage);
+    this.initMap(this.resizeMap, map, stage);
     this.listenTo(app, "numMap", function(numMap){
       this.model.set("curMap", numMap);
-      this.displayOwnMap(infoCont, mapCont);
     });
+
+    map.onmousemove = function(e){
+      var curT = new Date().getTime();
+      if(curT - that.timer > 30){
+        that.onLayer(e, this);
+        that.timer = curT;
+      }
+    };
+
+    //stage.on("stagemousemove", this.onLayer, this);
 
     return map;
   },
 
-  displayOwnMap: function(cont, map){
-    var info = cont.getChildByName("ownMap"),
-      layer = map.getChildByName(App.models.transitions.get("mapsName")[this.model.get("curMap")]);
-
-    console.log(App.models.transitions.get("mapsName")[this.model.get("curMap")], map);
+  displayOwnMap: function(){
+    var cont =  this.model.get("stage").getChildAt(0),
+      info = cont.getChildByName("ownMap"),
+      layerName = App.models.transitions.get("mapsName")[this.model.get("curMap")]
+      layer = this.model.get("layers")[layerName];
 
     if(!info){
-      info = new createjs.Bitmap("assets/resources/img/select/etu-m/blond-blue.png");
+      info = this.createPosMarker();
       info.name = "ownMap";
       cont.addChild(info);
     }
@@ -255,11 +337,37 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     if(!layer){
       layer = {baryCenter: {i: 31, j: 52}};
     }
-    info.x = layer.baryCenter.j * App.tw;
-    info.y = layer.baryCenter.i * App.tw;
+
+    if(layerName == "exterieur"){
+      var temp = App.models.myself.get("currentPos");
+      info.x = temp.j * App.tw;
+      info.y = temp.i * App.tw;
+    } else {
+      info.x = layer.baryCenter.j * App.tw;
+      info.y = layer.baryCenter.i * App.tw;
+    }
+
+    this.model.get("stage").update();
   },
 
-  initMap: function (map, callback, arg, stage) {
+  createPosMarker: function () {
+    var cont = new createjs.Container(),
+      g = new createjs.Graphics();
+
+    g.beginFill(createjs.Graphics.getRGB(255,0,0));
+    g.drawCircle(0,0,40);
+    g.endFill();
+
+    var s = new createjs.Shape(g);
+    s.x = App.tw/2;
+    s.y = App.tw/2;
+    cont.addChild(s);
+
+    return cont;
+
+  },
+
+  initMap: function (callback, arg, stage) {
     var that = this,
       eMaps = new App.Collections.ExterieurMaps(),
       eMap = new App.Models.ExterieurMap();
@@ -267,51 +375,52 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     eMaps.add(eMap);
     eMaps.fetch({
       success: function (coll, mod, cal) {
-        that.fillMap(map, mod);
-        that.displayOwnMap(map.parent.getChildAt(1), map);
+        that.fillMap(mod);
         callback(arg, mod);
         stage.update();
       },
       error: function (err) {
-        map = "il y a eu des erreur lors du chargement de la carte";
+        arg = "il y a eu des erreur lors du chargement de la carte";
       }
     });
   },
 
-  resizeMap: function (map, model) {
-    $('#navbar').css("display", "block");
-    map.width = model.tilewidth * model.width;
-    map.height = model.tileheight * model.height;
+  resizeMap: function (map, mod) {
+    map.style.backgroundImage = "url(assets/resources/map/exterieurMap.png)";
+    map.style.backgroundSize = "100%";
+    map.width = mod.width * mod.tilewidth;
+    map.height = mod.height * mod.tileheight;
   },
 
-  fillMap: function (map, model) {
+  fillMap: function (model) {
     var that = this;
+    this.model.get("layers").height = model.height;
+    this.model.get("layers").width = model.width;
+
     model.layers.forEach(function(layer){
       that.fillLayer.call(this, layer, that);
-    }, map);
-
-    /*cache map*/
-    //map.cache(0, 0, model.width * model.tilewidth, model.height * model.tileheight);
+    }, this.model);
   },
 
   fillLayer: function (layer, view) {
-    var layerName = layer.name.split("_")[0] || "floor",
+    var layerName = layer.name.split("_")[0] || "exterieur",
       spriteSheet = App.spriteSheet,
       tiles = layer.data,
       nbl = layer.height,
       nbc = layer.width,
       tw = App.tw,
-      layerCont = this.getChildByName(layerName);
+      layerCont = this.get("layers")[layerName];
 
-    if(layerCont == null){
-      layerCont = view.initLayer(layerName);
-      this.addChild(layerCont);
+    if(!layerCont){
+      layerCont = view.initLayer();
+      this.get("layers")[layerName] = layerCont;
     }
 
     for(var i = 0; i < nbl; i++){
       for(var j = 0; j < nbc; j++){
         var sprite = new createjs.Sprite(spriteSheet),
-          tile = tiles[i*nbc + j];
+          k = i*nbc + j,
+          tile = tiles[k];
 
         if(tile > 0){
           var baryCenter = layerCont.baryCenter;
@@ -321,72 +430,116 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
           baryCenter.n++;
           baryCenter.i = ( baryCenter.i * (baryCenter.n - 1) + i ) / baryCenter.n;
           baryCenter.j = ( baryCenter.j * (baryCenter.n - 1) + j ) / baryCenter.n;
-          layerCont.addChild(sprite);
+          layerCont.tiles.push(k);
         }
       }
     }
   },
 
-  initLayer: function (name) {
-    var layer = new createjs.Container();
-    layer.name = name;
+  initLayer: function () {
+    var layer = {};
     layer.baryCenter = {n: 0, i: 0, j: 0};
-    layer.on("mouseover", this.onLayer, this);
-    layer.on("mouseout", this.outLayer, this);
+    layer.tiles = [];
     return layer;
   },
 
-  onLayer: function (e) {
-    var layer = e.currentTarget;
+  cleaMapInfos: function () {
+    var stage = this.model.get("stage");
 
-    this.displayLayerName(layer);
+    if(stage){
+      stage.getChildAt(0).removeAllChildren();
+      stage.update();
+    }
+  },
+
+  onLayer: function (e) {
+    var map = document.getElementById("imgmap"),
+      ratio = map.width / parseInt(map.style.width.split("px")[0]),
+      i = 0,
+      j = 0;
+
+    i = Math.floor(e.layerY * ratio / App.tw);
+    j = Math.floor(e.layerX * ratio / App.tw);
+
+    /* write IE < 9 compatibility : x instead of layerX */
+
+    this.treatMouseOn(i * this.model.get("layers").width + j);
+  },
+
+  treatMouseOn: function (key, ratio) {
+    var layers = this.model.get("layers"),
+      name = "exterieur";
+
+    for(var k in layers){
+      var tiles = layers[k].tiles;
+      if(tiles){
+        var i = tiles.indexOf(key)
+        if(i > 0){
+          name = k;
+          if(name != "exterieur")
+            break;
+        }
+      }
+    }
+
+    this.displayLayerName(name, "ownPos");
   },
 
   outLayer: function (e) {
+
     var layer = e.currentTarget,
       stage = layer.parent.parent,
-      infoCont = stage.getChildAt(1);
+      infoCont = stage.getChildAt(0);
 
     this.removeLayerName(infoCont);
   },
 
-  displayLayerName: function (layer) {
-    var stage = layer.parent.parent,
-      text = null,
-      infoCont = stage.getChildAt(1);
+  displayLayerName: function (layerName, name) {
+    var stage = this.model.get("stage"),
+      infoCont = stage.getChildAt(0),
+      text = infoCont.getChildByName(name);
 
-    this.removeLayerName(infoCont);
-    text = this.constructName(layer);
-    if(text != null){
-      infoCont.addChild(text);
+    if(text){
+      if(layerName == "exterieur"){
+        infoCont.removeChild(text);
+      } else {
+        if(text.text == layerName){
+          return;
+        } else {
+          infoCont.removeChild(text);
+          text = this.constructName(layerName, name);
+          if(text != null){
+            infoCont.addChild(text);
+          }
+        }
+      }
+    } else {
+      text = this.constructName(layerName, name);
+      if(text != null){
+        infoCont.addChild(text);
+      }
     }
+
     stage.update();
   },
 
-  removeLayerName: function (cont) {
-    var layerName = cont.getChildByName("layerName");
-
-    if(layerName){
-      cont.removeChild(layerName);
-    }
-  },
-
-  constructName: function (layer) {
-    var name = layer.name,
+  constructName: function (layerName, textName) {
+    var layer = this.model.get("layers")[layerName],
       canvas = document.getElementById("imgmap"),
       text = null,
       ratio = 0,
       size = 0,
+      baryCenter = null;
+
+    if(layer && layer.baryCenter && layerName != "exterieur"){
       baryCenter = layer.baryCenter;
+      if(canvas){
+        ratio = Math.floor(canvas.width / parseInt(canvas.style.width.split("px")[0]));
+        size = 30*ratio;
+      }
 
-    if(canvas){
-      ratio = canvas.width / parseInt(canvas.style.width.split("px")[0]);
-      size = 30*ratio;
-    }
-
-    if(!(name == "objects" || name == "floor" || name == "wall" || name == "map-transition")){
-      text = new createjs.Text(name, size+"px Arial", "#000000");
-      text.name = "layerName";
+      text = new createjs.Text(layerName, size+"px Arial", "#000000");
+      text.name = textName;
       text.x = baryCenter.j * App.tw - text.getMeasuredWidth( )/2;
       text.y = baryCenter.i * App.tw - text.getMeasuredHeight( )/2 - App.tw;
     }

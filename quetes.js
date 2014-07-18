@@ -51,7 +51,9 @@ quests.ClientQuest = function (login, socket) {
         if(name)
           sendQ.push({"type": 2, "name": name});
        }
-       socket.emit("newQuests", {"data": sendQ, "init": true});
+       socket.on("waitQ", function(){
+         socket.emit("newQuests", {"data": sendQ, "init": true});
+       });
        console.log("\n sending quests : ", sendQ, " to client : ", that.login);
 
        console.log("\n quests loaded : \n QenCours : ", that.QenCours, "\n Qterminees : ", that.Qterminees);

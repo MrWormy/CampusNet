@@ -148,6 +148,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
   },
 
   initNavBar: function ( ) {
+    $("#navbar").css("display","block");
     App.views.navbar = new App.Views.Navbar({model: new App.Models.Navbar});
   },
 
@@ -175,7 +176,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         pnjs.newMap( that.curMap );
         that.pName = data.pName;
         that.destroyReg( );
-        myPerso = new App.Models.Perso( {
+        myPerso = App.models.myself = new App.Models.Perso( {
           'id': data.id,
           'currentPos': data.pos,
           'pName': data.pName,
