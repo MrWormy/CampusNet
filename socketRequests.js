@@ -91,7 +91,7 @@ exports.listenSocket = function(socket){
     }
   });*/
 
-  //test de dev 4
+  //test de dev 5
 
   /*
   socket.on("setNom", function(nom) {
