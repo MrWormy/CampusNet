@@ -320,24 +320,49 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
 
   listenWin: function (){
     var that = this,
-      kon = [1,38,38,40,40,37,39,37,39,66,65];
+      konamiCode = [1,38,38,40,40,37,39,37,39,66,65],
+      tsp = [1, 84, 83, 80],
+      tem = [1, 84, 69, 77];
     if(window.addEventListener){
       window.addEventListener("keydown", function(e){
-        that.konami(e, kon);
+        that.keyBoardEvent(e, konamiCode, that.onKonami);
+        that.keyBoardEvent(e, tsp, that.onTsp);
+        that.keyBoardEvent(e, tem, that.onTem);
       });
     }
   },
 
-  konami: function (e, kon) {
-    if(e.keyCode == kon[kon[0]]){
-      kon[0]++;
-      if(kon[0] == kon.length){
-        kon[0] = 1;
-        console.log("konami !");
+  keyBoardEvent: function (e, code, callback) {
+    if(e.keyCode == code[code[0]]){
+      code[0]++;
+      if(code[0] == code.length){
+        code[0] = 1;
+        callback();
       }
     } else{
-      kon[0] = 1;
+      code[0] = 1;
     }
+  },
+
+  /* à implémenter */
+
+  onKonami: function () {
+    console.log("konami !");
+  },
+
+  onTsp: function () {
+    console.log("Vive TSP !");
+  },
+
+  onTem: function () {
+    console.log("Vive TEM !");
+  },
+
+  onGeneralTexting: function (argument) {
+    if(argument)
+      console.log(argument);
   }
 
 } );
+
+

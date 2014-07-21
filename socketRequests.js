@@ -91,8 +91,6 @@ exports.listenSocket = function(socket){
     }
   });*/
 
-  //test de dev 5
-
   /*
   socket.on("setNom", function(nom) {
     if (that.idBDD != null) {
