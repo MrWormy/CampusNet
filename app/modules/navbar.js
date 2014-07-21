@@ -415,7 +415,6 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
   fillLayer: function (layer, view) {
     var layerName = layer.name.split("_")[0] || "exterieur",
-      spriteSheet = App.spriteSheet,
       tiles = layer.data,
       nbl = layer.height,
       nbc = layer.width,
@@ -429,15 +428,11 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
     for(var i = 0; i < nbl; i++){
       for(var j = 0; j < nbc; j++){
-        var sprite = new createjs.Sprite(spriteSheet),
           k = i*nbc + j,
           tile = tiles[k];
 
         if(tile > 0){
           var baryCenter = layerCont.baryCenter;
-          sprite.x = j * tw;
-          sprite.y = i * tw;
-          sprite.gotoAndStop(tile - 1);
           baryCenter.n++;
           baryCenter.i = ( baryCenter.i * (baryCenter.n - 1) + i ) / baryCenter.n;
           baryCenter.j = ( baryCenter.j * (baryCenter.n - 1) + j ) / baryCenter.n;

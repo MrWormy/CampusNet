@@ -442,9 +442,11 @@ App.Views.Pnjs = Backbone.View.extend({
   savePnjforExport: function (pnj) {
     var p = App.collections.pnjsForExport.get(pnj.id);
     if(p){
-      App.collections.pnjsForExport.remove(p);
+      p.clearInfos();
+      p.set(pnj.attributes);
+    } else {
+      App.collections.pnjsForExport.add(pnj.clone(), {merge: true});
     }
-    App.collections.pnjsForExport.add(pnj.clone(), {merge: true});
   },
 
   removePnj: function (pnj, option) {
