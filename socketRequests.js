@@ -116,7 +116,7 @@ exports.listenSocket = function(socket){
 }
 
 function treatCal (calstr) {
-  var enCours = [], suivants = [], now = new Date(), //"May 26 2014 14:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
+  var enCours = [], suivants = [], now = new Date("May 26 2014 14:20:50 GMT+0200 (Paris, Madrid (heure d’été))"), //"May 26 2014 14:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
     ical = {
       version:'',
       prodid:'',

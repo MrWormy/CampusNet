@@ -80,6 +80,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     this.timer = new Date().getTime();
     this.listenTo(app, 'close:info', function(){
       this.ind = -1;
+      this.clearMapInfos();
       this.closeInfo();});
     this.listenTo(app, "showOnMap", function(input){
       that.showOnMap(input);
@@ -104,7 +105,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   navAction: function (e){
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
-      this.cleaMapInfos();
+      this.clearMapInfos();
     switch(e.target.id){
       case "quetes" :
         if(this.ind != 1){
@@ -215,7 +216,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       var display = this.renderingCal(cal);
       calD.innerHTML = display;
     } else {
-      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & ";
+      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & au format : \"url=votre url;\" ";
     }
   },
 
@@ -304,7 +305,6 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
     this.model.set("stage", stage);
     stage.addChild(infoCont);
-    stage.enableMouseOver(20);
     map.id = "imgmap";
     this.initMap(this.resizeMap, map, stage);
     this.listenTo(app, "numMap", function(numMap){
@@ -449,7 +449,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     return layer;
   },
 
-  cleaMapInfos: function () {
+  clearMapInfos: function () {
     var stage = this.model.get("stage");
 
     if(stage){
@@ -477,7 +477,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     this.treatMouseOn(i * this.model.get("layers").width + j);
   },
 
-  treatMouseOn: function (key, ratio) {
+  treatMouseOn: function (key) {
     var layers = this.model.get("layers"),
       name = "exterieur";
 

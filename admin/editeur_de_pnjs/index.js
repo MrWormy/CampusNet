@@ -327,6 +327,7 @@ App.Models.Pnj = Backbone.Model.extend({
       this.unset("height", {silent: true});
       this.unset("width", {silent: true});
       this.unset("objectName", {silent: true});
+      this.unset("pannel", {silent: true});
     } else {
       this.unset("skin", {silent: true});
       this.unset("orientation", {silent: true});
@@ -415,6 +416,11 @@ App.Views.Pnjs = Backbone.View.extend({
       $(formPnj.objet).change();
       formPnj.obj.value = pnj.get("objectName");
       $("#obj").change();
+      if(pnj.get("pannel")){
+        formPnj.pannel.checked = true;
+      } else {
+        formPnj.pannel.checked = false;
+      }
     } else {
       var splitName = (pnj.get("skin") || "etu-m-brown-blue.png").split("-");
       formPnj.perso.checked = true;
@@ -429,13 +435,15 @@ App.Views.Pnjs = Backbone.View.extend({
     mapContainer.scrollTop = pos.i * 48 - 300;
     mapContainer.scrollLeft = pos.j * 48 - 500;
     App.views.gestionPnjs.positionSelected({offsetX: pos.j*48, offsetY: pos.i*48});
-    /* appeler positionSelected avec offset = pos * 48 */
     formPnj.dialDefault.value = pnj.get("text");
-    // a faire plus tard formPnj.displayName.checked = !(!pnj.get("displayName"));
+    if(pnj.get("showName")){ // pnj.get("displayName") peut être undefined
+      formPnj.showName.checked = true;
+    } else {
+      formPnj.showName.checked = false;
+    }
   },
 
   updateName: function (pnj, pName) {
-    console.log(pnj, pName);
     document.getElementById("pnj"+pnj.id).innerHTML = pName;
   },
 
@@ -707,7 +715,8 @@ App.Views.GestionPnjs = Backbone.View.extend({
       "displayName": true,
       "pos": {i:15, j:50},
       "map": 0,
-      "text": ""
+      "text": "",
+      "showName": true
     });
 
     this.collection.push(newP);
@@ -727,27 +736,28 @@ App.Views.GestionPnjs = Backbone.View.extend({
       err = "",
       showName = formPnj.showName.checked;
 
-      if(persoSelected && !objectSelected){
-        var skin = formPnj.frameSkin.name,
-          orientation = parseInt(formPnj.frameSkin.value),
-          ts;
+    if(persoSelected && !objectSelected){
+      var skin = formPnj.frameSkin.name,
+        orientation = parseInt(formPnj.frameSkin.value),
+        ts;
 
-        if(!(skin && (ts = this.model.get("characters").tilesets[skin]) && orientation >= 0 && orientation < ts.getNumFrames())){
-          err += " veuillez sélectionner un aperçu de personnage valide,";
-          isValid = false;
-        } else {
-          pnj.object = false
-          pnj.skin = skin;
-          pnj.orientation = orientation;
-        }
-      } else if(objectSelected && !persoSelected){
-        var obj = App.collections.objs.get(formPnj.obj.selectedIndex);
+      if(!(skin && (ts = this.model.get("characters").tilesets[skin]) && orientation >= 0 && orientation < ts.getNumFrames())){
+        err += " veuillez sélectionner un aperçu de personnage valide,";
+        isValid = false;
+      } else {
+        pnj.object = false
+        pnj.skin = skin;
+        pnj.orientation = orientation;
+      }
+    } else if(objectSelected && !persoSelected){
+      var obj = App.collections.objs.get(formPnj.obj.selectedIndex);
 
       if(obj){
         pnj.object = obj.get("tiles");
         pnj.height = obj.get("height");
         pnj.width = obj.get("width");
         pnj.objectName = obj.get("name");
+        pnj.pannel = formPnj.pannel.checked;
       } else{
         err += " veuillez délectionner un objet valide,";
         isValid = false;
