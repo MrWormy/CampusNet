@@ -344,11 +344,11 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
     if(layerName == "exterieur"){
       var temp = App.models.myself.get("currentPos");
-      info.x = temp.j * App.tw;
-      info.y = temp.i * App.tw;
+      info.x = temp.j * (App.tw / 4);
+      info.y = temp.i * (App.tw / 4);
     } else {
-      info.x = layer.baryCenter.j * App.tw;
-      info.y = layer.baryCenter.i * App.tw;
+      info.x = layer.baryCenter.j * (App.tw / 4);
+      info.y = layer.baryCenter.i * (App.tw / 4);
     }
 
     this.model.get("stage").update();
@@ -370,8 +370,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     g.endFill();
 
     var s = new createjs.Shape(g);
-    s.x = App.tw/2;
-    s.y = App.tw/2;
+    s.x = (App.tw / 4)/2;
+    s.y = (App.tw / 4)/2;
     cont.addChild(s);
 
     return cont;
@@ -399,8 +399,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   resizeMap: function (map, mod) {
     map.style.backgroundImage = "url(assets/resources/map/exterieurMap.png)";
     map.style.backgroundSize = "100%";
-    map.width = mod.width * mod.tilewidth;
-    map.height = mod.height * mod.tileheight;
+    map.width = mod.width * mod.tilewidth / 4;
+    map.height = mod.height * mod.tileheight / 4;
   },
 
   fillMap: function (model) {
@@ -418,7 +418,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       tiles = layer.data,
       nbl = layer.height,
       nbc = layer.width,
-      tw = App.tw,
+      tw = (App.tw / 4),
       layerCont = this.get("layers")[layerName];
 
     if(!layerCont){
@@ -465,13 +465,13 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       j = 0;
 
     if("layerX" in e){
-      i = Math.floor(e.layerY * ratio / App.tw);
-      j = Math.floor(e.layerX * ratio / App.tw);
+      i = Math.floor(e.layerY * ratio / (App.tw / 4));
+      j = Math.floor(e.layerX * ratio / (App.tw / 4));
     }
-    /* IE < 9 compatibility */
+    /* IE < 9 and opera compatibility */
     else if("x" in e){
-      i = Math.floor(e.y * ratio / App.tw);
-      j = Math.floor(e.x * ratio / App.tw);
+      i = Math.floor(e.y * ratio / (App.tw / 4));
+      j = Math.floor(e.x * ratio / (App.tw / 4));
     }
 
     this.treatMouseOn(i * this.model.get("layers").width + j);
@@ -551,8 +551,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
       text = new createjs.Text(layerName, size+"px Arial", "#000000");
       text.name = textName;
-      text.x = baryCenter.j * App.tw - text.getMeasuredWidth( )/2;
-      text.y = baryCenter.i * App.tw - text.getMeasuredHeight( )/2 - App.tw;
+      text.x = baryCenter.j * (App.tw / 4) - text.getMeasuredWidth( )/2;
+      text.y = baryCenter.i * (App.tw / 4) - text.getMeasuredHeight( )/2 - (App.tw / 4);
     }
 
     return text;
