@@ -65,7 +65,11 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	parler: function(texte) {
 		if (texte=="default") {
-			texte = this.get("text");
+			if(this.get("pannel")){
+				texte = "none";
+			} else {
+				texte = this.get("text");
+			}
 		}
 		var that = this;
 		if(texte != "none"){

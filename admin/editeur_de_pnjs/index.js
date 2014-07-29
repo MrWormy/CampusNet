@@ -532,7 +532,7 @@ App.Views.GestionPnjs = Backbone.View.extend({
   positionSelected: function (e) {
     var selecPerso = document.getElementById("perso").checked,
       selecObj = document.getElementById("objet").checked,
-      pos = {i: Math.floor(e.offsetY / 48), j: Math.floor(e.offsetX / 48)},
+      pos = {i: Math.floor((e.offsetY || e.originalEvent.layerY) / 48), j: Math.floor((e.offsetX || e.originalEvent.layerX) / 48)},
       mapDisplay = this.model.get("stages").mapDisplay;
 
     document.getElementById("posI").value = pos.i;

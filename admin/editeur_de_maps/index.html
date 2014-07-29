@@ -7,15 +7,33 @@
   </head>
   <body>
     <div id="wrap">
-    <header>
-      <a id='titre' href="../../index.html">CampusNet v2</a>
-      <span id="path">></span> <a href="..">Administration</a>
-      <span id="path">></span> <a href="">Edition de cartes</a>
-        <a id ="deco" href="../../logout.html">Déconnexion</a>
-    </header>
+      <header>
+        <a id='titre' href="../../index.html">CampusNet v2</a>
+        <span id="path">></span> <a href="..">Administration</a>
+        <span id="path">></span> <a href="">Edition de cartes</a>
+          <a id ="deco" href="../../logout.html">Déconnexion</a>
+      </header>
 
-    <h1>Bienvenue sur la page d'édition de maps</h1>
-  </div>
+      <h1>Bienvenue sur la page d'édition de transitions de maps</h1>
+
+      <section id="content" class="content-menu">
+        <form id="detailTrans">
+          Sélectionnez une carte : <select id="fromMap"></select> <br />
+          Sélectionnez une case de départ (en cliquant sur la carte) : <br />
+          <div id="fromContainer" style="overflow: scroll; width: 1000px; height: 600px;">
+          </div>
+          <div id="fromInfos"></div>
+          Sélectionnez une carte : <select id="toMap"></select> <br />
+          Sélectionnez une case d'arrivée (en cliquant sur la carte) : <br />
+          <div id="toContainer" style="overflow: scroll; width: 1000px; height: 600px;">
+          </div>
+          <div id="toInfos"></div>
+          <input class="TrButton" type="button" name="saveTr" id="saveTr" value="Sauvegarder cette transition" />
+          <input class="TrButton" type="button" name="removeTr" id="removeTr" value="Supprimer cette transition" />
+          <input class="TrButton" type="button" name="sendAllTrs" id="sendAllTrs" value="Envoyer les modifications au serveur" /><br />
+        </form>
+      </div>
+    </div>
     <footer>
       Copyright 2014 - CampusNet v2<br>
       <img src="/assets/resources/logos.png"/>
@@ -24,7 +42,6 @@
     <script type="text/javascript" src="/assets/jquery/dist/jquery.js"></script>
     <script type="text/javascript" src="/assets/underscore/underscore.js"></script>
     <script type="text/javascript" src="/assets/backbone/backbone.js"></script>
-    <script type="text/javascript" src="/assets/easeljs/lib/easeljs-0.7.1.min.js"></script>
 
     <script type="text/javascript" src="index.js"></script>
 

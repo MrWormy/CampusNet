@@ -124,12 +124,11 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
         if(this.ind != 3){
           this.ind = 3;
           infoBox.html(title);
-          var width = infoBox.css("width").slice(0,-2),
-            height = infoBox.css('height').slice(0,-2);
           infoBox.append(this.model.get("carte"));
-          $('#imgmap').css({
-            'width' : width + 'px'
-          });
+          var mapCan = document.getElementById("imgmap"),
+            width = infoBox.css("width").slice(0,-2),
+            height = infoBox.css('height').slice(0,-2);
+          mapCan.style.width = Math.min(mapCan.width, width) + "px";
           this.displayOwnMap();
         } else this.ind = -1;
         break;
@@ -269,8 +268,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
   getBuilding: function (str) {
     var building = null,
-      batiment = /^(A|B|C|D|E|F|G|BL)/,
-      autre = /^(AMPHI 10|AMPHI 11)/i,
+      batiment = /^(A|B|C|D|E|F|G)/,
+      autre = /^(AMPHI 10|AMPHI 11|BL|SSP)/i,
       bat = str.match(batiment),
       a = str.match(autre);
 
@@ -339,7 +338,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     }
 
     if(!layer){
-      layer = {baryCenter: {i: 31, j: 52}};
+      console.log("map inconnue");
+      return false;
     }
 
     if(layerName == "exterieur"){
@@ -485,7 +485,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       var tiles = layers[k].tiles;
       if(tiles){
         var i = tiles.indexOf(key)
-        if(i > 0){
+        if(i >= 0){
           name = k;
           if(name != "exterieur")
             break;
@@ -545,8 +545,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     if(layer && layer.baryCenter && layerName != "exterieur"){
       baryCenter = layer.baryCenter;
       if(canvas){
-        ratio = Math.floor(canvas.width / parseInt(canvas.style.width.split("px")[0]));
-        size = 30*ratio;
+        ratio = canvas.width / parseInt(canvas.style.width.split("px")[0]);
+        size = Math.floor(30*ratio);
       }
 
       text = new createjs.Text(layerName, size+"px Arial", "#000000");

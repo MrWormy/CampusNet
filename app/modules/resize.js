@@ -87,9 +87,13 @@ App.Models.Canvas = Backbone.Model.extend( /** @lends module:resize.Canvas.proto
       'margin-top' : '50px',
       'margin-left' : '80px'
     });
-    $('#imgmap').css({
-      'width' : width - 200 + 'px'
-    });
+
+    var imgmap = $("#imgmap");
+    if(imgmap[0]){
+      $('#imgmap').css({
+        'width' : Math.min(width - 200, imgmap[0].width) + 'px'
+      });
+    }
 
     mapCan.width = width;
     mapCan.height = height;

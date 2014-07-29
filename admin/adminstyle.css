@@ -179,6 +179,14 @@ footer {
 	margin-top: 8px;
 }
 
+.TrButton{
+	font-family: 'Open Sans', 'sans-serif';
+	height: 35px;
+	width: 240px;
+	text-align: center;
+	margin-top: 8px;
+}
+
 #listeQ{
 	font-family: 'Open Sans', 'sans-serif';
 	width: 150px;
