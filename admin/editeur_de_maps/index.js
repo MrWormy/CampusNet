@@ -84,20 +84,101 @@ App.Models.Transition = Backbone.Model.extend({
 
   updateAndSplice: function (trs, indMap, indTr) {
     var mapTrs = trs[indMap];
-    for(var i = indTr + 1, l = mapTrs.length; i < l; i ++){
-      var tmp = mapTrs[i];
-      trs[tmp[2]][tmp[3]][3]--;
+    for(var i = 0, l = trs.length; i < l; i++){
+      var tmpMap = trs[i];
+      for(var j = 0, m = tmpMap.length; j < m; j++){
+        var tmpTr = tmpMap[j];
+        if(tmpTr[2] == indMap && tmpTr[3] > indTr){
+          tmpTr[3]--;
+        }
+      }
     }
     mapTrs.splice(indTr, 1);
   },
 
-  addTr: function (tr) {
-    var from = tr.from,
-      to = tr.to,
-      isFrom = this.isInTr(from, from.map),
-      isTo = this.isInTr(to, to.map);
+  indexOf: function (tr, map) {
+    var mapTrs = this.get("transitions")[map];
 
-    console.log(isFrom, isTo);
+    for(var i = 0, l = mapTrs.length; i < l; i++){
+      if(mapTrs[i][0] == tr.i && mapTrs[i][1] == tr.j){
+        return i;
+      }
+    }
+    return -1;
+  },
+
+  addTr: function (tr) {
+    var transitions = this.get("transitions"),
+      from = tr.from,
+      to = tr.to,
+      fromInd = this.indexOf(from, from.map),
+      toInd = this.indexOf(to, to.map),
+      fromMap = transitions[from.map],
+      toMap = transitions[to.map];
+
+    if(fromInd < 0 && toInd < 0){
+      fromMap.push([from.i, from.j, to.map, toMap.length]);
+      toMap.push([to.i, to.j, from.map, fromMap.length - 1]);
+    } else if(fromInd < 0 && toInd >= 0){
+      fromMap.push([from.i, from.j, to.map, toInd]);
+    } else if(fromInd >= 0 && toInd < 0){
+      fromMap[fromInd][2] = to.map;
+      fromMap[fromInd][3] = toMap.length;
+      toMap.push([to.i, to.j, from.map, fromInd]);
+    } else {
+      fromMap[fromInd][2] = to.map;
+      fromMap[fromInd][3] = toInd;
+    }
+  },
+
+  hasOtherRef: function (refMap, refInd, indMap, indTr) {
+    var transitions = this.get("transitions");
+
+    for (var i = transitions.length - 1; i >= 0; i--) {
+      var tmpMap = transitions[i];
+      for (var j = tmpMap.length - 1; j >= 0; j--) {
+        var tmpTr = tmpMap[j];
+        if(tmpTr[2] == indMap && tmpTr[3] == indTr && !(i == refMap && j == refInd)){
+          return {map: i, tr: j};
+        }
+      };
+    };
+    return  null;
+  },
+
+  delTr: function (tr) {
+    var transitions = this.get("transitions"),
+      from = tr.from,
+      to = tr.to,
+      fromInd = this.indexOf(from, from.map),
+      toInd = this.indexOf(to, to.map),
+      fromMap = transitions[from.map],
+      toMap = transitions[to.map];
+
+    if(fromInd >= 0 && toInd >= 0){
+      var fromRef = this.hasOtherRef(to.map, toInd, from.map, fromInd),
+        fromIsToSource = (toMap[toInd][2] == from.map && toMap[toInd][3] == fromInd);
+
+      if(fromRef){
+        fromMap[fromInd][2] = fromRef.map;
+        fromMap[fromInd][3] = fromRef.tr;
+      } else {
+        this.updateAndSplice(transitions, from.map, fromInd);
+        from.map = -1;
+        fromInd = -1;
+      }
+
+      if(fromIsToSource){
+        var toRef = this.hasOtherRef(from.map, fromInd, to.map, toInd);
+
+        if(toRef){
+          toMap[toInd][2] = toRef.map;
+          toMap[toInd][3] = toRef.tr;
+        } else {
+          this.updateAndSplice(transitions, to.map, toInd);
+        }
+      }
+    }
   }
 });
 
@@ -339,22 +420,26 @@ App.Views.Transition = Backbone.View.extend({
       trs = this.res.transitions[name].trans;
 
     if(this.isTra(pos, trs)){
-      this.tr.from = {i: pos.i, j: pos.j, map: ind};
-      var alreadyExist = this.model.isInTr(pos, ind);
-      if(alreadyExist){
-        var selecTo = document.getElementById("toMap"),
-          indTo = this.indexFromSelect(selecTo, this.model.get("mapsName")[alreadyExist.map]);
+      this.clickOnPos(pos, ind);
+    }
+  },
 
-        selecTo.selectedIndex = indTo;
-        this.tr.to = alreadyExist;
-        this.displayMap("to");
-        this.scrollMapTo("to", this.tr.to);
-      } else {
-        var selecTo = document.getElementById("toMap");
+  clickOnPos: function (pos, ind) {
+    this.tr.from = {i: pos.i, j: pos.j, map: ind};
+    var alreadyExist = this.model.isInTr(pos, ind);
+    if(alreadyExist){
+      var selecTo = document.getElementById("toMap"),
+        indTo = this.indexFromSelect(selecTo, this.model.get("mapsName")[alreadyExist.map]);
 
-        selecTo.selectedIndex = -1;
-        this.displayMap("to");
-      }
+      selecTo.selectedIndex = indTo;
+      this.tr.to = alreadyExist;
+      this.displayMap("to");
+      this.scrollMapTo("to", this.tr.to);
+    } else {
+      var selecTo = document.getElementById("toMap");
+
+      selecTo.selectedIndex = -1;
+      this.displayMap("to");
     }
   },
 
@@ -419,11 +504,35 @@ App.Views.Transition = Backbone.View.extend({
   },
 
   removeTr: function (e) {
+    if(this.tr.from && this.tr.to){
+      var from = this.tr.from,
+        pos = {i: from.i, j: from.j},
+        map = from.map;
 
+      this.model.delTr(this.tr);
+
+      this.tr = {};
+      this.clickOnPos(pos, map);
+    }
   },
 
   sendAllTrs: function (e) {
-
+    var data = JSON.stringify(this.model.toJSON());
+    $.ajax({
+      type: "POST",
+      url: "modifTransitions",
+      data: data,
+      success: function(data, status){
+        if(data == "OK"){
+          alert("les modifications ont bien été enregistrées");
+        } else {
+          alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ");
+        }
+      },
+      error: function (data) {
+        alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ", data);
+      }
+    });
   }
 });
 

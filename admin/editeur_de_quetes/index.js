@@ -241,8 +241,15 @@ App.Views.Gestion = Backbone.View.extend({
 		  url: "modifQuetes",
 		  data: data,
 		  success: function(data, status){
-		  	alert("les modifications ont bien été enregistrées");
-		  }
+        if(data == "OK"){
+          alert("les modifications ont bien été enregistrées");
+        } else {
+          alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ");
+        }
+		  },
+      error: function (data) {
+        alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ", data);
+      }
 		});
 	}
 

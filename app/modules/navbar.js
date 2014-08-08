@@ -269,15 +269,20 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   getBuilding: function (str) {
     var building = null,
       batiment = /^(A|B|C|D|E|F|G)/,
-      autre = /^(AMPHI 10|AMPHI 11|BL|SSP)/i,
+      amphis = /^(AMPHI 10|AMPHI 11)/i,
+      autres = /^(BL|SSP)/i,
       bat = str.match(batiment),
-      a = str.match(autre);
+      am = str.match(amphis),
+      a = str.match(autres);
 
       if(bat){
         building = "bâtiment " + bat[0];
       }
+      if(am){
+        building = am[0].toLowerCase();
+      }
       if(a){
-        building = a[0].toLowerCase();
+        building = a[0];
       }
 
       return building;
@@ -329,7 +334,33 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       color = (typeof pColor !== "undefined") ? pColor : "#ee0000",
       info = cont.getChildByName(contName),
       layerName = (typeof layName !== "undefined") ? layName : App.models.transitions.get("mapsName")[this.model.get("curMap")],
-      layer = this.model.get("layers")[layerName];
+      layers = this.model.get("layers"),
+      bats = / [A-G]/,
+      autres = / (SSP|BL)/i;
+      layer = null;
+
+    if(layerName != "exterieur" && !(layerName in layers)){
+      for(var k in layers){
+        if(layerName.indexOf(k) >= 0){
+          layerName = k;
+          break;
+        } else {
+          var ba = layerName.match(bats),
+            a = layerName.match(autres);
+
+          if(ba){
+            layerName = "bâtiment" + ba[0];
+            break;
+          }
+          if(a){
+            layerName = a[0].trim();
+            break;
+          }
+        }
+      }
+    }
+
+    layer = layers[layerName];
 
     if(!info){
       info = this.createPosMarker(color);

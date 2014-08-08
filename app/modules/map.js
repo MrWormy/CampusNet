@@ -175,6 +175,7 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
     var tileWidth = this.model.get( "tilewidth" ),
       tileHeight = this.model.get( "tileheight" ),
       layerWidth = this.model.get( "width" ),
+      layerHeight = this.model.get("height"),
       currentJ = this.model.get( "currentX" ) / tileWidth,
       currentI = this.model.get( "currentY" ) / tileHeight,
       toJ = Math.floor( ( this.stage.mouseX + this.stage.getChildAt( 0 ).regX ) / tileWidth ) + currentJ,
@@ -182,7 +183,8 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
     if($("#infoBox").css("display") != "none"){
       app.trigger('close:info');
     }else{
-       app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth );
+      if(toI >= 0 && toJ >= 0)
+        app.trigger( 'move', currentI, currentJ, toI, toJ, layerWidth, layerHeight );
     }
   }
 

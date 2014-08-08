@@ -492,8 +492,6 @@ App.Views.GestionPnjs = Backbone.View.extend({
   },
 
   initMaps: function () {
-    /* MODIFIER MAP.JSON POUR AVOIR DES IDENTIFIANTS DE NOMMAGE, UNIQUES */
-
     var maps = this.model.get("maps"),
       selec = document.getElementById("map");
     for(var map in maps){
@@ -822,7 +820,14 @@ App.Views.GestionPnjs = Backbone.View.extend({
       url: "modifPnjs",
       data: data,
       success: function(data, status){
-        alert("les modifications ont bien été enregistrées");
+        if(data == "OK"){
+          alert("les modifications ont bien été enregistrées");
+        } else {
+          alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ");
+        }
+      },
+      error: function (data) {
+        alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ", data);
       }
     });
   }
