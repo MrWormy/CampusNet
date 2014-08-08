@@ -267,6 +267,15 @@ quests.validatePnjs = function (newPnjsString) {
   fs.writeFile("./assets/resources/pnj.json", JSON.stringify(newPnjs));
 };
 
+quests.validateTransitions = function (newTrsString) {
+  var newTrs = JSON.parse(newTrsString);
+
+  /* validate here */
+
+  fs.writeFile("./assets/resources/map/transitions.json", JSON.stringify(newTrs));
+};
+
+
 function isIn (el, list) {
   var bool = false;
   for (var i = list.length - 1; i >= 0; i--) {

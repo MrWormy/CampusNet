@@ -130,6 +130,11 @@ App.Models.Perso = Backbone.Model.extend( /** @lends module:perso.Models/Perso.p
  moveAnim: function (dir) {
     var curFrame = this.get("curFrame"),
       that = this;
+    for(var k in curFrame){
+      if(k != dir){
+        curFrame[k] = 0;
+      }
+    }
     that.get("perso").gotoAndStop(dir*8 + curFrame[dir]);
     curFrame[dir] = (curFrame[dir] + 1) % 4;
     setTimeout(function () {

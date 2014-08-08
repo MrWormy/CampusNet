@@ -4,6 +4,7 @@ App.Models.Pnj = Backbone.Model.extend( {
     //  App.map[ pos ] = 2; ligne 169, event-handler
     	if (this.id!=undefined) { // C'est dégueu mais ça marche
 			var perso,
+				that = this;
 				skin = this.get("skin"),
 				object = this.get("object"),
 				tw = App.tw,
@@ -26,9 +27,20 @@ App.Models.Pnj = Backbone.Model.extend( {
 			perso.x = this.get( "pos" ).j * tw;
 			perso.y = this.get( "pos" ).i * tw;
 			perso.name = "pnj " + this.id;
-			perso.addEventListener("click", function ( ) {
-				App.socket.emit("parler_pnj", that.id);
-			});
+			if(this.get("pannel")){
+				perso.addEventListener("click", function ( ) {
+					var title = "<h1> - " + that.get("pName") + " - </h1>",
+			      infoBox = $("#infoBox");
+
+			    infoBox.html(title + that.get("text"));
+			    infoBox.css({'display' : 'block'});
+					App.socket.emit("parler_pnj", that.id);
+				});
+			} else {
+				perso.addEventListener("click", function ( ) {
+					App.socket.emit("parler_pnj", that.id);
+				});
+			}
 			this.set( "perso", perso );
 		}
 	},
@@ -53,7 +65,11 @@ App.Models.Pnj = Backbone.Model.extend( {
 
 	parler: function(texte) {
 		if (texte=="default") {
-			texte = this.get("text");
+			if(this.get("pannel")){
+				texte = "none";
+			} else {
+				texte = this.get("text");
+			}
 		}
 		var that = this;
 		if(texte != "none"){

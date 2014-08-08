@@ -16,15 +16,15 @@ App.Models.Move = Backbone.Model.extend( /** @lends module:move~Models/Move.prot
     @param {} toJ
     @param {} layerWidth
   */
-  move: function ( fromI, fromJ, toI, toJ, layerWidth ) {
+  move: function ( fromI, fromJ, toI, toJ, layerWidth, layerHeight ) {
     var way;
     this.set( "hashMove", toI * layerWidth + toJ );
-    way = this.findAway( fromI, fromJ, toI, toJ, layerWidth );
+    way = this.findAway( fromI, fromJ, toI, toJ, layerWidth, layerHeight );
     if ( this.get( "hashMove" ) == way[ 0 ] )
       app.trigger( 'move:ok', way[1] );
   },
 
-  findAway: function ( fromI, fromJ, toI, toJ, layerWidth ) {
+  findAway: function ( fromI, fromJ, toI, toJ, layerWidth, layerHeight ) {
     var i, j, neighbor, iN, Ni, Nj, tempCost, tempRes, openCases = [ {
         "i": fromI,
         "j": fromJ,
@@ -55,8 +55,8 @@ App.Models.Move = Backbone.Model.extend( /** @lends module:move~Models/Move.prot
         return [ hashMove, this.buildAway( cameFrom, minHcost.i, minHcost.j ) ];
       }
       for ( var h = 0; h < 4; h++ ) {
-        Ni = i + ( ( h + 1 ) % 2 ) * ( h - 1 );
-        Nj = j + ( h % 2 ) * ( 2 - h );
+        Ni = Math.min(Math.max(i + ( ( h + 1 ) % 2 ) * ( h - 1 ), 0), layerHeight);
+        Nj = Math.min(Math.max(j + ( h % 2 ) * ( 2 - h ), 0), layerWidth);
         neighbor = {
           "i": Ni,
           "j": Nj

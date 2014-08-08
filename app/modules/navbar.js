@@ -80,6 +80,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     this.timer = new Date().getTime();
     this.listenTo(app, 'close:info', function(){
       this.ind = -1;
+      this.clearMapInfos();
       this.closeInfo();});
     this.listenTo(app, "showOnMap", function(input){
       that.showOnMap(input);
@@ -104,7 +105,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   navAction: function (e){
     var title = "<h1> - " + e.target.title + " - </h1>",
       infoBox = $("#infoBox");
-      this.cleaMapInfos();
+      this.clearMapInfos();
     switch(e.target.id){
       case "quetes" :
         if(this.ind != 1){
@@ -123,12 +124,11 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
         if(this.ind != 3){
           this.ind = 3;
           infoBox.html(title);
-          var width = infoBox.css("width").slice(0,-2),
-            height = infoBox.css('height').slice(0,-2);
           infoBox.append(this.model.get("carte"));
-          $('#imgmap').css({
-            'width' : width + 'px'
-          });
+          var mapCan = document.getElementById("imgmap"),
+            width = infoBox.css("width").slice(0,-2),
+            height = infoBox.css('height').slice(0,-2);
+          mapCan.style.width = Math.min(mapCan.width, width) + "px";
           this.displayOwnMap();
         } else this.ind = -1;
         break;
@@ -215,7 +215,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       var display = this.renderingCal(cal);
       calD.innerHTML = display;
     } else {
-      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & ";
+      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & au format : \"url=votre url;\" ";
     }
   },
 
@@ -268,16 +268,21 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
   getBuilding: function (str) {
     var building = null,
-      batiment = /^(A|B|C|D|E|F|G|BL)/,
-      autre = /^(AMPHI 10|AMPHI 11)/i,
+      batiment = /^(A|B|C|D|E|F|G)/,
+      amphis = /^(AMPHI 10|AMPHI 11)/i,
+      autres = /^(BL|SSP)/i,
       bat = str.match(batiment),
-      a = str.match(autre);
+      am = str.match(amphis),
+      a = str.match(autres);
 
       if(bat){
         building = "bâtiment " + bat[0];
       }
+      if(am){
+        building = am[0].toLowerCase();
+      }
       if(a){
-        building = a[0].toLowerCase();
+        building = a[0];
       }
 
       return building;
@@ -304,7 +309,6 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
     this.model.set("stage", stage);
     stage.addChild(infoCont);
-    stage.enableMouseOver(20);
     map.id = "imgmap";
     this.initMap(this.resizeMap, map, stage);
     this.listenTo(app, "numMap", function(numMap){
@@ -330,7 +334,33 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       color = (typeof pColor !== "undefined") ? pColor : "#ee0000",
       info = cont.getChildByName(contName),
       layerName = (typeof layName !== "undefined") ? layName : App.models.transitions.get("mapsName")[this.model.get("curMap")],
-      layer = this.model.get("layers")[layerName];
+      layers = this.model.get("layers"),
+      bats = / [A-G]/,
+      autres = / (SSP|BL)/i;
+      layer = null;
+
+    if(layerName != "exterieur" && !(layerName in layers)){
+      for(var k in layers){
+        if(layerName.indexOf(k) >= 0){
+          layerName = k;
+          break;
+        } else {
+          var ba = layerName.match(bats),
+            a = layerName.match(autres);
+
+          if(ba){
+            layerName = "bâtiment" + ba[0];
+            break;
+          }
+          if(a){
+            layerName = a[0].trim();
+            break;
+          }
+        }
+      }
+    }
+
+    layer = layers[layerName];
 
     if(!info){
       info = this.createPosMarker(color);
@@ -339,16 +369,17 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     }
 
     if(!layer){
-      layer = {baryCenter: {i: 31, j: 52}};
+      console.log("map inconnue");
+      return false;
     }
 
     if(layerName == "exterieur"){
       var temp = App.models.myself.get("currentPos");
-      info.x = temp.j * App.tw;
-      info.y = temp.i * App.tw;
+      info.x = temp.j * (App.tw / 4);
+      info.y = temp.i * (App.tw / 4);
     } else {
-      info.x = layer.baryCenter.j * App.tw;
-      info.y = layer.baryCenter.i * App.tw;
+      info.x = layer.baryCenter.j * (App.tw / 4);
+      info.y = layer.baryCenter.i * (App.tw / 4);
     }
 
     this.model.get("stage").update();
@@ -370,8 +401,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     g.endFill();
 
     var s = new createjs.Shape(g);
-    s.x = App.tw/2;
-    s.y = App.tw/2;
+    s.x = (App.tw / 4)/2;
+    s.y = (App.tw / 4)/2;
     cont.addChild(s);
 
     return cont;
@@ -399,8 +430,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
   resizeMap: function (map, mod) {
     map.style.backgroundImage = "url(assets/resources/map/exterieurMap.png)";
     map.style.backgroundSize = "100%";
-    map.width = mod.width * mod.tilewidth;
-    map.height = mod.height * mod.tileheight;
+    map.width = mod.width * mod.tilewidth / 4;
+    map.height = mod.height * mod.tileheight / 4;
   },
 
   fillMap: function (model) {
@@ -418,7 +449,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       tiles = layer.data,
       nbl = layer.height,
       nbc = layer.width,
-      tw = App.tw,
+      tw = (App.tw / 4),
       layerCont = this.get("layers")[layerName];
 
     if(!layerCont){
@@ -449,7 +480,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     return layer;
   },
 
-  cleaMapInfos: function () {
+  clearMapInfos: function () {
     var stage = this.model.get("stage");
 
     if(stage){
@@ -465,19 +496,19 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       j = 0;
 
     if("layerX" in e){
-      i = Math.floor(e.layerY * ratio / App.tw);
-      j = Math.floor(e.layerX * ratio / App.tw);
+      i = Math.floor(e.layerY * ratio / (App.tw / 4));
+      j = Math.floor(e.layerX * ratio / (App.tw / 4));
     }
-    /* IE < 9 compatibility */
+    /* IE < 9 and opera compatibility */
     else if("x" in e){
-      i = Math.floor(e.y * ratio / App.tw);
-      j = Math.floor(e.x * ratio / App.tw);
+      i = Math.floor(e.y * ratio / (App.tw / 4));
+      j = Math.floor(e.x * ratio / (App.tw / 4));
     }
 
     this.treatMouseOn(i * this.model.get("layers").width + j);
   },
 
-  treatMouseOn: function (key, ratio) {
+  treatMouseOn: function (key) {
     var layers = this.model.get("layers"),
       name = "exterieur";
 
@@ -485,7 +516,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       var tiles = layers[k].tiles;
       if(tiles){
         var i = tiles.indexOf(key)
-        if(i > 0){
+        if(i >= 0){
           name = k;
           if(name != "exterieur")
             break;
@@ -545,14 +576,14 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
     if(layer && layer.baryCenter && layerName != "exterieur"){
       baryCenter = layer.baryCenter;
       if(canvas){
-        ratio = Math.floor(canvas.width / parseInt(canvas.style.width.split("px")[0]));
-        size = 30*ratio;
+        ratio = canvas.width / parseInt(canvas.style.width.split("px")[0]);
+        size = Math.floor(30*ratio);
       }
 
       text = new createjs.Text(layerName, size+"px Arial", "#000000");
       text.name = textName;
-      text.x = baryCenter.j * App.tw - text.getMeasuredWidth( )/2;
-      text.y = baryCenter.i * App.tw - text.getMeasuredHeight( )/2 - App.tw;
+      text.x = baryCenter.j * (App.tw / 4) - text.getMeasuredWidth( )/2;
+      text.y = baryCenter.i * (App.tw / 4) - text.getMeasuredHeight( )/2 - (App.tw / 4);
     }
 
     return text;

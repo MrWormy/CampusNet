@@ -47,23 +47,24 @@
 						<div id="apercuObjet" class="objectPreview" style="display: none" >
 							Objet : <select id="obj"></select><br />
 							<img id="apercuObj" src=""/><br />
+							<input type="checkbox" id="pannel" value="Panneau d'affichage" checked/><label for="pannel">Est un panneau d'affichage</label><br />
 						</div><br/>
 					</div>
-							<div>
-								Position sur la map : <br />
-							</div>
-							<div id="mapContainer" style="overflow: scroll; width: 1000px; height: 600px;">
-								<canvas id="mapDisplay" ></canvas><br />
-							</div>
-							Dialogue par defaut : <input type="texte" id="dialDefault" size="90" maxlength="300"/><br />
-							<input type="checkbox" id="showName" value="Afficher le nom du pnj" checked/><label for="showName">Afficher le nom</label><br />
-							<input class="Qbutton" type="button" name="savePnj" id="savePnj" value="Sauvegarder le Pnj" />
-							<input class="Qbutton" type="button" name="newPnj" id="newPnj" value="Nouveau Pnj" />
-							<input class="Qbutton" type="button" name="removePnj" id="removePnj" value="Supprimer ce Pnj" />
-							<input class="Qbutton" type="button" name="sendAllPnjs" id="sendAllPnjs" value="Envoyer au serveur" /><br />
-							<input id="posI" type="hidden" value="-1" />
-							<input id="posJ" type="hidden" value="-1" />
-						</form>
+					<div>
+						Position sur la map : <br />
+					</div>
+					<div id="mapContainer" style="overflow: scroll; width: 1000px; height: 600px;">
+						<canvas id="mapDisplay" ></canvas><br />
+					</div>
+					Dialogue par defaut : <input type="texte" id="dialDefault" size="90" maxlength="3000"/><br />
+					<input type="checkbox" id="showName" value="Afficher le nom du pnj" /><label for="showName">Afficher le nom</label><br />
+					<input class="Qbutton" type="button" name="savePnj" id="savePnj" value="Sauvegarder le Pnj" />
+					<input class="Qbutton" type="button" name="newPnj" id="newPnj" value="Nouveau Pnj" />
+					<input class="Qbutton" type="button" name="removePnj" id="removePnj" value="Supprimer ce Pnj" />
+					<input class="Qbutton" type="button" name="sendAllPnjs" id="sendAllPnjs" value="Envoyer au serveur" /><br />
+					<input id="posI" type="hidden" value="-1" />
+					<input id="posJ" type="hidden" value="-1" />
+					</form>
 				</div>
 			</div>
 		</section>

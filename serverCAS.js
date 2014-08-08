@@ -164,6 +164,22 @@ app.use('/admin/editeur_de_pnjs/modifPnjs', function(req, res) {
     res.redirect('/404.html');
   }
 });
+app.use('/admin/editeur_de_maps/modifTransitions', function(req, res) {
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      console.log("\n Transitions file updated : ", req.session.login);
+      quests.validateTransitions(obj);
+    })
+    res.send(200);
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
 app.use(function(req, res, next){
   res.redirect('/404.html');
 });

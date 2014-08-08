@@ -40,7 +40,7 @@ _.extend( app, Backbone.Events );
 
 
 $( function ( ) {
-  App.socket = io.connect( 'http://localhost:19872', {"reconnection" : false} );
+  App.socket = io.connect( 'http://localhost:19872' );
   App.socket.on('error',  function (data){$
     if(data == "ERR_CONN_ALR")
       window.location.replace('dejala.html');
