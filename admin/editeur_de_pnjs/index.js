@@ -18,6 +18,7 @@ var App = {
 **/
 App.Models.Preload = Backbone.Model.extend({
   defaults: {
+    questsLoaded: false,
     mapsLoaded: false,
     objectsLoaded: false,
     spriteSheetLoaded: false,
@@ -39,6 +40,7 @@ App.Models.Preload = Backbone.Model.extend({
     * Launch all the prealoading functions
   **/
   initialize: function () {
+    this.loadQuests();
     this.loadTransitions();
     this.loadTilesheet();
     this.loadCharcters();
@@ -58,7 +60,7 @@ App.Models.Preload = Backbone.Model.extend({
     * Once all the resources have been loaded, launch the interactive view
   **/
   checkEndLoad: function () {
-    if(this.get("mapsLoaded") && this.get("spriteSheetLoaded") && this.get("objectsLoaded") && this.get("charPrevLoaded") && this.get("charTilesetsLoaded")){
+    if(this.get("questsLoaded") && this.get("mapsLoaded") && this.get("spriteSheetLoaded") && this.get("objectsLoaded") && this.get("charPrevLoaded") && this.get("charTilesetsLoaded")){
       console.log("chargement des données terminées");
       document.getElementById("loading").style.display = "none";
       document.getElementById("menu").style.display = "block";
@@ -79,6 +81,36 @@ App.Models.Preload = Backbone.Model.extend({
   initStages: function () {
     this.get("ret").stages.framePreview = new createjs.Stage("apercuFrame");
     this.get("ret").stages.mapDisplay = new createjs.Stage("mapDisplay");
+  },
+
+  loadQuests: function () {
+    var that = this,
+      Model = Backbone.Model.extend({}),
+      Coll = Backbone.Collection.extend({
+        url: "../editeur_de_quetes/quetes.json",
+        model: Model,
+        initialize: function () {
+          this.fetch({
+            success: function (coll, resp, opt) {
+              var qsts = coll.models,
+                selec = document.getElementById("Qneeded");
+              for(var i = 0, l = qsts.length; i<l; i++){
+                if(qsts[i].get("QneededToEnd").length > 0){
+                  var opt = document.createElement("option"),
+                    name = qsts[i].get("nameQ");
+                  opt.value = name;
+                  opt.innerHTML = name;
+                  selec.appendChild(opt);
+                }
+              }
+              selec.selectedIndex = -1;
+              that.set("questsLoaded", true);
+            }
+          })
+        }
+      });
+
+    new Coll();
   },
 
   loadTransitions: function () {
@@ -332,6 +364,7 @@ App.Models.Pnj = Backbone.Model.extend({
       this.unset("skin", {silent: true});
       this.unset("orientation", {silent: true});
     }
+    this.unset("Qneeded", {silent: true});
   }
 });;
 
@@ -440,6 +473,11 @@ App.Views.Pnjs = Backbone.View.extend({
       formPnj.showName.checked = true;
     } else {
       formPnj.showName.checked = false;
+    }
+    if(pnj.get("Qneeded")){
+      formPnj.Qneeded.value = pnj.get("Qneeded");
+    } else {
+      formPnj.Qneeded.selectedIndex = -1;
     }
   },
 
@@ -720,6 +758,20 @@ App.Views.GestionPnjs = Backbone.View.extend({
     this.collection.push(newP);
   },
 
+  splitInAnArray: function (str) {
+    var spl = str.trim().split(","),
+      ret = [];
+
+    for(var i=0, l=spl.length; i < l; i++){
+      var tmp = parseInt(spl[i].trim());
+      if(!isNaN(tmp)){
+        ret.push(tmp);
+      }
+    }
+
+    return ret;
+  },
+
   savePnj: function () {
     var formPnj = document.getElementById("detailPnj"),
       pnj = {},
@@ -732,7 +784,8 @@ App.Views.GestionPnjs = Backbone.View.extend({
       objectSelected = formPnj.objet.checked,
       text = formPnj.dialDefault.value,
       err = "",
-      showName = formPnj.showName.checked;
+      showName = formPnj.showName.checked,
+      Qneeded = formPnj.Qneeded.value;
 
     if(persoSelected && !objectSelected){
       var skin = formPnj.frameSkin.name,
@@ -785,6 +838,10 @@ App.Views.GestionPnjs = Backbone.View.extend({
       isValid = false;
     }
 
+    if(Qneeded){
+      pnj.Qneeded = Qneeded;
+    }
+
     if(!isValid){
       err += " merci."
       alert(err);
@@ -797,6 +854,7 @@ App.Views.GestionPnjs = Backbone.View.extend({
       pnj.showName = showName;
       this.collection.get(id).clearInfos();
       this.collection.get(id).set(pnj);
+      formPnj.Qneeded.value = Qneeded;
     }
   },
 
