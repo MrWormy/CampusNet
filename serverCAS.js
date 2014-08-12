@@ -15,6 +15,7 @@ var express = require( 'express' ),
   loggedIn = [],
   quests = require("./quetes"),
   sRequests = require("./socketRequests"),
+  services = require("./admin/editeur_de_droits/services.json"),
   fs = require("node-fs");
 
 //variables serveur
@@ -180,6 +181,39 @@ app.use('/admin/editeur_de_maps/modifTransitions', function(req, res) {
     res.redirect('/404.html');
   }
 });
+
+app.use('/admin/editeur_de_droits/searchById', function(req, res) {
+  if(req.method == 'GET'){
+    var search = req.param("search").trim(),
+     ret = [];
+
+    if(search.length > 0){
+      var requete = "SELECT login, admin FROM campusnet.users WHERE login like '%"+search+"%';",
+        connection = play.openConnectionBDD();
+
+      connection.query(requete, function(err, rows, fields){
+        if (err) throw err;
+        res.send(rows);
+      })
+      connection.end();
+    } else {
+      res.send([]);
+    }
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
+
+app.use('/admin/editeur_de_droits/getServices', function(req, res) {
+  if(req.method == 'GET'){
+    res.send(services);
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
+
 app.use(function(req, res, next){
   res.redirect('/404.html');
 });
@@ -212,6 +246,9 @@ if(sid){
       }
     }
   });
+} else {
+  console.log("\n connexion denied");
+  next(new Error("ERR_CONN_DEN"));
 }
 });
 
