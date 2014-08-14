@@ -9,7 +9,52 @@
         }
       }
       return undefined;
+    },
+    addService: function (name) {
+      var max = -1;
+
+      for(var k in this.data){
+        var kNum = parseInt(k)
+        if(!isNaN(kNum) && kNum > max){
+          max = kNum;
+        }
+      }
+      this.data[max + 1] = name;
     }
+  }
+
+  var oldServices = [];
+
+  function sendNewS (s) {
+    $.post("sendNewServices", JSON.stringify(s), function(data){
+      alert("modifications enregistrées");
+    })
+  }
+
+  function isEmpty (obj) {
+    for(var k in obj){
+      if(obj.hasOwnProperty(k))
+        return false;
+    }
+    return true;
+  }
+
+  function sendNewServices (e) {
+    var toSend = {},
+      newS = document.getElementsByClassName("persoSelec");
+
+    for(var i = 0, l = newS.length; i < l; i++){
+      var tmpN = newS[i],
+        tmpO = oldServices[i],
+        ind = parseInt(services.indexOf(tmpN.value))
+
+      if(tmpO.login === tmpN.id && tmpO.admin !== ind){
+        toSend[tmpN.id] = ind;
+        tmpO.admin = ind;
+      }
+    }
+
+    if(!isEmpty(toSend)) sendNewS(toSend);
   }
 
   function handleSearch (e) {
@@ -32,7 +77,8 @@
         } else {
           var servicesSelec = document.getElementById("services").cloneNode(true);
           servicesSelec.className = "persoSelec";
-          for (var i = data.length - 1; i >= 0; i--) {
+          oldServices = data;
+          for (var i = 0, l = data.length; i < l; i++) {
             var persoTr = document.createElement("TR"),
               td1 = document.createElement("TD"),
               td2 = document.createElement("TD"),
@@ -48,6 +94,10 @@
             persoTr.appendChild(td2);
             display.appendChild(persoTr);
           };
+          var but = document.createElement("button");
+          but.innerHTML = "envoyer au serveur";
+          but.onclick = sendNewServices;
+          display.appendChild(but);
         }
       });
     }
@@ -76,15 +126,40 @@
     serviceName.value = newName;
   }
 
+  function handleNewService (e) {
+    var newName = document.getElementById("serviceName").value.trim();
+
+    if(newName && services.indexOf(newName) === undefined){
+      var opt = document.createElement("option");
+
+      opt.value = newName;
+      opt.innerHTML = newName;
+      document.getElementById("services").appendChild(opt);
+      document.getElementById("services").value = newName;
+      services.addService(newName);
+    }
+    document.getElementById("serviceName").value = newName;
+  }
+
+  function sendServicesToServ (e) {
+    $.post("updateServices", JSON.stringify(services.data), function(data){
+      alert("modifications enregistrées");
+    })
+  }
+
   function initListeners () {
     var searchId = document.getElementById("searchById"),
       servicesSelec = document.getElementById("services"),
-      changeName = document.getElementById("changeName");
+      changeName = document.getElementById("changeName"),
+      newService = document.getElementById("newService"),
+      sendServ = document.getElementById("sendServicesToServ");
 
 
     searchId.addEventListener("submit", handleSearch, false);
     servicesSelec.addEventListener("change", handleServiceChange, false);
-    changeName.addEventListener("click", handleChangeName, false)
+    changeName.addEventListener("click", handleChangeName, false);
+    newService.addEventListener("click", handleNewService, false);
+    sendServ.addEventListener("click", sendServicesToServ, false);
   }
 
   function fillServices (data) {

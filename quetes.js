@@ -299,3 +299,15 @@ function fillPnjsQ (quetes){
   }
   return ret;
 }
+
+quests.getPannels = function (serv) {
+  var res = [];
+  for(var i = 0, l = pnjs.length; i < l; i++){
+    var pnj = pnjs[i];
+
+    if(pnj.service && pnj.service == serv && pnj.object){
+      res.push(pnj);
+    }
+  }
+  return res;
+};

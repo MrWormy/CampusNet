@@ -17,19 +17,20 @@
       <h1>Bienvenue sur la page d'édition des droits</h1>
 
       <section id="content" class="content-menu">
+        Rechercher un utilisateur : <br>
         <form action="searchById" target="_blank" id="searchById">
           <input type="text" name="search">
           <input type="submit" name="submit" value="Rechercher">
         </form>
         <table id="searchResults">
         </table><br>
-        <form action="getServices" id="formServices">
+        <form id="formServices">
           <label for="services">Services : </label>
           <select id="services"></select><br>
           <input type="text" id="serviceName">
           <input type="button" id="changeName" value="Modifier le Nom">
           <input type="button" id="newService" value="Ajouter un Service">
-          <input type="submit" id="sendServiceToServ" value="Enoyer au serveur">
+          <input type="button" id="sendServicesToServ" value="Enoyer au serveur">
         </form>
       </section>
     </div>

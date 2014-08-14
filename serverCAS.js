@@ -98,9 +98,6 @@ app.get( '/index.html', function ( req, res ) {
 app.use( '/assets', express.static( __dirname + '/assets' ) );
 app.use( '/node_modules', express.static( __dirname + '/node_modules' ) );
 app.use( '/app', express.static( __dirname + '/app' ) );
-app.get( '/quete.js', function ( req, res ) {
-  res.sendfile( __dirname + '/quete.js' );
-} );
 app.use('/modifAvatar', function(req, res) {
   var requeteSel = "SELECT login FROM campusnet.users WHERE login='"+req.session.login+"';",
     avatar = game.testAvatar(req.query.avatar),
@@ -126,11 +123,46 @@ app.use('/modifAvatar', function(req, res) {
   connection.end();
 } );
 
+app.use(function (req, res, next) {
+  var requete = "SELECT admin FROM campusnet.users WHERE login='"+req.session.login+"';",
+    connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+    if (rows[0] && rows[0].admin > 0) {
+      next();
+    } else {
+      res.redirect('/404.html');
+    }
+  });
+  connection.end();
+})
+app.use( '/services', express.static( __dirname + '/services' ) );
+
+app.get('/services/getPannels', function (req, res) {
+  var requete = "SELECT admin FROM campusnet.users WHERE login='"+req.session.login+"';",
+    connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+    if (rows[0] && rows[0].admin > 0) {
+      res.send(quests.getPannels(rows[0].admin));
+    } else {
+      res.redirect('/404.html');
+    }
+  });
+  connection.end();
+});
+
 app.use(function(req, res, next){
-  if(play.isAdmin(req.session.login))
-    next();
-  else
-    res.redirect('/404.html');
+  var requete = "SELECT admin FROM campusnet.users WHERE login='"+req.session.login+"';",
+    connection = play.openConnectionBDD();
+  connection.query(requete, function(err, rows, fields) {
+    if (err) throw err;
+    if (rows[0] && rows[0].admin == 1) {
+      next();
+    } else {
+      res.redirect('/404.html');
+    }
+  });
 });
 app.use( '/admin', express.static( __dirname + '/admin' ) );
 app.use('/admin/editeur_de_quetes/modifQuetes', function(req, res) {
@@ -208,6 +240,53 @@ app.use('/admin/editeur_de_droits/searchById', function(req, res) {
 app.use('/admin/editeur_de_droits/getServices', function(req, res) {
   if(req.method == 'GET'){
     res.send(services);
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
+
+app.use('/admin/editeur_de_droits/sendNewServices', function (req, res) {
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      var modif = JSON.parse(obj)
+      console.log("\n Authorizations updated by", req.session.login, " : ", modif);
+      for(var k in modif){
+        if(typeof services[modif[k]] !== "undefined"){
+          var requete = "UPDATE campusnet.users SET `admin`="+modif[k]+" WHERE `login`='"+k+"';",
+            connection = play.openConnectionBDD();
+
+          connection.query(requete, function(err, rows, fields){
+            if (err) throw err;
+          })
+          connection.end();
+        }
+      }
+      res.send(200);
+    })
+  }
+  else{
+    res.redirect('/404.html');
+  }
+});
+
+app.use("/admin/editeur_de_droits/updateServices", function (req, res) {
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      var modif = JSON.parse(obj)
+      console.log("\n Services updated by", req.session.login, " : ", modif);
+      fs.writeFile("./admin/editeur_de_droits/services.json", JSON.stringify(modif));
+      services = modif;
+      res.send(200);
+    })
   }
   else{
     res.redirect('/404.html');

@@ -1,0 +1,130 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+html, body, #wrap {margin: 0px; height: 100%;}
+
+body > #wrap {height: auto; min-height: 100%;}
+
+#content{
+	padding-top: 10px;
+	padding-bottom: 140px;
+}
+
+body {
+	margin: 0px;
+	min-width: 580px;
+	text-align: center;
+	font-family: 'Open Sans', 'sans-serif';
+}
+
+header {
+	color: white;
+	background-color: #404040;
+	padding: 15px;
+	text-align: left;
+	vertical-align: text-bottom;
+}
+
+header #titre {
+	font-size: 1.4em;
+	font-weight: bold;
+}
+
+header #deco {
+	margin-top: 7px;
+	float: right;
+	text-align: right;
+}
+
+header a {
+	display: inline-block;
+	color: white;
+	text-decoration: none;
+}
+
+header a:hover {
+	text-decoration: underline;
+}
+
+header #path {
+	margin-left: 5px;
+}
+
+h1 {
+	margin: 0;
+	padding: 40px;
+	background-color: #EEEEEE;
+}
+
+h2 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color: #404040;
+}
+
+section {
+	margin: 0;
+	padding-top: 5px;
+	padding-bottom: 20px;
+	background-color: white;
+}
+
+a {
+	text-decoration: none;
+}
+
+#main_menu {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
+#menu_pnjs {
+	text-align: left;
+	vertical-align: top;
+	display: inline-block;
+}
+
+aside {
+	min-width: 300px;
+	background-color: grey;
+}
+
+footer {
+	position: relative;
+	margin-top: -140px;
+	height: 140px;
+	line-height: 40px;
+	vertical-align: middle;
+	clear: both;
+	background-color: #404040;
+	color: white;
+}
+
+/* Quest edition style*/
+.content-menu {
+	display: inline-block;
+	vertical-align: top;
+	margin: 20px;
+	text-align: left;
+}
+
+.Qbutton{
+	font-family: 'Open Sans', 'sans-serif';
+	height: 35px;
+	width: 150px;
+	text-align: center;
+	margin-top: 8px;
+}
+
+.TrButton{
+	font-family: 'Open Sans', 'sans-serif';
+	height: 35px;
+	width: 240px;
+	text-align: center;
+	margin-top: 8px;
+}
+
+#listeQ{
+	font-family: 'Open Sans', 'sans-serif';
+	width: 150px;
+}
