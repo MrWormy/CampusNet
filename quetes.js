@@ -47,9 +47,9 @@ quests.ClientQuest = function (login, socket) {
        }
 
        for(var k = 0; k < that.Qterminees.length; k++){
-        var name = that.getQName(that.Qterminees[k]);
-        if(name)
-          sendQ.push({"type": 2, "name": name});
+        var que = that.getQName(that.Qterminees[k], true);
+        if(que)
+          sendQ.push(que);
        }
        socket.on("waitQ", function(){
          socket.emit("newQuests", {"data": sendQ, "init": true});
@@ -93,14 +93,25 @@ quests.ClientQuest = function (login, socket) {
     }
   }
 
-  this.getQName = function (qId) {
-    var ret = null;
+  this.getQName = function (qId, bool) {
+    var ret = null,
+      id = -1;
     for (var i = quetes.length - 1; i >= 0; i--) {
       if(quetes[i].id == qId){
+        id = i;
         ret = quetes[i].nameQ;
         break;
       }
     };
+
+    if(bool && id > -1 && ret){
+      ret = {"name": ret};
+      if(quetes[i].QneededToEnd.length > 0){
+        ret.type = 3;
+      } else {
+        ret.type = 2;
+      }
+    }
     return ret;
   }
 };
@@ -302,12 +313,42 @@ function fillPnjsQ (quetes){
 
 quests.getPannels = function (serv) {
   var res = [];
-  for(var i = 0, l = pnjs.length; i < l; i++){
-    var pnj = pnjs[i];
 
-    if(pnj.service && pnj.service == serv && pnj.object){
-      res.push(pnj);
+  if(serv > 1){
+    for(var i = 0, l = pnjs.length; i < l; i++){
+      var pnj = pnjs[i];
+
+      if(pnj.service && pnj.service == serv && pnj.object){
+        res.push(pnj);
+      }
+    }
+  } else if (serv == 1){
+    for(var i = 0, l = pnjs.length; i < l; i++){
+      var pnj = pnjs[i];
+
+      if(pnj.object){
+        res.push(pnj);
+      }
     }
   }
+
   return res;
 };
+
+quests.setNewPanText = function (pan) {
+  var pannel = null,
+    i = Math.min(pnjs.length, pan.id);
+
+  for(i; i >= 0; i--){
+    if(pnjs[i].id == pan.id){
+      pannel = pnjs[i];
+      break;
+    }
+  }
+
+  if(pannel){
+    pannel.text = pan.text;
+    fs.writeFile("./assets/resources/pnj.json", JSON.stringify(pnjs));
+  }
+};
+

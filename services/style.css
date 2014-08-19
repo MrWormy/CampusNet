@@ -128,3 +128,7 @@ footer {
 	font-family: 'Open Sans', 'sans-serif';
 	width: 150px;
 }
+
+#content > textarea{
+	display: none;
+}

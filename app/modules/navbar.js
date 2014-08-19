@@ -22,24 +22,24 @@ App.Models.Navbar = Backbone.Model.extend({
       var tempQ = newQ[i];
       switch(tempQ.type){
         case 1:
-          this.get("curQ").push(tempQ.name);
+          this.get("curQ").push(tempQ);
           if(!init){
             setTimeout(function(){
             App.views.drawings.displayQ(true, tempQ.name);}, 3000);
           }
           break;
         case 2:
-          this.get("endedQ").push(tempQ.name);
+          this.get("endedQ").push(tempQ);
           break;
         case 3:
           var curQt = this.get("curQ");
           for (var j = curQt.length - 1; j >= 0; j--) {
-            if(curQt[j] == tempQ.name){
+            if(curQt[j].name == tempQ.name){
               curQt.splice(j, 1);
               break;
             }
           };
-          this.get("endedQ").push(tempQ.name);
+          this.get("endedQ").push(tempQ);
           if(!init){
             setTimeout(function(){
             App.views.drawings.displayQ(false, tempQ.name);}, 3000);
@@ -50,12 +50,15 @@ App.Models.Navbar = Backbone.Model.extend({
       }
     };
     for (var i = this.get("curQ").length - 1; i >= 0; i--) {
-      curQ += this.get("curQ")[i];
+      curQ += this.get("curQ")[i].name;
       curQ += "<br />";
     };
     for (var j = this.get("endedQ").length - 1; j >= 0; j--) {
-      endedQ += this.get("endedQ")[j];
-      endedQ += "<br />";
+      console.log(this.get("endedQ")[j])
+      if(this.get("endedQ")[j].type == 3){
+        endedQ += this.get("endedQ")[j].name;
+        endedQ += "<br />";
+      }
     };
     ret = "<div class='info'><h2> Quêtes en cours </h2>"+curQ+"<br /><h2> Quêtes terminées </h2>"+endedQ+"</div>";
     this.set("quetes", ret);

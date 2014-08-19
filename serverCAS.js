@@ -38,6 +38,21 @@ app.get( '/dejala.html', function ( req, res ) {
   res.sendfile( __dirname + '/dejala.html' );
 } );
 
+app.get('/logout.html', function ( req, res ) {
+  if(typeof req.session.login === "string"){
+    var login = req.session.login;
+    for (var i = loggedIn.length - 1; i >= 0; i--) {
+      if(loggedIn[i] == login){
+        break;
+      }
+    };
+    req.session.destroy();
+    console.log("\n client disconnected :", login);
+  }
+  res.redirect( casURL + '/logout');
+  //res.sendfile( __dirname + '/logout.html' );
+});
+
 app.get( '/', function ( req, resp ) {
   var ticket = req.param('ticket');
   if(ticket){
@@ -150,6 +165,25 @@ app.get('/services/getPannels', function (req, res) {
     }
   });
   connection.end();
+});
+app.use('/services/setNewPanText', function(req, res) {
+  if(req.method == 'POST'){
+    var obj = "";
+    req.on('data', function(data){
+      obj += data.toString();
+    })
+    req.on('end', function(){
+      obj = JSON.parse(obj);
+      if(obj && obj.id && obj.text){
+        console.log("\n Pannel :", obj.id, "updated by :", req.session.login);
+        quests.setNewPanText(obj);
+      }
+    })
+    res.send(200);
+  }
+  else{
+    res.redirect('/404.html');
+  }
 });
 
 app.use(function(req, res, next){
