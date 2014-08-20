@@ -13,21 +13,31 @@ exports.listenSocket = function(socket){
     var connection = openConnectionBDD(),
       requete = "UPDATE `campusnet`.`users` SET `bio`='"+bio+"' WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       console.log("\n " + login + "'s bio updated : ", bio);
+      connection.end();
     });
-    connection.end();
   });
 
   socket.on("getBio", function() {
     var connection = openConnectionBDD(),
       requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       var bio = rows[0].bio;
       socket.emit("bio", bio);
+      connection.end();
     });
-    connection.end();
   });
 
   socket.on("getCal", function () {
@@ -35,7 +45,12 @@ exports.listenSocket = function(socket){
       url = /url=[^;\n]*;/,
       requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       var bio = rows[0].bio,
         cal = bio.match(url);
 
@@ -78,8 +93,8 @@ exports.listenSocket = function(socket){
       } else {
         socket.emit("todayCalendar", null);
       }
+      connection.end();
     });
-    connection.end();
   })
 
   /*socket.on("setAvatar", function(avatar) {
@@ -116,7 +131,7 @@ exports.listenSocket = function(socket){
 }
 
 function treatCal (calstr) {
-  var enCours = [], suivants = [], now = new Date("Oct 14 2013 9:20:50 GMT+0200 (Paris, Madrid (heure d’été))"), //"May 26 2014 14:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
+  var enCours = [], suivants = [], now = new Date(), //"Oct 14 2013 9:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
     ical = {
       version:'',
       prodid:'',

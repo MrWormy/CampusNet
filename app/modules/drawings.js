@@ -29,7 +29,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     var former, s, tName = "texte" + id,
       h = Math.ceil( text.length / 15 ),
       textContainer = new createjs.Container( ),
-      others = App.Stages.characterStage.getChildByName( "others" ),
+      others = App.Stages.characterStage.getChildByName( "textDisplay" ),
       dText = new createjs.Text( text, "17px Arial" ),
       g = new createjs.Graphics( );
     g.beginStroke( "#000000" );
@@ -46,11 +46,11 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     g.drawRoundRect ( 0, 0, Math.min(250, dText.getMeasuredWidth( )) + 10 , dText.getMeasuredHeight( ) + 10, 5 );
     g.endFill();
     g.endStroke();
-    textContainer.x = pos.j * App.tw + App.tw / 2;
+    textContainer.x = pos.j * App.tw + App.tw/2 ;
     textContainer.y = pos.i * App.tw - dText.getMeasuredHeight( ) - 10;
     if ( former = others.getChildByName( tName ) )
       others.removeChild( former );
-    App.Stages.characterStage.getChildByName( "others" ).addChild( textContainer );
+    App.Stages.characterStage.getChildByName( "textDisplay" ).addChild( textContainer );
     if ( dest != "all" && dest != "pnj" ) {
       setTimeout( function ( ) {
         if ( textContainer )
@@ -78,7 +78,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
     @param {number} id Id du joueur
   */
   removeText: function ( id ) {
-    var others = App.Stages.characterStage.getChildByName( "others" );
+    var others = App.Stages.characterStage.getChildByName( "textDisplay" );
     if(others){
       var text = others.getChildByName( "texte" + id );
       if ( text )
@@ -94,7 +94,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
   */
   moveAndText: function ( id, diffI, diffJ ) {
 
-    var others = App.Stages.characterStage.getChildByName( "others" ),
+    var others = App.Stages.characterStage.getChildByName( "textDisplay" ),
       text = others.getChildByName( "texte" + id );
     if ( text && text.getChildAt( 1 ).color != "brown" )
       others.removeChild( text );
@@ -141,7 +141,7 @@ App.Views.Drawings = Backbone.View.extend( /** @lends module:drawings.Drawings.p
   },
 
   displayQ: function (bool, name) {
-    var player = App.Stages.mapStage.getChildByName( "player" ),
+    var player = App.Stages.characterStage.getChildByName( "player" ),
       display = (bool && ("Nouvelle quête : " + name)) || ("Quête achevée : " + name);
       var text = player.getChildByName("quest") || player.addChild(new createjs.Text(" ", "40px Arial", "#000000"));
       text.text = display;

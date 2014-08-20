@@ -81,9 +81,19 @@ tinymce.init({
   }
 
   function sendPanToServ (pannel) {
-    $.post("setNewPanText", JSON.stringify(pannel), function (data) {
-      if(data == "OK"){
-        alert("modification enregistrées");
+    $.ajax({
+      type: "POST",
+      url: "setNewPanText",
+      data: JSON.stringify(pannel),
+      success: function(data, status){
+        if(data == "OK"){
+          alert("les modifications ont bien été enregistrées");
+        } else {
+          alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ");
+        }
+      },
+      error: function (data) {
+        alert("une erreur est survenue lors de l'enregitrement, veuillez réessayer : ", data);
       }
     });
   }

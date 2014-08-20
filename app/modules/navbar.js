@@ -54,7 +54,6 @@ App.Models.Navbar = Backbone.Model.extend({
       curQ += "<br />";
     };
     for (var j = this.get("endedQ").length - 1; j >= 0; j--) {
-      console.log(this.get("endedQ")[j])
       if(this.get("endedQ")[j].type == 3){
         endedQ += this.get("endedQ")[j].name;
         endedQ += "<br />";

@@ -116,15 +116,18 @@ App.Views.OtherPlayers = Backbone.View.extend( /** @lends module:others.Views/Ot
   },
 
   newCont: function ( idMap ) {
-    var cont = new createjs.Container( );
+    var cont = new createjs.Container( ),
+      textCont = new createjs.Container( );
 
     cont.name = "others";
-    cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
-    cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
-    cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
-    cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
+    textCont.name = "textDisplay";
+    textCont.x = cont.x = App.Stages.mapStage.getChildAt( 0 ).x;
+    textCont.y = cont.y = App.Stages.mapStage.getChildAt( 0 ).y;
+    textCont.regX = cont.regX = App.Stages.mapStage.getChildAt( 0 ).regX;
+    textCont.regY = cont.regY = App.Stages.mapStage.getChildAt( 0 ).regY;
+    App.Stages.characterStage.addChild( textCont );
     this.initListener(cont, idMap);
-    App.Stages.characterStage.addChild( cont );
+    App.Stages.characterStage.addChildAt( cont, 0 );
   },
 
   initListener: function( cont, idMap ){
