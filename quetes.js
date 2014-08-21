@@ -33,6 +33,7 @@ quests.ClientQuest = function (login, socket) {
     }
     that.idBDD = row[0].id;
     console.log("\n idBDD : ", that.idBDD);
+    connection.end();
     var requete = "SELECT `id_quest` FROM `campusnet`.`quests` WHERE `id_user` = "+that.idBDD+" ;",
       connec = openConnectionBDD();
     connec.query(requete, function(err, rows, fields) {
@@ -47,7 +48,7 @@ quests.ClientQuest = function (login, socket) {
         if(tempQ - 1000 >= 0) that.QenCours.push(tempQ - 1000);
         else that.Qterminees.push(tempQ);
       }
-
+      connec.end();
       /* on envoie toutes les quetes au client */
       var sendQ = [];
       for(var k = 0; k < that.QenCours.length; k++){
@@ -65,21 +66,20 @@ quests.ClientQuest = function (login, socket) {
         socket.emit("newQuests", {"data": sendQ, "init": true});
       });
       console.log("\n quest loaded, sending quests to client : ", that.login);
-      socket.on("parler_pnj", function(idPnj){
-        var ret = that.treatQ(idPnj, that, socket),
-          name = null;
-        that.updateQ(ret);
-        if(ret.type > 0 && ret.type < 4){
-        /* on revoie ret au client (avec nom de la quête) */
-        name = that.getQName(ret.idQ);
-          if(name){
-            socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}], "init": false});
-          }
-        }
-      });
-      connec.end();
     });
-    connection.end();
+  });
+
+  socket.on("parler_pnj", function(idPnj){
+    var ret = that.treatQ(idPnj, that, socket),
+      name = null;
+    that.updateQ(ret);
+    if(ret.type > 0 && ret.type < 4){
+    /* on revoie ret au client (avec nom de la quête) */
+    name = that.getQName(ret.idQ);
+      if(name){
+        socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}], "init": false});
+      }
+    }
   });
 
   this.checkEndQ = function(Quest){
@@ -125,8 +125,8 @@ quests.ClientQuest = function (login, socket) {
 };
 
 quests.ClientQuest.prototype.updateQ = function (ret) {
-  var connection = openConnectionBDD(),
-    requete = "";
+  var connection = null,
+    requete = null;
   switch(ret.type){
     case 0:
       break;
@@ -140,13 +140,14 @@ quests.ClientQuest.prototype.updateQ = function (ret) {
       break;
     case 3:
       requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ)+"\');";
-      connection.query(requete, function(err, rows, fields) {
+      var tmpCon = openConnectionBDD();
+      tmpCon.query(requete, function(err, rows, fields) {
         if (err) {
-          connection.end();
+          tmpCon.end();
           console.log(err);
           this.socket.disconnect();
         } else {
-          connection.end();
+          tmpCon.end();
         }
       });
       requete = "DELETE FROM `campusnet`.`quests` WHERE `quests`.`id_user` = "+this.idBDD+" AND `quests`.`id_quest` = "+(ret.idQ + 1000)+";";
@@ -156,6 +157,7 @@ quests.ClientQuest.prototype.updateQ = function (ret) {
       break;
   }
   if(requete){
+    connection = openConnectionBDD();
     connection.query(requete, function(err, rows, fields) {
       if (err) {
         connection.end();

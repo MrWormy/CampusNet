@@ -8,7 +8,7 @@ App.Models.Navbar = Backbone.Model.extend({
     "aide": '<div class="info">Bienvenue sur Campusnet v2.<br><br>Bientôt vous pourrez trouvez l\'aide pour le jeu ici.<br><br>Crédits:<br><br>Campusnet v2 a été développé par Nicolas Benning, Thomas Laurence, Bilgé Kimyonok et Benoît Koenig.</div>',
     "quit": "",
     "name": "<div class=\"info\"> Pseudo : Inconnu<br><br>",
-    "bio": "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\"></textarea><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"/><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"/><br><br>",
+    "bio": "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\"></textarea><div>Calendrier : <input id=\"urlCal\" type=\"text\" size=\"46\"><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"></div><br><br>",
     "avatar": "Avatar :<br><img src=\"assets/resources/img/select/etu-m/brown-blue.png\"><br><br></div>",
     "curQ": [],
     "endedQ": [],
@@ -92,7 +92,16 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       that.model.newQ(data.data, data.init);
     });
     App.socket.on("bio", function(data){
-      that.loadBio(data);
+      var urlCal = data.match(/url=[^;\n]*;/);
+
+      if(urlCal && urlCal[0]){
+        data = data.replace(urlCal, "");
+        urlCal = urlCal[0].replace("url=","").replace(";","");
+      } else {
+        urlCal = "";
+      }
+
+      that.loadBio(data, urlCal);
     });
     App.socket.on("todayCalendar", function(cal){
       that.displayCal(cal)
@@ -201,10 +210,12 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
 
   sendBio: function (e, that) {
     if(e.target.id == "sendBio"){
-      var bio = document.getElementById("bio");
-      if(bio){
-        that.model.set("bio", "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\">"+bio.value+"</textarea><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"/><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"/><br><br>");
-        App.socket.emit("setBio", bio.value);
+      var bio = document.getElementById("bio"),
+        urlCal = document.getElementById("urlCal");
+      if(bio && urlCal){
+        bio.value = bio.value.trim();
+        that.model.set("bio", "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\">"+bio.value+"</textarea><div>Calendrier : <input id=\"urlCal\" value=\""+urlCal.value+"\" type=\"text\" size=\"46\"><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"></div><br><br>");
+        App.socket.emit("setBio", bio.value+" url="+urlCal.value+";");
       }
     } else if (e.target.id == "cal"){
       App.socket.emit("getCal");
@@ -217,7 +228,7 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       var display = this.renderingCal(cal);
       calD.innerHTML = display;
     } else {
-      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & au format : \"url=votre url;\" ";
+      calD.innerHTML = "<br>Veuillez saisir une url de calendrier valide : <br> zimbra -> calendrier -> cours -> propriétés -> copier l'url en remplaçant %26 par & ";
     }
   },
 
@@ -290,8 +301,8 @@ App.Views.Navbar = Backbone.View.extend( /** @lends module:navbar.Navbar.prototy
       return building;
   },
 
-  loadBio: function (bio) {
-    this.model.set("bio", "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\">"+bio+"</textarea><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"/><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"/><br><br>")
+  loadBio: function (bio, url) {
+    this.model.set("bio", "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\">"+bio+"</textarea><div>Calendrier : <input id=\"urlCal\" type=\"text\" size=\"46\" value=\""+url+"\"><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"></div><br><br>")
   },
 
   loadPerso: function (name, skin) {

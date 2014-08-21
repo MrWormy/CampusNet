@@ -48,7 +48,7 @@ $( function ( ) {
       window.location.replace('404.html');
   });
   App.socket.on('disconnect', function (data){
-    window.location.replace('overload.html');
+    window.location.replace('deco.html');
   });
   App.Stages.mapStage = new createjs.Stage( "mapCanvas" );
   App.Stages.characterStage = new createjs.Stage( "charactersCanvas" );

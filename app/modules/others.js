@@ -32,6 +32,16 @@ App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/
     perso.addEventListener( "mouseout", function ( ) {
       App.views.drawings.removeName( that.get( "id" ) );
     } )
+    perso.addEventListener( "click", function ( ) {
+      App.socket.emit("getOtherBio", that.get( "pName" ));
+      if(!App.mobilecheck()){
+        var mess = document.getElementById("messageInput");
+        if(mess){
+          mess.value = "/w "+that.get("pName")+" ";
+          mess.focus();
+        }
+      }
+    } )
     this.set( "perso", perso );
     App.Stages.characterStage.getChildByName( "others" ).addChild( perso );
   },
@@ -66,6 +76,7 @@ App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/
     }
 
     App.views.drawings.moveAndText( e.get( "id" ), curPos.i - prevPos.i, curPos.j - prevPos.j );
+    App.views.drawings.removeName( e.get( "id" ) );
   }
 } );
 
@@ -74,6 +85,13 @@ App.Models.OtherPlayer = Backbone.Model.extend( /** @lends module:others.Models/
   * @augments Backbone.Collection
 */
 App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:others~Collections/OtherPlayers.prototype */ {
+
+  initialize: function () {
+    var that = this;
+    App.socket.on("otherBio", function (data) {
+      that.displayBio(data);
+    });
+  },
 
   pop: function ( data ) {
     var player = new this.model( data );
@@ -92,8 +110,9 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
     var id = data.id,
       nextPos = data.pos,
       perso = this.get( id );
-    if(typeof(perso) != "undefined")
+    if(typeof(perso) != "undefined"){
       perso.set( "pos", nextPos );
+    }
 
   },
 
@@ -101,6 +120,27 @@ App.Collections.OtherPlayers = Backbone.Collection.extend( /** @lends module:oth
     var pos = this.get( data.expediteur ).get( "pos" ),
       id = this.get( data.expediteur ).get( "id" );
     App.views.drawings.drawText( data.msg, pos, id, data.destinataire );
+  },
+
+  byName: function (pName) {
+    for(var i = 0; i < this.length; i++){
+      if(this.at(i).get("pName") == pName)
+        return this.at(i).id;
+    }
+    return -1;
+  },
+
+  displayBio: function (data) {
+    var bio = data.bio,
+      pName = data.pseudo;
+
+    if(bio && pName){
+      bio = bio.trim();
+      var id = this.byName(pName);
+      if(id >= 0){
+        this.message({expediteur: id, msg: bio, destinataire: "pmBio"})
+      }
+    }
   }
 
 } );

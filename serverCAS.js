@@ -38,8 +38,8 @@ app.get( '/dejala.html', function ( req, res ) {
   res.sendfile( __dirname + '/dejala.html' );
 } );
 
-app.get( '/overload.html', function ( req, res ) {
-  res.sendfile( __dirname + '/overload.html' );
+app.get( '/deco.html', function ( req, res ) {
+  res.sendfile( __dirname + '/deco.html' );
 } );
 
 app.get('/logout.html', function ( req, res ) {
@@ -142,8 +142,8 @@ app.use('/modifAvatar', function(req, res) {
             console.log(err);
             res.redirect("/overload.html");
           } else {
-            res.redirect('index.html');
             oConnection.end();
+            res.redirect('index.html');
           }
         });
       } else {
@@ -153,8 +153,8 @@ app.use('/modifAvatar', function(req, res) {
             console.log(err);
             res.redirect("/overload.html");
           } else {
-            res.redirect('index.html');
             oConnection.end();
+            res.redirect('index.html');
           }
         });
       }

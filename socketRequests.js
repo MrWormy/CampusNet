@@ -40,6 +40,39 @@ exports.listenSocket = function(socket){
     });
   });
 
+  socket.on("getOtherBio", function (log){
+    var bio = null,
+      url = /url=[^;\n]*;/,
+      requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+log+"';",
+      connection = openConnectionBDD();
+
+    connection.query(requete, function(err, rows, fields) {
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
+
+      if(rows && rows[0] && rows[0].bio){
+        var bio = rows[0].bio,
+          cal = bio.match(url);
+
+        if(cal){
+          bio = bio.replace(cal[0], "").trim();
+        }
+      }
+
+      if(bio){
+        bio = bio.trim();
+      }
+
+      socket.emit("otherBio", {"bio": bio, "pseudo": log});
+
+      connection.end();
+    });
+  });
+
   socket.on("getCal", function () {
     var connection = openConnectionBDD(),
       url = /url=[^;\n]*;/,
@@ -54,6 +87,7 @@ exports.listenSocket = function(socket){
       var bio = rows[0].bio,
         cal = bio.match(url);
 
+      connection.end();
       if(cal){
         cal = cal[0];
       }
@@ -93,7 +127,6 @@ exports.listenSocket = function(socket){
       } else {
         socket.emit("todayCalendar", null);
       }
-      connection.end();
     });
   })
 
