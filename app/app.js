@@ -41,11 +41,14 @@ _.extend( app, Backbone.Events );
 
 $( function ( ) {
   App.socket = io.connect( 'http://localhost:19872' );
-  App.socket.on('error',  function (data){$
+  App.socket.on('error',  function (data){
     if(data == "ERR_CONN_ALR")
       window.location.replace('dejala.html');
     else
-      window.location.replace('../404.html');
+      window.location.replace('404.html');
+  });
+  App.socket.on('disconnect', function (data){
+    window.location.replace('deco.html');
   });
   App.Stages.mapStage = new createjs.Stage( "mapCanvas" );
   App.Stages.characterStage = new createjs.Stage( "charactersCanvas" );

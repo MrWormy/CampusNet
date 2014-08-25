@@ -87,8 +87,9 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
     container.y = -this.model.get( "currentY" );
     container.regX = -Math.round(width / 2);
     container.regY = -Math.round(height / 2);
-    var charac = App.Stages.mapStage.getChildByName( "player" ),
-      others = App.Stages.characterStage.getChildByName( "others" );
+    var charac = App.Stages.characterStage.getChildByName( "player" ),
+      others = App.Stages.characterStage.getChildByName( "others" ),
+      text = App.Stages.characterStage.getChildByName( "textDisplay" );
     if ( charac ) {
       charac.regX = container.regX;
       charac.regY = container.regY;
@@ -96,6 +97,10 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
     if ( others ) {
       others.regX = container.regX;
       others.regY = container.regY;
+    }
+    if (text) {
+      text.regX = container.regX;
+      text.regY = container.regY;
     }
   },
 
@@ -109,12 +114,19 @@ App.Views.DrawMap = Backbone.View.extend( /** @lends module:map.DrawMap.prototyp
 
   moveContainer: function ( e ) {
     var cont = App.Stages.mapStage.getChildAt( 0 ),
-      contOthers = App.Stages.characterStage.getChildByName( "others" );
-    if ( cont && contOthers ) {
+      contOthers = App.Stages.characterStage.getChildByName( "others" ),
+      textDisplay = App.Stages.characterStage.getChildByName( "textDisplay" );
+    if ( cont ) {
       cont.x = -e.get( "currentX" );
       cont.y = -e.get( "currentY" );
+    }
+    if ( contOthers ) {
       contOthers.x = -e.get( "currentX" );
       contOthers.y = -e.get( "currentY" );
+    }
+    if ( textDisplay ){
+      textDisplay.x = -e.get( "currentX" );
+      textDisplay.y = -e.get( "currentY" );
     }
   },
 

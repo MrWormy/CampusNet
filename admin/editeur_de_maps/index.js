@@ -26,24 +26,25 @@ App.Models.Transition = Backbone.Model.extend({
 
   updateTransitions: function (trs) {
     var transitions = this.get("transitions"),
+      names = this.get("maps"),
       toDelete = [],
       oks = [];
 
+    for(var b = transitions.length ; b < names.length; b++){
+      transitions[b] = [];
+    }
+
+    console.log(transitions);
+
     for(var k in trs){
       var uri = k + ".json",
-        ind = this.get("maps").indexOf(uri),
-        eTrs = transitions[ind];
-
-      if(!eTrs){
-        transitions[ind] = [];
-      }
+        ind = names.indexOf(uri);
 
       oks[uri] = trs[k];
     }
 
     for(var i = 0, l = transitions.length; i < l; i++){
       var tmpTr = transitions[i],
-        names = this.get("maps"),
         ok = oks[names[i]].trans;
 
       for(var j = 0, m = tmpTr.length; j < m; j++){

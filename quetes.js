@@ -10,6 +10,7 @@ pnjsQ = fillPnjsQ(quetes);
 
 quests.ClientQuest = function (login, socket) {
   var that = this;
+  this.socket = socket;
   this.login = login;
   this.QenCours = [];
   this.Qterminees = [];
@@ -19,60 +20,67 @@ quests.ClientQuest = function (login, socket) {
    connection = openConnectionBDD();
 
   connection.query(reqGetId, function(err, row, fields) {
-    if (err) throw err;
+    if (err) {
+      connection.end();
+      console.log(err);
+      socket.disconnect();
+      return 0;
+    }
     if(!(row[0] && typeof(row[0].id) != "undefined")){
+      connection.end();
       socket.disconnect();
       return 0;
     }
     that.idBDD = row[0].id;
     console.log("\n idBDD : ", that.idBDD);
+    connection.end();
     var requete = "SELECT `id_quest` FROM `campusnet`.`quests` WHERE `id_user` = "+that.idBDD+" ;",
       connec = openConnectionBDD();
     connec.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connec.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       for(var i = 0; i < rows.length; i++){
-       var tempQ = rows[i].id_quest;
-       if(tempQ - 1000 >= 0)
-         that.QenCours.push(tempQ - 1000);
-       else
-         that.Qterminees.push(tempQ);
-       }
-
-       /* on envoie toutes les quetes au client */
-       var sendQ = [];
-       for(var k = 0; k < that.QenCours.length; k++){
+        var tempQ = rows[i].id_quest;
+        if(tempQ - 1000 >= 0) that.QenCours.push(tempQ - 1000);
+        else that.Qterminees.push(tempQ);
+      }
+      connec.end();
+      /* on envoie toutes les quetes au client */
+      var sendQ = [];
+      for(var k = 0; k < that.QenCours.length; k++){
         var name = that.getQName(that.QenCours[k]);
         if(name)
           sendQ.push({"type": 1, "name": name});
-       }
+      }
 
-       for(var k = 0; k < that.Qterminees.length; k++){
-        var name = that.getQName(that.Qterminees[k]);
-        if(name)
-          sendQ.push({"type": 2, "name": name});
-       }
-       socket.on("waitQ", function(){
-         socket.emit("newQuests", {"data": sendQ, "init": true});
-       });
-       console.log("\n sending quests : ", sendQ, " to client : ", that.login);
-
-       console.log("\n quests loaded : \n QenCours : ", that.QenCours, "\n Qterminees : ", that.Qterminees);
-       socket.on("parler_pnj", function(idPnj){
-         var ret = that.treatQ(idPnj, that, socket),
-          name = null;
-         that.updateQ(ret);
-         if(ret.type > 0 && ret.type < 4){
-         /* on revoie ret au client (avec nom de la quête) */
-         name = that.getQName(ret.idQ);
-           if(name){
-            socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}], "init": false});
-           }
-         }
-       });
-     });
-     connec.end();
+      for(var k = 0; k < that.Qterminees.length; k++){
+        var que = that.getQName(that.Qterminees[k], true);
+        if(que)
+          sendQ.push(que);
+      }
+      socket.on("waitQ", function(){
+        socket.emit("newQuests", {"data": sendQ, "init": true});
+      });
+      console.log("\n quest loaded, sending quests to client : ", that.login);
+    });
   });
-  connection.end();
+
+  socket.on("parler_pnj", function(idPnj){
+    var ret = that.treatQ(idPnj, that, socket),
+      name = null;
+    that.updateQ(ret);
+    if(ret.type > 0 && ret.type < 4){
+    /* on revoie ret au client (avec nom de la quête) */
+    name = that.getQName(ret.idQ);
+      if(name){
+        socket.emit("newQuests", {"data": [{"type": ret.type, "name": name}], "init": false});
+      }
+    }
+  });
 
   this.checkEndQ = function(Quest){
     var bool = true
@@ -93,53 +101,73 @@ quests.ClientQuest = function (login, socket) {
     }
   }
 
-  this.getQName = function (qId) {
-    var ret = null;
+  this.getQName = function (qId, bool) {
+    var ret = null,
+      id = -1;
     for (var i = quetes.length - 1; i >= 0; i--) {
       if(quetes[i].id == qId){
+        id = i;
         ret = quetes[i].nameQ;
         break;
       }
     };
+
+    if(bool && id > -1 && ret){
+      ret = {"name": ret};
+      if(quetes[i].QneededToEnd.length > 0){
+        ret.type = 3;
+      } else {
+        ret.type = 2;
+      }
+    }
     return ret;
   }
 };
 
 quests.ClientQuest.prototype.updateQ = function (ret) {
-  var connection = openConnectionBDD(),
-    requete = "";
+  var connection = null,
+    requete = null;
   switch(ret.type){
     case 0:
       break;
     case 1:
       requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ + 1000)+"\');";
-      connection.query(requete, function(err, rows, fields) {
-        if (err) throw err;
-      });
       console.log("\n new quest in progress : ", ret.idQ, " ", this.login);
       break;
     case 2:
       requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ)+"\');";
-      connection.query(requete, function(err, rows, fields) {
-        if (err) throw err;
-      });
       console.log("\n quest ended : ", ret.idQ, " ", this.login);
       break;
     case 3:
       requete = "INSERT INTO `campusnet`.`quests` (`id_user`, `id_quest`) VALUES ("+this.idBDD+", \'"+(ret.idQ)+"\');";
-      connection.query(requete, function(err, rows, fields) {
-        if (err) throw err;
+      var tmpCon = openConnectionBDD();
+      tmpCon.query(requete, function(err, rows, fields) {
+        if (err) {
+          tmpCon.end();
+          console.log(err);
+          this.socket.disconnect();
+        } else {
+          tmpCon.end();
+        }
       });
       requete = "DELETE FROM `campusnet`.`quests` WHERE `quests`.`id_user` = "+this.idBDD+" AND `quests`.`id_quest` = "+(ret.idQ + 1000)+";";
-      connection.query(requete, function(err, rows, fields) {
-        if (err) throw err;
-      });
       console.log("\n quest ended and quest in progress deleted : ", ret.idQ, " ", this.login);
       break;
     default:
       break;
   }
-  connection.end();
+  if(requete){
+    connection = openConnectionBDD();
+    connection.query(requete, function(err, rows, fields) {
+      if (err) {
+        connection.end();
+        console.log(err);
+        this.socket.disconnect();
+      } else {
+        connection.end();
+      }
+    });
+  }
 };
 
 quests.ClientQuest.prototype.treatQ = function (idPnj, that, socket) {
@@ -164,7 +192,6 @@ quests.ClientQuest.prototype.treatQ = function (idPnj, that, socket) {
           }
           else {
             dial = curQ.dialQ;
-            break;
           }
         }
         else if(isIn(curQ.id, that.Qterminees)) {
@@ -299,3 +326,45 @@ function fillPnjsQ (quetes){
   }
   return ret;
 }
+
+quests.getPannels = function (serv) {
+  var res = [];
+
+  if(serv > 1){
+    for(var i = 0, l = pnjs.length; i < l; i++){
+      var pnj = pnjs[i];
+
+      if(pnj.service && pnj.service == serv && pnj.object){
+        res.push(pnj);
+      }
+    }
+  } else if (serv == 1){
+    for(var i = 0, l = pnjs.length; i < l; i++){
+      var pnj = pnjs[i];
+
+      if(pnj.object){
+        res.push(pnj);
+      }
+    }
+  }
+
+  return res;
+};
+
+quests.setNewPanText = function (pan) {
+  var pannel = null,
+    i = Math.min(pnjs.length, pan.id);
+
+  for(i; i >= 0; i--){
+    if(pnjs[i].id == pan.id){
+      pannel = pnjs[i];
+      break;
+    }
+  }
+
+  if(pannel){
+    pannel.text = pan.text;
+    fs.writeFile("./assets/resources/pnj.json", JSON.stringify(pnjs));
+  }
+};
+

@@ -14,6 +14,7 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
     this.afterLoad( );
     this.mobileEvents();
     this.listenWin();
+    this.listenDeco();
   },
 
   /**
@@ -330,6 +331,13 @@ App.Views.eventHandler = Backbone.View.extend( /** @lends module:event_handler.e
         that.keyBoardEvent(e, tem, that.onTem);
       });
     }
+  },
+
+  listenDeco: function () {
+    this.listenTo(app, "deco", function (el) {
+      App.socket.disconnect();
+      window.location.replace("logout.html");
+    });
   },
 
   keyBoardEvent: function (e, code, callback) {

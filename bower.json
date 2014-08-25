@@ -7,6 +7,7 @@
     "underscore": ">=0.0.0",
     "backbone": ">=0.0.0",
     "backbone.localStorage": ">=0.0.0",
-    "jquery": ">=0.0.0"
+    "jquery": ">=0.0.0",
+    "tinymce": ""
   }
 }

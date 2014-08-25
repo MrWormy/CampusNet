@@ -13,21 +13,64 @@ exports.listenSocket = function(socket){
     var connection = openConnectionBDD(),
       requete = "UPDATE `campusnet`.`users` SET `bio`='"+bio+"' WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       console.log("\n " + login + "'s bio updated : ", bio);
+      connection.end();
     });
-    connection.end();
   });
 
   socket.on("getBio", function() {
     var connection = openConnectionBDD(),
       requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       var bio = rows[0].bio;
       socket.emit("bio", bio);
+      connection.end();
     });
-    connection.end();
+  });
+
+  socket.on("getOtherBio", function (log){
+    var bio = null,
+      url = /url=[^;\n]*;/,
+      requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+log+"';",
+      connection = openConnectionBDD();
+
+    connection.query(requete, function(err, rows, fields) {
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
+
+      if(rows && rows[0] && rows[0].bio){
+        var bio = rows[0].bio,
+          cal = bio.match(url);
+
+        if(cal){
+          bio = bio.replace(cal[0], "").trim();
+        }
+      }
+
+      if(bio){
+        bio = bio.trim();
+      }
+
+      socket.emit("otherBio", {"bio": bio, "pseudo": log});
+
+      connection.end();
+    });
   });
 
   socket.on("getCal", function () {
@@ -35,10 +78,16 @@ exports.listenSocket = function(socket){
       url = /url=[^;\n]*;/,
       requete = "SELECT `bio` FROM `campusnet`.`users` WHERE `login`='"+login+"';";
     connection.query(requete, function(err, rows, fields) {
-      if (err) throw err;
+      if (err) {
+        connection.end();
+        console.log(err);
+        socket.disconnect();
+        return 0;
+      }
       var bio = rows[0].bio,
         cal = bio.match(url);
 
+      connection.end();
       if(cal){
         cal = cal[0];
       }
@@ -79,7 +128,6 @@ exports.listenSocket = function(socket){
         socket.emit("todayCalendar", null);
       }
     });
-    connection.end();
   })
 
   /*socket.on("setAvatar", function(avatar) {
@@ -116,7 +164,7 @@ exports.listenSocket = function(socket){
 }
 
 function treatCal (calstr) {
-  var enCours = [], suivants = [], now = new Date("Oct 14 2013 9:20:50 GMT+0200 (Paris, Madrid (heure d’été))"), //"May 26 2014 14:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
+  var enCours = [], suivants = [], now = new Date(), //"Oct 14 2013 9:20:50 GMT+0200 (Paris, Madrid (heure d’été))" pour tester
     ical = {
       version:'',
       prodid:'',

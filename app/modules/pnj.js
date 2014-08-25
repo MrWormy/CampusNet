@@ -2,7 +2,7 @@ App.Models.Pnj = Backbone.Model.extend( {
 	initialize: function() {
 
     //  App.map[ pos ] = 2; ligne 169, event-handler
-    	if (this.id!=undefined) { // C'est dégueu mais ça marche
+    if (this.id!=undefined) {
 			var perso,
 				that = this;
 				skin = this.get("skin"),
@@ -45,8 +45,38 @@ App.Models.Pnj = Backbone.Model.extend( {
 		}
 	},
 
+	canBeDisplayed: function (id_map) {
+	  var ret = true,
+	  	qN = this.get("Qneeded");
+
+	  ret = ret && (this.get("map") == id_map);
+	  if(qN){
+	  	if(this.collection.qInProgress.indexOf(qN) >= 0){
+	  		if(ret){
+	  			var td = this.collection.tmpPnjDisplayed[qN];
+	  			if(td){
+	  				td.push(this.id);}
+	  			else{
+	  				this.collection.tmpPnjDisplayed[qN] = [this.id];}
+	  		}
+	  	} else {
+	  		if(ret){
+	  			var td = this.collection.tmpPnjWaiting[qN];
+	  			if(td){
+	  				td.push(this.id);}
+	  			else {
+	  				this.collection.tmpPnjWaiting[qN] = [this.id];}
+	  		}
+	  		ret = false;
+	  	}
+	  }
+
+	  return ret;
+	},
+
 	afficher: function(id_map) {
-		if (this.get("map") == id_map) {
+		var ok = this.canBeDisplayed(id_map);
+		if ( ok ) {
 			var obj = this.get("object");
 			if(obj){
 				for (var k = 0; k<obj.length; k+=3){
@@ -83,20 +113,73 @@ App.Models.Pnj = Backbone.Model.extend( {
 } );
 
 App.Collections.Pnjs = Backbone.Collection.extend({
+	tmpPnjWaiting: [],
+	tmpPnjDisplayed: [],
+	qInProgress: [],
+	curMap: -1,
 	url: "assets/resources/pnj.json",
 	model: App.Models.Pnj,
 
 	initialize: function() {
+		var that = this;
+		App.socket.on("newQuests", function(data){
+			var qsts = data.data;
+			for (var i = qsts.length - 1; i >= 0; i--) {
+				var tmp = qsts[i];
+				if(tmp.type == 1){
+					that.qInProgress.push(tmp.name);
+					that.newCurQ(tmp.name);
+				} else if(tmp.type == 3){
+					var ind = that.qInProgress.indexOf(tmp.name);
+					if(ind >= 0){
+						that.qInProgress.splice(ind, 1);
+						that.removeCurQ(tmp.name);
+					}
+				}
+			};
+		})
+	},
+
+	newCurQ: function (nameQ) {
+		var tW = this.tmpPnjWaiting[nameQ];
+		if(tW){
+			for (var i = tW.length - 1; i >= 0; i--) {
+				this.get(tW[i]).afficher(this.curMap);
+			};
+		}
+	},
+
+	removeCurQ: function (nameQ) {
+		var s = App.Stages.characterStage.getChildByName( "others" ),
+			tD = this.tmpPnjDisplayed[nameQ];
+		if(tD){
+			for (var i = tD.length - 1; i >= 0; i--) {
+				var id = tD[i],
+					c = s.getChildByName("pnj "+ id);
+				if(c)
+					s.removeChild(c);
+					App.views.drawings.removeName(-id -1);
+			};
+			tD = [];
+		}
+	},
+
+	resetTmpPnjs: function () {
+	  this.tmpPnjWaiting = [];
+	  this.tmpPnjDisplayed = [];
 	},
 
 	newMap: function (id_map) {
 		var that = this;
+		this.curMap = id_map;
 	  if(this.models.length > 0){
+			that.resetTmpPnjs();
 			for (var i=0 ; i<that.models.length ; i++) {
 				that.models[i].afficher(id_map);
 			}
 	  } else {
 			this.fetch().done(function() {
+				that.resetTmpPnjs();
 				for (var i=0 ; i<that.models.length ; i++) {
 					that.models[i].afficher(id_map);
 				}

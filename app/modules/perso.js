@@ -201,7 +201,8 @@ App.Views.Perso = Backbone.View.extend( /** @lends module:perso.Views/Perso.prot
     perso.x = this.model.get( "currentPos" ).j * tw;
     perso.y = this.model.get( "currentPos" ).i * tw;
     cont.addChild( perso );
-    App.Stages.mapStage.addChild( cont );
+    App.Stages.characterStage.addChildAt( cont, 1 );
+
   }
 
 } );

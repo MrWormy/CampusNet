@@ -98,47 +98,6 @@ var Guy = function(socket, id, initPos, Map, login, idBdd, skin) {
 		socket.removeAllListeners("iMove");
 		socket.removeAllListeners("quitMap");
 	}
-
-	this.loadBDD = function() {
-		var requete = "SELECT `id` FROM `campusnet`.`users` WHERE `login`='"+that.login+"';";
-		var connection = openConnectionBDD();
-		connection.query(requete, function(err, rows, fields) {
-			if (err) throw err;
-			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
-				that.idBDD = parseInt(rows[0].id);
-			} else { // Creer un nouveau
-				//that.signin();
-			}
-		})
-		connection.end();
-	}
-
-	/* this.signin = function() {
-		var requete = "INSERT INTO `campusnet`.`users` (`login`, `nom`) VALUES ('"+that.login+"', '"+that.login+"');";
-		var connection = openConnectionBDD();
-		connection.query(requete, function(err, rows, fields) {
-			if (err) throw err;
-			if (rows[0] != undefined && parseInt(rows[0].id) >= 0) {
-				that.idBDD = parseInt(rows[0].id);
-			}
-		});
-		connection.end();
-	} */
-
-	this.getSkin = function() {
-		if (that.idBDD != null) {
-			var requete = "SELECT `avatar` FROM `campusnet`.`users` WHERE `id`="+that.idBDD+";";
-			var connection = openConnectionBDD();
-			connection.query(requete, function(err, rows, fields) {
-				if (err) throw err;
-				return rows[0];
-			});
-			connection.end();
-		} else {
-			return null;
-		}
-	}
-
 }
 
 /**
@@ -158,21 +117,26 @@ var Map = function() {
 		 connection = openConnectionBDD(),
 		 that = this;
 		connection.query(requete, function(err, rows, fields) {
-			if (err) throw err;
-			if (rows[0] != undefined && parseInt(rows[0].id) >= 0 && rows[0].avatar) {
-				that.calculeridnew();
-				that.guys.unshift(new Guy(socket, that.idnew, initPos, that, login, rows[0].id, rows[0].avatar));
-				for (var i=0 ; i<that.guys.length ; i++) {
-					var guy = that.guys[i];
-					if (guy != undefined) {
-						socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName, skin: guy.skin});
-					}
-				}
-			} else { // Un erreur dans le processus de connection est survenue, il faut recommencer
+			if (err){
+				connection.end();
+				console.log(err);
 				socket.disconnect();
+			} else {
+				if (rows[0] != undefined && parseInt(rows[0].id) >= 0 && rows[0].avatar) {
+					that.calculeridnew();
+					that.guys.unshift(new Guy(socket, that.idnew, initPos, that, login, rows[0].id, rows[0].avatar));
+					for (var i=0 ; i<that.guys.length ; i++) {
+						var guy = that.guys[i];
+						if (guy != undefined) {
+							socket.emit("popGuy", {id: guy.id, pos: guy.pos, pName: guy.pName, skin: guy.skin});
+						}
+					}
+				} else { // Un erreur dans le processus de connection est survenue, il faut recommencer
+					socket.disconnect();
+				}
+				connection.end();
 			}
 		})
-		connection.end();
 	}
 
 	/**
