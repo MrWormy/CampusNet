@@ -192,7 +192,6 @@ quests.ClientQuest.prototype.treatQ = function (idPnj, that, socket) {
           }
           else {
             dial = curQ.dialQ;
-            break;
           }
         }
         else if(isIn(curQ.id, that.Qterminees)) {
