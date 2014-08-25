@@ -5,7 +5,7 @@ App.Models.Navbar = Backbone.Model.extend({
     "carte": "",
     "son": '<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>',
     "param": '<div class="info">Cette fonctionnalité n\'a pas encore été implémentée</div>',
-    "aide": '<div class="info">Bienvenue sur Campusnet v2.<br><br>Bientôt vous pourrez trouvez l\'aide pour le jeu ici.<br><br>Crédits:<br><br>Campusnet v2 a été développé par Nicolas Benning, Thomas Laurence, Bilgé Kimyonok et Benoît Koenig.</div>',
+    "aide": '<div class="info">Bienvenue sur Campusnet v2.<br><br>Vous pouvez accéder à la biographie de quelqu\'un en cliquant sur son avatar.<br>Vous pouvez envoyer un message privé à quelqu\'un en ecrivant \"\\w le nom du destinataire\" suivi d\'un espace et de votre message.<br>Pour se déplacer, il faut cliquer avec la souris sur la case de destination.<br><br>Crédits:<br><br>Campusnet v2 a été développé par Nicolas Benning, Thomas Laurence, Bilgé Kimyonok et Benoît Koenig.</div>',
     "quit": "",
     "name": "<div class=\"info\"> Pseudo : Inconnu<br><br>",
     "bio": "Biographie : <br><br><textarea id=\"bio\" rows=\"10\" cols=\"50\"></textarea><div>Calendrier : <input id=\"urlCal\" type=\"text\" size=\"46\"><br><input id=\"sendBio\" type=\"button\" value=\"Enregistrer\"><input id=\"cal\" type=\"button\" value=\"Emploi du temps\"></div><br><br>",
