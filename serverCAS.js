@@ -108,7 +108,7 @@ app.get( '/index.html', function ( req, res ) {
     if (err) {
       connection.end();
       console.log(err);
-      res.redirect("/overload.html");
+      res.redirect("/deco.html");
     } else {
       if (rows[0] && rows[0].login == req.session.login && rows[0].avatar != null && rows[0].avatar != "") {
         res.sendfile( __dirname + '/index.html' );
@@ -132,7 +132,7 @@ app.use('/modifAvatar', function(req, res) {
     if (err) {
       connection.end();
       console.log(err);
-      res.redirect("/overload.html");
+      res.redirect("/deco.html");
     } else {
       var oConnection = play.openConnectionBDD();
       if (rows[0] && rows[0].login == req.session.login) {
@@ -140,7 +140,7 @@ app.use('/modifAvatar', function(req, res) {
           if (err) {
             oConnection.end();
             console.log(err);
-            res.redirect("/overload.html");
+            res.redirect("/deco.html");
           } else {
             oConnection.end();
             res.redirect('index.html');
@@ -151,7 +151,7 @@ app.use('/modifAvatar', function(req, res) {
           if (err) {
             oConnection.end();
             console.log(err);
-            res.redirect("/overload.html");
+            res.redirect("/deco.html");
           } else {
             oConnection.end();
             res.redirect('index.html');
@@ -170,7 +170,7 @@ app.use(function (req, res, next) {
     if (err) {
       connection.end();
       console.log(err);
-      res.redirect("/overload.html");
+      res.redirect("/deco.html");
     }
     else{
       if (rows[0] && rows[0].admin > 0) {
@@ -229,7 +229,7 @@ app.use(function(req, res, next){
     if (err) {
       connection.end();
       console.log(err);
-      res.redirect("/overload.html");
+      res.redirect("/deco.html");
     } else {
       if (rows[0] && rows[0].admin == 1) {
         next();
